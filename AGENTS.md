@@ -79,6 +79,11 @@
 - LabUtopia：`https://github.com/Rui-li023/LabUtopia`
 - AutoBio thermal cycler close Sim2Real 视频：`https://huggingface.co/datasets/autobio-bench/thermal_cycler_close-mujoco`
 - AutoBio insert Sim2Real 视频：`https://huggingface.co/datasets/autobio-bench/insert-mujoco`
+- 当前页面接入过的公开原始视频直链包括：
+  - thermal cycler close front：`https://huggingface.co/datasets/autobio-bench/thermal_cycler_close-mujoco/resolve/main/videos/chunk-000/image/episode_000000.mp4`
+  - thermal cycler close wrist：`https://huggingface.co/datasets/autobio-bench/thermal_cycler_close-mujoco/resolve/main/videos/chunk-000/wrist_image/episode_000000.mp4`
+  - insert front：`https://huggingface.co/datasets/autobio-bench/insert-mujoco/resolve/main/videos/chunk-000/image/episode_000000.mp4`
+  - insert wrist：`https://huggingface.co/datasets/autobio-bench/insert-mujoco/resolve/main/videos/chunk-000/wrist_image/episode_000000.mp4`
 
 ## 8. 本地只读参考源说明
 
@@ -110,6 +115,7 @@
   - Level 3 左侧是多视频视图
 - Level 3 的视频实现现在按 `videoSources` 动态渲染，不再把视频卡片数量写死在 `index.html` 里。
 - 当前仓库内已落地的 Level 3 视频副本位于 `docs/assets/videos/`，这样 GitHub Pages 可以直接稳定提供静态文件。
+- 对低分辨率仿真视频，页面上应限制展示尺寸，不要把视频区域放得过大；当前实现通过限制 `video-grid` 的最大宽度和视频高度来避免画面发糊。
 
 ## 10. 浏览器验证经验
 
@@ -121,6 +127,11 @@
   - `curl -I` 检查页面、模型、视频资源是否返回 `200`
 - 如果 Level 3 视频改成新的 Hugging Face 来源，优先把最小必要集合下载到仓库内，再在页面里引用仓库内副本，避免运行时依赖跨站视频资源。
 - 如果要做浏览器级验证，Playwright 是可用方案。
+- 当前环境里直接跑 `npx playwright ...` 可能会因为默认 `~/.npm` 缓存目录不可写而失败；可改用：
+  - `env npm_config_cache=/tmp/.npm PLAYWRIGHT_BROWSERS_PATH=/tmp/pw-browsers npx playwright ...`
+- 如果只是做移动端截图验证，优先继续用 Chromium 并手动指定手机视口，例如：
+  - `--browser chromium --viewport-size "390,844"`
+- 不要默认用 `--device "iPhone 13"` 这类预设；在当前环境下它可能触发额外的 WebKit 浏览器依赖，导致无关的缺包报错。
 - Three.js 通过 CDN 直接加载 `examples/jsm/*` 时，要注意这些模块内部会使用裸模块导入 `three`。
 - 如果页面上只有空白 canvas 或 3D 完全不出现，而模型文件本身可以访问，优先检查是不是 `OrbitControls`、`OBJLoader`、`STLLoader` 的裸模块导入没有被浏览器解析。
 - 当前仓库的修复方式是在 `docs/index.html` 里加入 `importmap`，把 `three` 映射到公共 CDN 的 `three.module.js`，这样 GitHub Pages 下的浏览器模块解析才稳定。
