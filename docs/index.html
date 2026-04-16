@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LabOS Benchmark Explorer</title>
+    <meta
+      name="description"
+      content="Interactive GitHub Pages demo for the LabOS benchmark, with 3D lab instruments, sample benchmark items, and aligned asset/action views."
+    />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Benchmark navigation">
+        <div class="brand-block">
+          <p class="eyebrow">GitHub Pages Demo</p>
+          <h1>LabOS Benchmark Explorer</h1>
+          <p class="brand-copy">
+            Benchmark design aligned to Nature Protocols for scientific grounding and
+            AutoBio / LabUtopia for reusable assets and actions.
+          </p>
+        </div>
+
+        <nav id="section-nav" class="section-nav"></nav>
+
+        <section class="sidebar-section">
+          <p class="sidebar-label">Aligned Sources</p>
+          <ul class="source-links">
+            <li><a href="https://www.nature.com/nprot/" target="_blank" rel="noreferrer">Nature Protocols</a></li>
+            <li><a href="https://github.com/autobio-bench/AutoBio" target="_blank" rel="noreferrer">AutoBio</a></li>
+            <li><a href="https://github.com/Rui-li023/LabUtopia" target="_blank" rel="noreferrer">LabUtopia</a></li>
+            <li><a href="https://huggingface.co/datasets/InternScience/SGI-WetExperiment" target="_blank" rel="noreferrer">SGI-WetExperiment</a></li>
+          </ul>
+        </section>
+
+        <section class="sidebar-section">
+          <p class="sidebar-label">On This Page</p>
+          <p class="sidebar-note">
+            Each part contains two illustrative items. Click an item to swap the 3D
+            instrument, example media, and benchmark content.
+          </p>
+        </section>
+      </aside>
+
+      <main class="workspace">
+        <header class="workspace-head">
+          <div class="workspace-copy">
+            <p id="section-kicker" class="section-kicker"></p>
+            <h2 id="section-title" class="section-title"></h2>
+            <p id="section-summary" class="section-summary"></p>
+          </div>
+          <div class="legend-strip">
+            <span class="legend-chip">Nature Protocols grounding</span>
+            <span class="legend-chip">AutoBio / LabUtopia ontology</span>
+            <span class="legend-chip">Three.js instrument viewer</span>
+          </div>
+        </header>
+
+        <section class="viewer-band">
+          <div class="viewer-stage">
+            <div class="viewer-toolbar">
+              <div>
+                <p class="viewer-label">3D Instrument</p>
+                <h3 id="model-label" class="viewer-title"></h3>
+              </div>
+              <button id="reset-view" class="ghost-button" type="button">Reset View</button>
+            </div>
+            <div id="viewer" class="viewer"></div>
+            <div class="viewer-footer">
+              <p id="viewer-description" class="viewer-description"></p>
+              <div id="viewer-tags" class="viewer-tags"></div>
+            </div>
+          </div>
+
+          <div class="media-panel">
+            <img id="media-image" class="media-image" alt="" />
+            <video id="media-video" class="media-video" controls muted loop playsinline></video>
+          </div>
+        </section>
+
+        <section class="content-band">
+          <div class="list-panel">
+            <div class="panel-head">
+              <p class="panel-label">Sample Items</p>
+              <h3>Two Examples Per Part</h3>
+            </div>
+            <div id="item-list" class="item-list"></div>
+          </div>
+
+          <div class="detail-panel">
+            <div class="panel-head">
+              <p class="panel-label" id="item-kind"></p>
+              <h3 id="item-title"></h3>
+            </div>
+            <div id="item-body" class="item-body"></div>
+          </div>
+        </section>
+
+        <footer class="page-footer">
+          Static site for GitHub Pages. The 3D assets and embodied clips are copied from a
+          read-only local mirror of AutoBio materials; the source repos remain unchanged.
+        </footer>
+      </main>
+    </div>
+
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>

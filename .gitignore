@@ -208,3 +208,6 @@ __marimo__/
 
 # Codex local state
 .codex
+
+# Local benchmark data
+data/
