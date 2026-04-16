@@ -112,6 +112,9 @@
   - `git diff --check -- docs AGENTS.md`
   - `curl -I` 检查页面、模型、视频资源是否返回 `200`
 - 如果要做浏览器级验证，Playwright 是可用方案。
+- Three.js 通过 CDN 直接加载 `examples/jsm/*` 时，要注意这些模块内部会使用裸模块导入 `three`。
+- 如果页面上只有空白 canvas 或 3D 完全不出现，而模型文件本身可以访问，优先检查是不是 `OrbitControls`、`OBJLoader`、`STLLoader` 的裸模块导入没有被浏览器解析。
+- 当前仓库的修复方式是在 `docs/index.html` 里加入 `importmap`，把 `three` 映射到公共 CDN 的 `three.module.js`，这样 GitHub Pages 下的浏览器模块解析才稳定。
 - 在 Ubuntu 24.04 环境下，Playwright 下载的 Chromium headless shell 可能缺系统库，实际补过的依赖包括：
   - `libnspr4`
   - `libnss3`
