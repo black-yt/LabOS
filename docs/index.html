@@ -6,7 +6,7 @@
     <title>LabOS Benchmark Explorer</title>
     <meta
       name="description"
-      content="LabOS benchmark GitHub Pages demo with three benchmark parts, 3D experimental assets, and protocol questions."
+      content="LabOS benchmark GitHub Pages demo with three benchmark levels, 3D experimental assets, long-horizon planing questions, and Sim2Real videos."
     />
     <link rel="stylesheet" href="./styles.css" />
     <script type="importmap">
@@ -26,7 +26,7 @@
           <p class="brand-copy">
             The sidebar only contains Level 1, Level 2, and Level 3. The left-side
             view changes with the active level: one 3D asset, multiple instruments,
-            or a video.
+            or looped multi-view videos.
           </p>
         </div>
         <nav id="section-nav" class="section-nav"></nav>
@@ -93,7 +93,7 @@
             </div>
 
             <div id="video-stage" class="video-stage" hidden>
-              <video id="feature-video" class="feature-video" controls muted loop playsinline></video>
+              <div id="video-grid" class="video-grid"></div>
             </div>
 
             <div class="feature-foot">

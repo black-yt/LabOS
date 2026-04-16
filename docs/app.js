@@ -138,10 +138,10 @@ const SECTIONS = [
   {
     id: "part-2",
     label: "Level 2",
-    navTitle: "Protocol Question",
-    navMeta: "Multiple instruments + long-horizon planning",
+    navTitle: "Long-Horizon Planing",
+    navMeta: "Multiple instruments + long-horizon planing",
     kicker: "Level 2",
-    title: "Protocol Question",
+    title: "Long-Horizon Planing",
     summary:
       "Level 2 shows multiple instruments in the left-side view because the protocol question depends on cross-instrument coordination.",
     note:
@@ -151,7 +151,7 @@ const SECTIONS = [
         id: "plan-q1",
         tabTitle: "Question 1",
         tabMeta: "qPCR protocol",
-        kind: "Protocol question",
+        kind: "Long-Horizon Planing",
         title: "qPCR protocol question under a finite action space",
         modelKeys: ["thermalCycler", "centrifugeMini", "tube15ml"],
         displayTitle: "Protocol instrument set",
@@ -193,7 +193,7 @@ const SECTIONS = [
         id: "plan-q2",
         tabTitle: "Question 2",
         tabMeta: "Thermal mixer protocol",
-        kind: "Protocol question",
+        kind: "Long-Horizon Planing",
         title: "Thermal mixer incubation protocol question",
         modelKeys: ["thermalMixer", "centrifugeMini", "tube15ml"],
         displayTitle: "Protocol instrument set",
@@ -236,58 +236,64 @@ const SECTIONS = [
   {
     id: "part-3",
     label: "Level 3",
-    navTitle: "Video Preview",
-    navMeta: "Video + transfer-oriented question",
+    navTitle: "Sim2Real",
+    navMeta: "Multi-view videos + transfer-oriented question",
     kicker: "Level 3",
-    title: "Sim2Real Video",
+    title: "Sim2Real",
     summary:
-      "Level 3 replaces the 3D asset on the left side with a video so the question can focus on transfer-oriented observations.",
+      "Level 3 replaces the 3D asset on the left side with looped multi-view videos so the question can focus on transfer-oriented observations.",
     note:
-      "The left-side view switches to video in Level 3 because the benchmark is emphasizing observable execution and transfer conditions rather than static asset structure.",
+      "The left-side view switches to looped multi-view videos in Level 3 because the benchmark is emphasizing observable execution and transfer conditions rather than static asset structure.",
     samples: [
       {
         id: "sim-q1",
         tabTitle: "Question 1",
-        tabMeta: "Tube pickup",
-        kind: "Transfer preview",
-        title: "Tube pickup transfer check",
-        videoTitle: "Tube pickup episode",
+        tabMeta: "Thermal cycler close",
+        kind: "Sim2Real",
+        title: "Thermal cycler close transfer check",
+        videoTitle: "Thermal cycler close videos",
         videoDescription:
-          "The left-side view is a video in Level 3. This clip is used to anchor the transfer-oriented question to an observable execution trace.",
-        videoTags: ["Embodied clip", "Transfer preview", "Tube handling"],
+          "Level 3 uses paired front-view and wrist-view videos so the transfer-oriented question is grounded in a concrete multi-view execution trace.",
+        videoTags: ["Embodied clip", "Sim2Real", "Thermal cycler close"],
+        videoSources: [
+          { title: "Front view", src: "assets/videos/thermal_cycler_close_front.mp4" },
+          { title: "Wrist view", src: "assets/videos/thermal_cycler_close_wrist.mp4" },
+        ],
         prompt:
-          "Observe the tube-pickup video and answer the following question. Which signals should matter before a simulated pickup is considered transferable to the real bench?",
+          "Observe the thermal cycler close videos and answer the following question. Which signals should matter before the simulated close-lid routine is considered transferable to the real bench?",
         checks: [
-          "The gripper contacts the tube body instead of clipping through the cap.",
-          "The tube remains stable after lift-off instead of slipping or oscillating.",
-          "The post-grasp orientation remains usable for the next protocol step.",
-          "Success depends on the object state, not only the arm trajectory.",
+          "The lid follows a valid hinge path instead of intersecting the instrument housing.",
+          "The final state is a seated, closed lid rather than a visually near-miss pose.",
+          "The end effector releases with enough clearance to avoid bumping the lid edge.",
+          "Success is judged by the resulting instrument state, not only by motion similarity.",
         ],
         answer:
-          "A useful sim2real transfer signal must score grasp stability, pose consistency, and downstream usability rather than only matching the nominal motion.",
-        videoSrc: "assets/videos/pickup_tube.mp4",
+          "A useful Sim2Real signal here is state-based: valid hinge motion, seated closure, clean release, and readiness for the next PCR step.",
       },
       {
         id: "sim-q2",
         tabTitle: "Question 2",
-        tabMeta: "Centrifuge lid",
-        kind: "Transfer preview",
-        title: "Mini centrifuge lid-closure transfer check",
-        videoTitle: "Centrifuge lid-closure episode",
+        tabMeta: "Insert task",
+        kind: "Sim2Real",
+        title: "Insert-task transfer check",
+        videoTitle: "Insert-task videos",
         videoDescription:
-          "This clip keeps the left-side view tied to a concrete execution trace, so the question can focus on closure state, release, and transfer readiness.",
-        videoTags: ["Embodied clip", "Transfer preview", "Closure event"],
+          "These paired videos keep the left-side view tied to a concrete insertion trace so the question can focus on alignment, seating depth, and transfer readiness.",
+        videoTags: ["Embodied clip", "Sim2Real", "Insertion"],
+        videoSources: [
+          { title: "Front view", src: "assets/videos/insert_front.mp4" },
+          { title: "Wrist view", src: "assets/videos/insert_wrist.mp4" },
+        ],
         prompt:
-          "Observe the centrifuge lid-closure video and answer the following question. Which conditions should stay consistent when the same close-lid routine is evaluated on the real instrument?",
+          "Observe the insert-task videos and answer the following question. Which conditions should stay consistent when the same insertion routine is evaluated on the real bench?",
         checks: [
-          "The lid follows a valid hinge path instead of intersecting the housing.",
-          "The final state corresponds to a seated, closed lid rather than a near-miss pose.",
-          "The release keeps clearance between the gripper and the lid edge.",
-          "The pass condition requires the rotor region to be enclosed and ready for spin.",
+          "The approach pose stays aligned with the target opening instead of relying on clipping.",
+          "Contact leads to a seated insertion state with usable depth, not a partial near-miss.",
+          "The object remains stable after release instead of drifting or bouncing out.",
+          "Success is judged by insertion state and downstream usability, not only by the arm path.",
         ],
         answer:
-          "The real-world pass condition should be state-based: seated lid, clear release, enclosed rotor, and readiness for the next physical step.",
-        videoSrc: "assets/videos/centrifuge_mini_close_lid.mp4",
+          "The real-world pass condition should stay state-based: alignment, seated depth, stable release, and readiness for the next embodied step.",
       },
     ],
   },
@@ -495,8 +501,8 @@ const dom = {
   singleViewStage: document.getElementById("single-view-stage"),
   multiViewStage: document.getElementById("multi-view-stage"),
   videoStage: document.getElementById("video-stage"),
+  videoGrid: document.getElementById("video-grid"),
   viewerStatus: document.getElementById("viewer-status"),
-  featureVideo: document.getElementById("feature-video"),
   miniCards: Array.from(document.querySelectorAll(".mini-view-card")),
   miniTitles: [0, 1, 2].map((index) => document.getElementById(`mini-title-${index}`)),
   miniStatuses: [0, 1, 2].map((index) => document.getElementById(`mini-status-${index}`)),
@@ -563,9 +569,41 @@ function showFeatureMode(mode) {
 }
 
 function resetVideoStage() {
-  dom.featureVideo.pause();
-  dom.featureVideo.removeAttribute("src");
-  dom.featureVideo.load();
+  dom.videoGrid.querySelectorAll("video").forEach((video) => {
+    video.pause();
+    video.removeAttribute("src");
+    video.load();
+  });
+  dom.videoGrid.innerHTML = "";
+}
+
+function createVideoCard(source, index) {
+  const card = document.createElement("article");
+  card.className = "video-card";
+
+  const meta = document.createElement("div");
+  meta.className = "video-card-meta";
+
+  const kicker = document.createElement("p");
+  kicker.className = "video-card-kicker";
+  kicker.textContent = `View ${index + 1}`;
+
+  const title = document.createElement("h4");
+  title.className = "video-card-title";
+  title.textContent = source.title;
+
+  const video = document.createElement("video");
+  video.className = "feature-video";
+  video.controls = true;
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.src = assetUrl(source.src);
+
+  meta.append(kicker, title);
+  card.append(meta, video);
+  return { card, video };
 }
 
 async function renderSingleAsset(sample) {
@@ -640,17 +678,26 @@ async function renderInstrumentSet(sample) {
 }
 
 function renderVideo(sample) {
-  dom.featureKicker.textContent = "Video";
+  dom.featureKicker.textContent = "Videos";
   dom.featureTitle.textContent = sample.videoTitle;
   dom.featureDescription.textContent = sample.videoDescription;
   renderTags(sample.videoTags || []);
   dom.resetView.hidden = true;
 
+  resetVideoStage();
   showFeatureMode("video");
   setStatus(dom.viewerStatus, "", false);
 
-  dom.featureVideo.src = assetUrl(sample.videoSrc);
-  dom.featureVideo.load();
+  const sources = sample.videoSources || [];
+  sources.forEach((source, index) => {
+    const { card, video } = createVideoCard(source, index);
+    dom.videoGrid.appendChild(card);
+    video.load();
+    const playPromise = video.play();
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
+  });
 }
 
 async function renderFeature(section, sample) {

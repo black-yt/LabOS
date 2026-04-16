@@ -77,6 +77,8 @@
 - SGI-WetExperiment：`https://huggingface.co/datasets/InternScience/SGI-WetExperiment`
 - AutoBio：`https://github.com/autobio-bench/AutoBio`
 - LabUtopia：`https://github.com/Rui-li023/LabUtopia`
+- AutoBio thermal cycler close Sim2Real 视频：`https://huggingface.co/datasets/autobio-bench/thermal_cycler_close-mujoco`
+- AutoBio insert Sim2Real 视频：`https://huggingface.co/datasets/autobio-bench/insert-mujoco`
 
 ## 8. 本地只读参考源说明
 
@@ -105,7 +107,9 @@
 - 页面左侧展示逻辑目前是分 level 的：
   - Level 1 左侧是单个 3D 资产
   - Level 2 左侧是多仪器视图
-  - Level 3 左侧是视频
+  - Level 3 左侧是多视频视图
+- Level 3 的视频实现现在按 `videoSources` 动态渲染，不再把视频卡片数量写死在 `index.html` 里。
+- 当前仓库内已落地的 Level 3 视频副本位于 `docs/assets/videos/`，这样 GitHub Pages 可以直接稳定提供静态文件。
 
 ## 10. 浏览器验证经验
 
@@ -115,6 +119,7 @@
   - `node --check docs/app.js`
   - `git diff --check -- docs AGENTS.md`
   - `curl -I` 检查页面、模型、视频资源是否返回 `200`
+- 如果 Level 3 视频改成新的 Hugging Face 来源，优先把最小必要集合下载到仓库内，再在页面里引用仓库内副本，避免运行时依赖跨站视频资源。
 - 如果要做浏览器级验证，Playwright 是可用方案。
 - Three.js 通过 CDN 直接加载 `examples/jsm/*` 时，要注意这些模块内部会使用裸模块导入 `three`。
 - 如果页面上只有空白 canvas 或 3D 完全不出现，而模型文件本身可以访问，优先检查是不是 `OrbitControls`、`OBJLoader`、`STLLoader` 的裸模块导入没有被浏览器解析。
