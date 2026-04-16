@@ -1,462 +1,574 @@
 # LabOS
 
-> 面向生物科学实验协议生成与实验室具身智能的双轨 benchmark。
-> 本文档基于截至 2026-04-14 的公开资料整理，目标是先把 benchmark 的范围、可复用素材和最快落地路径说明白。
+> 面向实验室智能体的三段式 benchmark。
+> 本文档反映截至 2026-04-16 的最新规划：`Nature Protocols` 提供科学语义与详细 protocol，`AutoBio + LabUtopia` 提供可复用的 assets 和 actions。
 
 ## 项目概述
 
-LabOS 计划包含两个互补部分：
+LabOS 现在拆成三个部分：
 
-1. **QA Benchmark**
-   输入实验背景、研究目标、可用动作/材料/设备等信息，输出**结构化的实验协议（protocol）**。
-2. **Embodied Benchmark**
-   面向实验室场景中的 VLA / embodied agent，评测模型执行**复杂长链 protocol** 的能力。
+1. **Experimental Asset Understanding**
+   输入实验仪器图片和一道选择题，输出正确选项。题目主要围绕仪器识别、部件含义、状态判断和使用方式。
+2. **Long-Horizon Planning**
+   输入实验描述、目标、可用材料/设备等信息，输出一份**非常长、结构化、可执行**的实验步骤。
+3. **Sim2Real**
+   面向仿真与真实执行的评测接口，后续再展开。
 
-核心思路不是把两部分完全分开，而是让它们共享一个统一的 **Protocol IR（中间表示）**：
+这三个部分不是孤立的。它们背后有三类共享来源：
 
-- QA 侧负责从文本背景生成结构化 protocol；
-- 具身侧负责把 protocol 映射成可执行动作链，并在模拟环境中评测；
-- 这样同一套 protocol 表达可以同时服务于数据构造、自动评测和 agent 执行。
+- `Nature Protocols`：提供实验目的、实验步骤、设备用途和科学语义；
+- `AutoBio + LabUtopia`：提供实验室场景里真正要对齐的 assets 与 actions；
+- `protocol_v1`：提供当前仓库里已经落好的大规模协议语料，适合做工程启动和数据清洗。
 
 ```mermaid
 flowchart LR
-    A[Nature Protocols PDFs<br/>约 3000 篇] --> B[Protocol Parsing / Structuring]
-    C[SGI-WetExperiment<br/>现有 wet-lab QA 评测样例] --> D[QA Prompt / Scoring Recipe]
-    B --> E[Protocol IR]
-    D --> F[QA Benchmark]
-    E --> F
+    A[Nature Protocols<br/>scientific semantics / detailed protocols] --> B[Biological Grounding]
+    C[AutoBio + LabUtopia<br/>assets / actions / embodied alignment] --> D[Asset & Action Ontology]
+    E[protocol_v1 corpus<br/>engineering bootstrap] --> F[Corpus Scale]
 
-    G[AutoBio<br/>原子实验操作与现成数据] --> H[Action Ontology Alignment]
-    I[LabUtopia<br/>层级化实验室任务] --> H
-    E --> H
-    H --> J[Long-horizon Embodied Tasks]
+    B --> G[Experimental Asset Understanding]
+    D --> G
 
-    F --> K[LabOS Benchmark]
-    J --> K
+    B --> H[Long-Horizon Planning]
+    D --> H
+    F --> H
+
+    D --> I[Sim2Real interface]
+    H --> I
 ```
 
-## 设计目标
+## 当前判断
 
-- **优先复用已有素材**，减少从零造数据、造环境、造动作空间的成本。
-- **优先做可跑通的 MVP**，再追求更大规模和更复杂的任务设计。
-- **输出必须结构化**，否则 QA 侧难自动评分，具身侧也难映射成动作链。
-- **QA 与具身共享 schema**，避免出现两套数据表达、两套工具链。
+这次调整以后，LabOS 的重点不是把 `AutoBio` 和 `LabUtopia` 拿掉，而是把它们放到更准确的位置：
 
-## 为什么这个方向成立
+- `Nature Protocols` 负责 benchmark 的**科学对齐**；
+- `AutoBio + LabUtopia` 负责 benchmark 的**具身对齐**；
+- 前两块 benchmark 则负责把这两种对齐方式接到一起。
 
-### 1. QA 任务天然适合用 Nature Protocols 做高质量来源
+也就是说，LabOS 不是单纯做一个“实验文本 benchmark”，而是在做一座桥：
 
-`Nature Protocols` 本身就是面向实验流程的高质量 protocol 载体，公开介绍中强调了其文章通常包含试剂/材料、设备、时长、分步骤流程、关键步骤、问题排查等要素。对我们来说，这类文档非常适合被解析成结构化 protocol。
+1. 一端对齐 `Nature Protocols` 这样的高质量生物实验知识；
+2. 一端对齐 `AutoBio`、`LabUtopia` 这样的具身资产与动作空间；
+3. 中间通过 asset understanding 和 long-horizon planning 完成映射。
 
-这意味着 QA benchmark 的 gold data 不需要从零标注，可以优先做：
+这条路线的价值在于：
 
-- PDF 抽取；
-- 章节解析；
-- 步骤归一化；
-- 参数抽取（体积、温度、时长、转速、设备、前后依赖）；
-- 再补少量人工质检。
+- 有科学内容上的约束，不会变成泛泛的 robotics benchmark；
+- 有 assets / actions 上的复用，不需要重新发明一套实验室本体；
+- 后续接 `sim2real` 时，不会和已有具身工作脱节。
 
-### 2. 具身任务可以直接站在现有实验室环境和动作库上
+## 核心原则
 
-用户希望“越快越好”，那最重要的不是重新搭 simulator，而是复用已有的实验室任务库与训练/评测管线。
+- **一方面对齐 Nature Protocols，另一方面对齐 AutoBio / LabUtopia。**
+- **优先复用已有素材**，尤其是当前仓库里的 `protocol_v1` 和已有具身工作里的 asset / action 设计。
+- **先做可评分的 benchmark**，避免开放式任务难以比较。
+- **输出保持结构化**，后续才能接自动评测和 sim2real。
+- **设备知识、动作知识与 protocol 知识共享接口**，避免第一块和第二块完全分裂。
 
-- `AutoBio` 已经提供了面向数字生物实验室的原子操作任务、数据格式转换和 policy evaluation 流程。
-- `LabUtopia` 已经提供了实验室场景、层级任务、动作控制器、数据采集、训练和推理接口。
+## 三类来源的角色分工
 
-对 LabOS 来说，最合理的策略是：
+### Nature Protocols
 
-1. 不重新定义底层机器人控制；
-2. 不新造 3D 资产；
-3. 优先做**动作本体对齐 + protocol 组合**；
-4. 把 benchmark 难点放在**长链任务组织与评测**上。
+`Nature Protocols` 在 LabOS 里承担的是**生物理解与科学正确性锚点**：
 
-## 统一中间表示：Protocol IR
+- 定义某类实验的目标和阶段；
+- 提供高质量、非常详细的步骤；
+- 提供设备为什么使用、什么时候使用、如何使用的语义背景；
+- 为前三个部分都提供“这件事在生物实验上是否合理”的依据。
 
-如果这个 benchmark 想同时服务 QA 和 embodied，两边最好共享一套中间表示。建议最小可行 schema 如下：
+### AutoBio 与 LabUtopia
 
-```json
-{
-  "goal": "Isolate PBMCs from whole blood",
-  "context": "Human peripheral blood sample preparation",
-  "materials": ["whole blood", "PBS", "Ficoll"],
-  "equipment": ["centrifuge", "pipette", "15 mL conical tube"],
-  "constraints": ["keep sample at room temperature"],
-  "steps": [
-    {
-      "step_id": 1,
-      "action": "add_reagent",
-      "description": "Dilute whole blood with PBS at a 1:1 ratio.",
-      "inputs": ["whole blood", "PBS"],
-      "outputs": ["diluted blood"],
-      "parameters": {
-        "volume_ratio": "1:1"
-      },
-      "depends_on": [],
-      "safety": []
-    }
-  ]
-}
-```
+`AutoBio` 与 `LabUtopia` 在 LabOS 里承担的是**可执行世界的本体锚点**：
 
-建议每个 step 至少保留以下字段：
+- 有哪些实验室 assets；
+- 有哪些 canonical actions；
+- 哪些 assets / actions 已经在具身环境中被建模；
+- 后续 sim2real 最可能接到什么动作空间和场景对象。
 
-- `action`：归一化后的动作标签；
-- `description`：自然语言步骤；
-- `parameters`：时间、温度、体积、速度等；
-- `depends_on`：前置依赖；
-- `inputs / outputs`：有利于评估 step coverage 与执行一致性；
-- `safety`：对 wet lab 很关键，后面可单独评测。
+因此，这两个项目的价值不只是“以后做 sim2real 再看”，而是从现在开始就应该决定：
 
-这个 IR 会成为整个项目的主干：
+- asset understanding 里优先做哪些设备；
+- long-horizon planning 里每一步如何映射成 canonical action；
+- benchmark 的 schema 里哪些字段必须预留。
 
-- QA：模型输出 IR；
-- QA 评测：对 IR 做结构与语义评分；
-- Embodied：把 IR 中的 `action` 映射到环境中的 atomic action；
-- 长链任务：由多个 IR step 串联。
+### protocol_v1
 
-## Part I: QA Benchmark
+当前仓库里的 [data/protocol_v1/README.md](data/protocol_v1/README.md) 更适合被看作**工程启动语料**：
+
+- 它可以帮助快速抽设备名、动作词、阶段模板；
+- 它可以帮助第一版 planning benchmark 先做起来；
+- 但 benchmark 的科学锚点仍然应该优先向 `Nature Protocols` 对齐。
+
+## 关键对齐来源
+
+- Nature Protocols: <https://www.nature.com/nprot/>
+- AutoBio: <https://github.com/autobio-bench/AutoBio>
+- LabUtopia: <https://github.com/Rui-li023/LabUtopia>
+- SGI-WetExperiment: <https://huggingface.co/datasets/InternScience/SGI-WetExperiment>
+- protocol_v1: [data/protocol_v1/README.md](data/protocol_v1/README.md)
+
+## Part I: Experimental Asset Understanding
 
 ### 任务定义
 
 输入：
 
-- 实验背景 / 研究目标；
-- 可选的材料、设备、候选动作池、约束条件；
-- 可选的论文摘要、实验对象、期望输出。
+- 一张实验设备图片；
+- 一道关于该设备的选择题；
+- 若干候选项。
 
 输出：
 
-- 一份结构化的实验 protocol；
-- 最好直接输出为 JSON / YAML，而不是纯自由文本。
+- 正确选项。
 
-### 现成素材
+任务重点不是通用视觉识别，而是**实验设备使用知识**。也就是说，问题应该尽量考：
 
-#### A. Nature Protocols PDF 语料
+- 设备类别与用途；
+- 部件和按钮的功能；
+- 当前状态识别；
+- 下一步正确操作；
+- 安全与兼容性判断。
 
-这是我们计划中的主数据来源，规模约为 **3000 篇 PDF**。它的价值在于：
+### 这块为什么重要
 
-- 来源质量高；
-- 本身就是 step-by-step 实验流程；
-- 往往自带 reagent、equipment、timing、critical step 等结构线索；
-- 非常适合做“从文档到结构化 protocol”的抽取和重构。
+如果模型连实验设备都没看懂，后面的长程 planning 很容易出现两类错误：
 
-#### B. SGI-WetExperiment
+1. 计划里调用了错误设备或错误部件；
+2. 计划文本看起来合理，但和真实仪器的使用方式不一致。
 
-相关链接：<https://huggingface.co/datasets/InternScience/SGI-WetExperiment>
+所以第一块不是一个边缘小任务，它应该成为第二块的基础约束来源。
 
-这个数据集很适合作为 **现有 wet-lab QA benchmark 的参考基线**。从公开页面可见：
+更具体地说，这一块要同时满足两种对齐：
 
-- 规模较小：**68 条 test 样本**；
-- 任务形式是：给定 `question` 与 `action_pool`，生成 `answer`；
-- 数据字段包括：`question`、`action_pool`、`answer`、`discipline`、`direction`；
-- 它属于 `SGI-Bench` 的 wet experiment 子任务。
+- 和 `Nature Protocols` 对齐：设备在实验中到底用来做什么；
+- 和 `AutoBio / LabUtopia` 对齐：这个设备在具身世界里对应哪个 asset family。
 
-对 LabOS 的意义：
+### 建议的题目类型
 
-- 它提供了一个现成的 wet-lab protocol generation 任务模板；
-- 它证明“研究背景 + 动作池 -> 实验流程”这个问题已经可以 benchmark 化；
-- 但它规模不够大，不足以覆盖我们想做的 protocol generation 主 benchmark。
+建议先把题目分成四类，每类都做成单选：
 
-因此更合适的定位是：
+1. **Asset Identification**
+   识别设备类别，例如 thermal cycler、microplate reader、multichannel pipette。
+2. **Component / Control Understanding**
+   判断某个按钮、旋钮、盖子、接口或显示区域的作用。
+3. **State / Mode Understanding**
+   判断设备当前状态，例如 lid open/closed、ready/running、某模式是否已开启。
+4. **Usage / Safety Decision**
+   在给定场景下判断正确操作、错误操作、兼容耗材或安全注意事项。
 
-- 用它做 **baseline 参考**；
-- 用它借鉴 prompt 形式和 scoring 思路；
-- 不把它当作 LabOS QA 主体数据源。
+如果要做难度分层，建议这样拆：
 
-### QA 建议难度分层
+- `A1` 设备识别；
+- `A2` 状态判断；
+- `A3` 操作理解；
+- `A4` 安全与故障排查。
 
-为了避免 benchmark 一上来就只有一种过于开放的生成任务，建议至少拆成三档：
+### 最快的数据构造路线
 
-1. **Reconstruction**
-   给定较完整的材料/设备/目标信息，要求重建 protocol。
-2. **Constrained Synthesis**
-   给定背景、目标、可用设备/动作池，要求设计 protocol。
-3. **Open Protocol Design**
-   只给高层研究目标，要求生成较完整 protocol。
+这块目前仓库里还没有成型图像集，所以最快路线不是从零发明视觉语料，而是先做三步对齐：
 
-这样有三个好处：
+1. 用 `AutoBio + LabUtopia` 确定优先覆盖的 asset family；
+2. 用 `Nature Protocols` 提供这些 assets 在真实实验中的用途和使用语义；
+3. 用现有 `protocol_v1` 扩大设备名覆盖与长尾变体。
 
-- 便于先做 MVP；
-- 便于区分“信息抽取能力”和“实验设计能力”；
-- 便于和具身任务的可执行性对齐。
+#### Step 1: 先定 asset family，再抽设备词表
 
-### QA 数据构造建议
+第一步不应该只从语料里盲抽设备名，而应该先从 `AutoBio` 和 `LabUtopia` 里整理一份优先对齐的实验资产集合，例如：
 
-建议先走一个“高自动化 + 轻人工校验”的路线：
+- thermal cycler
+- centrifuge
+- pipette / multichannel pipette
+- microplate reader
+- vortex / thermal mixer
+- tube / plate / rack / lid / drawer 这类高频可操作对象
 
-1. 抓取 Nature Protocols PDF 与元数据。
-2. 解析章节：
-   - Title / Abstract
-   - Materials / Reagents
-   - Equipment
-   - Procedure / Steps
-   - Timing
-   - Troubleshooting / Critical steps
-3. 把 procedure 段落切成 step。
-4. 抽取 step 参数：
-   - time
-   - temperature
-   - volume / concentration
-   - device / instrument
-   - safety / caution
-5. 归一化成 Protocol IR。
-6. 对 dev/test 做人工质检，优先保证评测集质量。
+然后再用 [data/protocol_v1/README.md](data/protocol_v1/README.md) 和 `Nature Protocols` 去补充：
 
-### QA 评测建议
+- `5606` 条 passing protocols；
+- 包含 `equipment`、`reagents`、`steps`、`abstract` 等字段；
+- 抽样可见已有 `thermal cycler`、`microplate reader`、`multichannel pipette` 等设备名。
 
-不要只做 BLEU / ROUGE。对 protocol 任务，更合适的是多维评分：
+这一步建议做的不是出题，而是：
 
-- **Schema Validity**：输出是否符合 JSON / YAML schema；
-- **Step Coverage**：是否覆盖关键步骤；
-- **Parameter Accuracy**：时间、温度、体积、速度等是否正确；
-- **Dependency Consistency**：前后顺序和依赖是否合理；
-- **Entity / Slot F1**：材料、设备、动作、产物抽取是否对齐；
-- **Safety & Feasibility**：是否有明显危险或不可执行步骤；
-- **Semantic Match**：与参考 protocol 的语义一致性。
+- 归一化设备名；
+- 合并同义词；
+- 去掉明显噪声项；
+- 补部件、状态和典型用途；
+- 得到一份 `canonical asset ontology`。
 
-建议采用三层评分：
+#### Step 2: 收图时同时考虑科学语义和具身可复用性
 
-1. 结构化自动评分；
-2. LLM-as-judge 语义评分；
-3. 小规模专家抽检。
+优先收集以下来源中的公开图片：
 
-## Part II: Embodied Benchmark
+- 厂商 product page；
+- 仪器说明书 / user manual；
+- protocol 图示；
+- 教学视频帧图；
+- 公开实验室教学材料。
+
+第一版不必追求图像数量特别大，重点是：
+
+- 设备覆盖要代表真实 wet-lab 高频资产；
+- 图像来源要多样，避免只学会某个产品宣传图风格；
+- 尽量贴近 `AutoBio / LabUtopia` 中真正出现过的设备家族；
+- 每个设备至少要有不同视角、不同状态、不同背景的图片。
+
+#### Step 3: 题目必须围绕用途，而不只围绕识别
+
+题目不要做成纯常识题，而要尽量让答案和图像有关。也就是说，题目的正确性应该来自：
+
+- 图片里可见的部件；
+- 图片里可见的状态；
+- 设备类别决定的操作语义。
+
+同时，题目的语义来源最好来自 `Nature Protocols` 风格描述，对象来源则来自 `AutoBio / LabUtopia` 的 asset family。
+
+一个更稳的规则是：每道题都标一个 `evidence` 字段，记录出题依据来自哪一处视觉信息或哪条设备知识。
+
+### 建议的数据格式
+
+```json
+{
+  "item_id": "asset_000001",
+  "asset_id": "thermal_cycler",
+  "image": "images/thermal_cycler/xxx.jpg",
+  "question": "在该设备使用前，哪一个部件需要先关闭以开始升温循环？",
+  "choices": {
+    "A": "样品架侧门",
+    "B": "上盖",
+    "C": "显示屏外壳",
+    "D": "电源适配器"
+  },
+  "answer": "B",
+  "skill_tag": "usage",
+  "difficulty": "A3",
+  "evidence": "top lid visible in image",
+  "canonical_actions": ["close_lid", "start_cycle"],
+  "source": "manual",
+  "split": "dev"
+}
+```
+
+### 评测建议
+
+这块主指标很简单，先用 `accuracy` 即可，但要分组报：
+
+- overall accuracy；
+- by `skill_tag`；
+- by `difficulty`；
+- by asset family；
+- by image source。
+
+此外建议单独保留两种 harder split：
+
+- **OOD asset view**：同一设备的陌生视角；
+- **OOD asset instance**：同类但不同型号设备。
+
+这样才不至于把 benchmark 做成“见过图就会选”的模板匹配题。
+
+## Part II: Long-Horizon Planning
 
 ### 任务定义
 
-具身部分的目标不是只测单步 manipulation，而是测模型是否能把一个实验 protocol 执行成**复杂长链任务**。
+输入：
 
-换句话说：
+- 实验目标或实验描述；
+- 可选的摘要、背景、试剂、设备、允许 assets、允许 actions、约束条件；
+- 一组**有限动作空间**，每个动作带函数签名与参数说明；
+- 可选的输出格式要求。
 
-- 输入不只是图像；
-- 还要有 protocol / subgoal；
-- 输出不只是一个动作；
-- 而是一串能够完成实验流程的行为。
+输出：
 
-### 现成素材 1：AutoBio
+- 一份**非常长**的实验步骤；
+- 但输出形式不再是自由文本或纯 JSON，而是**由有限动作空间组合出来的 Python 程序**。
 
-相关链接：
+这里要明确：这块不是一般问答，也不是简短 workflow generation，而是**长程实验规划**。重点是模型能否把一个实验目标拆成几十步、跨多个阶段、前后依赖清楚的 protocol。
 
-- GitHub：<https://github.com/autobio-bench/AutoBio>
-- 官方 HF 组织：<https://huggingface.co/organizations/autobio-bench/activity/all>
+同时，这块的任务形式应当显式参考 `SGI-WetExperiment`：
 
-根据公开 README 和 HF 页面，AutoBio 可以直接复用的部分包括：
+- 输入中提供 `research direction / question`；
+- 输入中提供 `action_pool`；
+- 输出是动作的组合以及参数设置。
 
-- 面向数字生物实验室的原子任务；
-- 已有数据与渲染结果；
-- `LeRobot v2.0` 格式支持；
-- `openpi` / `RoboticsDiffusionTransformer` 的训练与远程评测流程。
+但 LabOS 不直接复用它的字符串格式，而是进一步改成**合法的 Python 函数调用**，以便做 AST 级评测。
 
-公开资料中可见的代表性任务包括：
+### 现有基础其实已经不错
 
-- open / close thermal cycler lid
-- pick up tube
-- unscrew cap
-- pipette liquid
-- insert tube into centrifuge
-- transport tube
-- screw cap
-- thermal mixer operation
+这块的核心不是单纯“拿一堆 protocol 来生成步骤”，而是做一份**既和科学 protocol 对齐、又和具身 asset / action 对齐**的 planning benchmark。
 
-从 HF 组织页面还能看到，它已经公开了多组任务数据，覆盖 **MuJoCo / Blender** 两种渲染版本。这对于快速搭建 VLA 训练与评测基线非常有价值。
+当前最直接的基础有两层：
 
-对 LabOS 的价值：
+1. `Nature Protocols`
+   提供高质量、非常详细的实验流程和设备用途语义；
+2. [data/protocol_v1/README.md](data/protocol_v1/README.md)
+   提供当前仓库里已经可直接启动的数据规模。
 
-- 提供了实验室原子动作与现成 episode 数据；
-- 提供了训练/评测脚手架；
-- 很适合作为“动作词表”和“短链任务库”的起点。
+根据当前 `protocol_v1`：
 
-### 现成素材 2：LabUtopia
+- 总量：`5606` 条 passing protocols；
+- 来源包括 `STAR Protocols`、`Bio-protocol`、`OpenWetWare`、`Current Protocols`、`Methods Mol Biol`、`JoVE`、`Nature Protocols` OA subset；
+- 多个来源的 median steps 在 `40-75+` 区间，非常适合做长程 planning。
 
-相关链接：
+这意味着第二块最合理的策略不是二选一，而是分层使用来源：
 
-- GitHub：<https://github.com/Rui-li023/LabUtopia>
-- 项目页：<https://rui-li023.github.io/labutopia-site/>
+- 用 `Nature Protocols` 作为科学锚点和高质量对齐来源；
+- 用 `protocol_v1` 作为工程规模化来源；
+- 用 `AutoBio + LabUtopia` 提供 assets / actions 的可执行本体。
 
-LabUtopia 的核心价值在于它不是单一任务，而是一个**高保真实验室模拟与层级化 benchmark 套件**。官方项目页描述它包含：
+### 这块真正要测什么
 
-- `LabSim`：高保真实验室模拟；
-- `LabScene`：可扩展场景生成；
-- `LabBench`：从 atomic action 到 long-horizon mobile manipulation 的层级 benchmark。
+建议把第二块的能力定义为下面五项：
 
-公开 README 中已经能直接看到多层任务配置：
+1. **Goal Decomposition**
+   能否把高层实验目标拆成多个阶段。
+2. **Long-range Coherence**
+   后面的步骤是否真的依赖前面的准备，而不是局部凑句子。
+3. **Constraint Satisfaction**
+   是否遵守给定设备、试剂、assets 和 actions 约束。
+4. **Parameter Fidelity**
+   时间、温度、体积、离心条件等关键参数是否合理。
+5. **Execution Readiness**
+   输出是否足够结构化，后续可接自动评测甚至 sim2real。
 
-- **Level 1 基础任务**：
-  `pick`、`place`、`open/close door`、`open/close drawer`、`pour`、`press`、`shake`、`stir`
-- **Level 2 组合任务**：
-  `ShakeBeaker`、`StirGlassrod`、`PourLiquid`、`TransportBeaker`、`Heat_Liquid`、`openclose`
-- **Level 3 泛化任务**：
-  更复杂的 `pour / heat / transport / open / pick / press`
-- **Level 4 长链任务**：
-  `CleanBeaker`、`DeviceOperation`
+### 建议的输入设置
 
-此外，README 还明确给出了：
+为了让 benchmark 有层次，建议至少做三档：
 
-- `controllers/atomic_actions/`；
-- 数据采集流程；
-- 训练流程；
-- 推理接口；
-- `OpenPI` WebSocket 客户端与动作返回格式。
+1. **P1: Scaffolded Planning**
+   给 `title + abstract + reagents + equipment + action_pool`，要求生成完整 protocol program。
+2. **P2: Constrained Planning**
+   给实验目标、可用设备/材料、可用 assets/actions，要求在约束下生成 protocol program。
+3. **P3: Sparse Planning**
+   只给高层实验描述和有限动作空间，要求输出长步骤 program。
 
-对 LabOS 的价值：
+这三档里，`P1` 最适合先跑通基线，因为当前 `protocol_v1` 已经直接具备对应字段。随后可以把 `AutoBio / LabUtopia` 的 asset / action 约束逐步加进 `P2` 和 `P3`。
 
-- 它天然适合做“从原子动作到长链实验流程”的分层 benchmark；
-- 已经有层级任务模板，不必从零定义任务难度；
-- 适合承载需要环境交互、状态跟踪和步骤恢复能力的评测。
+### 建议的输出格式
 
-> 注：官方项目页写的是 five-level hierarchy，而公开 README 当前直接展示到 level 4 配置。实现时建议以仓库中的实际任务配置与 release 内容为准。
+这块建议采用两层表示：
 
-### 具身 benchmark 的建议层级
+1. **对模型的目标输出**：Python action program
+2. **对评测器的内部表示**：由 Python AST 归一化得到的 `Protocol AST IR`
 
-结合 AutoBio 与 LabUtopia，LabOS 可以采用下面的层级设计：
+也就是说，模型看到的是一组可调用动作，最终输出的是 Python 代码；评测时我们再把代码解析成标准中间表示。
 
-1. **E1: Atomic Actions**
-   直接复用 AutoBio / LabUtopia 的原子任务。
-2. **E2: Short Chains**
-   2 到 4 步的短链流程，例如 `pick -> unscrew -> pipette -> screw`。
-3. **E3: Instrument-centered Protocols**
-   围绕单个设备或单类实验对象组织 5 到 10 步任务。
-4. **E4: Long-horizon Protocols**
-   跨容器、跨设备、跨状态变化的完整实验链。
-5. **E5: Recovery / Generalization**
-   在中间状态扰动、视角变化、容器变化、布局变化下测试恢复能力。
+#### Action specification
 
-### 动作池整合策略
+动作空间建议直接定义成 Python 函数签名，而不是自定义 DSL：
 
-最关键的工程工作不是重新写 controller，而是做 **action ontology alignment**。
+```python
+def process_tissue_samples(tissue_sample: str, processing_method: str) -> str: ...
+def score_pd_l1_expression(stained_tissue: str, cell_type: str) -> int: ...
+def administer_treatment(patient: str, dose: str, schedule: str) -> str: ...
+def collect_blood_sample(patient: str, collection_time: str, tube_type: str) -> str: ...
+def analyze_cytokines(plasma_sample: str, cytokine_panel: str) -> str: ...
+```
 
-建议把 AutoBio 和 LabUtopia 的动作先映射到统一动作集合，例如：
+#### Target output
 
-- `pick`
-- `place`
-- `open`
-- `close`
-- `unscrew`
-- `screw`
-- `aspirate`
-- `dispense`
-- `pour`
-- `press`
-- `shake`
-- `stir`
-- `heat`
-- `transport`
-- `insert`
+模型输出应当是由这些动作函数组成的长程序，例如：
 
-然后再做两层映射：
+```python
+processed_tissue = process_tissue_samples(
+    tissue_sample="archived_paraffin_embedded_tissue",
+    processing_method="standard_ihc_protocol",
+)
 
-1. **文本 protocol step -> canonical action**
-2. **canonical action -> environment-specific controller**
+immune_cell_score = score_pd_l1_expression(
+    stained_tissue=processed_tissue,
+    cell_type="tumor_infiltrating_immune_cells",
+)
+
+treatment_record = administer_treatment(
+    patient="eligible_ubc_patient",
+    dose="15_mg_per_kg",
+    schedule="q3w",
+)
+
+baseline_blood = collect_blood_sample(
+    patient="eligible_ubc_patient",
+    collection_time="pre_dose",
+    tube_type="sodium_heparin",
+)
+
+cytokine_panel = analyze_cytokines(
+    plasma_sample=baseline_blood,
+    cytokine_panel="IL18_IFNG",
+)
+```
+
+相对于 `SGI-WetExperiment` 的函数式字符串输出，这里进一步要求：
+
+- 函数名必须是合法 Python identifier；
+- 参数全部显式命名；
+- 变量依赖通过赋值表达；
+- 不允许调用动作池外的函数。
+
+这样做的好处是，评测时可以直接使用 Python AST，而不需要自己写一套复杂的动作序列比较器。
+
+#### Protocol AST IR
+
+评测器在解析模型输出后，可自动提取出下面这些字段：
+
+- `calls`
+- `call_order`
+- `callee_name`
+- `keyword_arguments`
+- `assigned_variables`
+- `data_dependencies`
+- `illegal_calls`
+- `missing_required_args`
+- `unused_results`
+
+### 数据构造建议
+
+基于当前设计，第二块的数据构造应该分三步：
+
+1. **Nature Protocols / protocol_v1 -> biological protocol**
+   提取目标、阶段、详细步骤、设备用途和关键参数。
+2. **AutoBio / LabUtopia -> canonical asset & action space**
+   整理每一步可能对应的资产与动作词表。
+3. **alignment**
+   把 protocol 中的设备与操作映射到统一的 `asset/action ontology`，再转成 Python 函数签名。
+
+具体工程上，最快路线是：
+
+1. 以 `all.jsonl` 作为主输入；
+2. 规范化 `steps`、`equipment`、`reagents` 字段；
+3. 从 `Nature Protocols` 风格记录中优先抽长而细的 protocol 做 dev/test；
+4. 从 `title`、`abstract`、`materials/equipment` 自动构造 prompt；
+5. 先把 step 中的操作词映射到 `AutoBio / LabUtopia` 的 canonical actions；
+6. 再把 canonical actions 定义成 Python 函数签名；
+7. 把 gold protocol 转成 Python action program；
+8. 评测时再从程序反解出 `Protocol AST IR`；
+9. 按 prompt 可见信息量切出 `P1/P2/P3` 三种任务；
+10. dev/test 做更强人工质检，尤其看长链依赖、参数正确性和 action 映射质量。
+
+### 评测建议
+
+这块不建议只用文本相似度。既然输出就是 Python program，更合适的做法是直接走 AST 评测。
+
+建议分成三层：
+
+1. **Syntax / Parse Layer**
+   - Python 是否可解析；
+   - 是否只调用了 action pool 中允许的函数；
+   - 是否满足基本参数签名。
+2. **Structure Layer**
+   - 调用覆盖率；
+   - 调用顺序是否合理；
+   - 变量依赖图是否合理；
+   - 是否有非法调用、缺参、重复无效调用。
+3. **Semantic Layer**
+   - 参数是否正确；
+   - 设备与动作是否匹配；
+   - 整体程序是否对应参考实验流程。
+
+建议至少报告这些指标：
+
+- **AST Parse Success**
+- **Allowed Call Accuracy**
+- **Call Coverage / F1**
+- **Dependency Edge Accuracy**
+- **Argument Match**
+- **Action Consistency**
+- **Length Adequacy**
+- **Program-level Exact Match**（归一化后）
+
+如果需要更高层语义评分，再补：
+
+- **LLM-as-judge**：评估程序整体是否实现了目标实验流程；
+- **专家抽检**：主要看关键参数与科学合理性。
+
+## 前两块如何衔接
+
+这次规划调整后，最关键的不是“两个 benchmark 并排放着”，而是把它们通过共享的**生物语义、资产本体和动作本体**连起来。
+
+建议共享下面三层接口：
+
+1. **Biological Grounding**
+   由 `Nature Protocols` 提供实验阶段、设备用途和步骤语义。
+2. **Canonical Asset / Action Ontology**
+   统一设备类别、部件、状态、典型操作和别名。
+3. **Python Action Program / Protocol AST IR**
+   统一 planning 的目标输出格式，以及评测器内部使用的 AST 归一化表示。
 
 ```mermaid
 flowchart TD
-    A[Protocol IR Steps] --> B[Canonical Action Vocabulary]
-    C[AutoBio Atomic Tasks] --> B
-    D[LabUtopia Atomic / Level-1 Tasks] --> B
-    B --> E[Task Composer]
-    E --> F[Short-chain Tasks]
-    E --> G[Long-horizon Tasks]
-    F --> H[VLA Evaluation]
-    G --> H
+    A[Nature Protocols] --> B[Biological Grounding]
+    C[AutoBio + LabUtopia] --> D[Canonical Asset / Action Ontology]
+    E[protocol_v1] --> F[Corpus Bootstrap]
+    B --> G[Asset MCQ generation]
+    D --> G
+    B --> H[Python Action Program]
+    D --> H
+    F --> H
+    G --> I[Asset Understanding Bench]
+    H --> J[Long-Horizon Planning Bench]
 ```
 
-### 具身评测建议
+这有两个直接好处：
 
-建议至少包含下面这些指标：
+- 第一块不会只学视觉分类，而会学到对后续 planning 真有用的设备语义；
+- 第二块不会只生成漂亮文本，而会天然受 `AutoBio / LabUtopia` 的 asset / action 空间约束。
 
-- **Episode Success Rate**：整条 protocol 是否完成；
-- **Step Success Rate**：每一步是否成功；
-- **First Failure Depth**：第一次失败发生在第几步；
-- **Recovery Success**：中途出错后能否回到正确轨道；
-- **Action Efficiency**：完成任务用了多少动作 / 时间；
-- **Constraint Satisfaction**：是否满足 protocol 中的关键条件；
-- **Cross-environment Transfer**：同一 protocol 在不同环境中的迁移能力。
+## Part III: Sim2Real
 
-## 为什么这条路线最快
+这一块暂时不展开，只保留接口位置。
 
-如果目标是尽快做出一个有说服力的 benchmark，最快路径不是“全栈重做”，而是：
+当前更合理的策略是：
 
-1. **QA 侧**
-   直接用 Nature Protocols 做主语料，用 SGI-WetExperiment 做参考基线与评分模板。
-2. **具身侧**
-   直接复用 AutoBio 和 LabUtopia 的任务、动作、数据、评测接口。
-3. **中间层**
-   优先定义统一 Protocol IR 与 canonical action vocabulary。
-
-这样能把主要工作集中在三件真正关键的事上：
-
-- 把高质量 protocol 变成结构化 benchmark；
-- 把文本 step 映射成可执行动作链；
-- 把 benchmark 难点放在长链规划与执行，而不是底层环境重复建设。
+- 先把 `biological grounding`、`asset/action ontology`、Python action spec 和 `Protocol AST IR` 定稳；
+- 先把前两块 benchmark 做到可跑、可评分、可扩展；
+- 等第一块和第二块稳定后，再把输出更自然地接到 `AutoBio / LabUtopia` 风格的仿真与执行接口。
 
 ## 建议的 MVP 路线
 
 ### Phase 0: 统一接口
 
-- 定 Protocol IR；
-- 定 canonical action vocabulary；
-- 定 QA 输出格式与 embodied 输入格式；
-- 先做一套最小评测 harness。
+- 定 `canonical asset ontology`
+- 定 `canonical action ontology`
+- 定 `asset MCQ` 数据格式
+- 定 Python action signatures
+- 定 `Protocol AST IR`
+- 定评测脚本输出格式
 
-### Phase 1: QA MVP
+### Phase 1: Asset Understanding MVP
 
-- 从 Nature Protocols 中抽取一小批高质量样本；
-- 做 100 到 300 条高质量 dev/test；
-- 引入 SGI-WetExperiment 作为外部对照；
-- 跑通结构化协议生成与自动评分。
+- 从 `AutoBio / LabUtopia` 整理高频 asset family
+- 用 `Nature Protocols + protocol_v1` 补设备用途与别名
+- 选 20 到 30 个高频设备 family
+- 每个 family 收若干公开图片
+- 做 300 到 1000 条高质量单选题
 
-### Phase 2: Embodied MVP
+### Phase 2: Long-Horizon Planning MVP
 
-- 从 AutoBio 抽原子任务；
-- 从 LabUtopia 抽 level 1 / level 2 / long-sequence 模板；
-- 先合成 10 到 20 个长链 protocol；
-- 跑现有 VLA 基线模型。
+- 基于 `Nature Protocols + protocol_v1` 构造 `P1` 任务
+- 接入 `AutoBio / LabUtopia` 的 asset / action 词表
+- 先做 100 到 300 条高质量 dev/test
+- 跑通结构化协议生成与自动评分
+- 再扩到 `P2` / `P3`
 
-### Phase 3: 正式版
+### Phase 3: Joint Consistency
 
-- 扩大 QA 数据规模；
-- 扩大具身 protocol 组合规模；
-- 加入扰动、恢复、泛化评测；
-- 建立统一 leaderboard。
+- 把设备本体接进 planning 的约束检查
+- 把 action ontology 接进 step-level consistency 检查
+- 加入“设备使用是否合理”的评测维度
+- 为后续 sim2real 预留接口
 
-## 需要尽早确认的问题
+## 当前建议
 
-- **Nature Protocols 原始 PDF 的版权与再分发边界**
-  建议公开 benchmark 时优先发布：
-  - 元数据；
-  - 解析脚本；
-  - 结构化标注；
-  - 样本索引与 DOI；
-  而不是直接重新分发全文 PDF。
+如果现在目标是尽快把 benchmark 做成形，那么最稳的落地顺序是：
 
-- **AutoBio / 相关数据的许可证边界**
-  在正式打包发布前，建议再次核对代码、数据和渲染结果的复用许可。
+1. 先以 `Nature Protocols` 定义 benchmark 的科学锚点；
+2. 再用 `AutoBio / LabUtopia` 定义 assets 和 actions 的可执行锚点；
+3. 用 `protocol_v1` 把 planning 数据和设备覆盖快速做大；
+4. 围绕高频资产做 `experimental asset understanding` 的图像题；
+5. 最后再考虑 sim2real。
 
-- **LabUtopia 的环境成本**
-  其公开 README 依赖 Ubuntu 24.04、Python 3.11、Isaac Sim 5.1 与 RTX GPU，环境比纯文本 benchmark 重很多，最好尽早决定是否把它作为主评测环境还是作为扩展赛道。
+换句话说，LabOS 的主线应该写成：
 
-## 相关资料
-
-- Nature Protocols: <https://www.nature.com/nprot/>
-- SGI-WetExperiment: <https://huggingface.co/datasets/InternScience/SGI-WetExperiment>
-- SGI-Bench: <https://github.com/InternScience/SGI-Bench>
-- AutoBio: <https://github.com/autobio-bench/AutoBio>
-- AutoBio HF organization: <https://huggingface.co/organizations/autobio-bench/activity/all>
-- LabUtopia: <https://github.com/Rui-li023/LabUtopia>
-- LabUtopia project page: <https://rui-li023.github.io/labutopia-site/>
-
-## 当前判断
-
-如果目标是“尽快做出一个有研究价值、又不至于全靠人工从零构造的数据集”，那么 LabOS 最合适的路线是：
-
-- **QA 主体靠 Nature Protocols 做规模与质量；**
-- **QA baseline 参考 SGI-WetExperiment；**
-- **具身任务主体靠 AutoBio + LabUtopia 做动作与环境复用；**
-- **整个项目用统一的 Protocol IR 串起来。**
-
-这条路线的优点是：
-
-- 可以很快拿到第一版 benchmark；
-- 现有素材足够多；
-- QA 与 embodied 两部分之间有天然桥梁；
-- 后续可以继续扩到更强的 scientist agent 评测，而不需要推倒重来。
+- **Nature Protocols 提供生物理解与详细步骤；**
+- **AutoBio + LabUtopia 提供 assets 与 actions；**
+- **前两块 benchmark 负责把这两套世界观对齐起来；**
+- **后续 sim2real 再承接这个统一接口。**
