@@ -323,15 +323,19 @@ select {
 }
 
 .video-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 14px;
-  max-width: 760px;
+  max-width: 100%;
   margin: 0 auto;
-  align-items: start;
+  justify-content: center;
+  align-items: flex-start;
 }
 
 .video-card {
+  flex: 0 1 auto;
+  width: min(var(--video-width, 100%), 100%);
+  max-width: 100%;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--panel-2);
@@ -362,11 +366,10 @@ select {
 
 .feature-video {
   display: block;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  max-height: 240px;
-  background: #101111;
-  object-fit: contain;
+  width: min(var(--video-width, 100%), 100%);
+  max-width: 100%;
+  height: auto;
+  background: transparent;
 }
 
 .detail-panel {
@@ -414,48 +417,28 @@ select {
   color: var(--accent-3);
 }
 
-.protocol-step-list {
-  display: grid;
-  gap: 12px;
+.protocol-flow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
 }
 
-.protocol-step-card {
-  display: grid;
-  gap: 10px;
-  padding: 12px;
+.protocol-flow-card {
+  padding: 10px 12px;
   border: 1px solid var(--line);
   border-radius: 6px;
   background: var(--panel-2);
-}
-
-.protocol-step-meta {
-  display: grid;
-  gap: 4px;
-}
-
-.protocol-step-kicker {
-  margin: 0;
-  font-size: 11px;
-  text-transform: uppercase;
-  color: var(--accent-2);
-}
-
-.protocol-step-title {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1.2;
-}
-
-.protocol-step-code {
-  margin: 0;
-  padding: 12px;
-  border-radius: 6px;
-  background: #101111;
-  color: #e8fffb;
+  color: var(--text);
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
   font-size: 13px;
-  line-height: 1.6;
-  white-space: pre-wrap;
-  overflow-x: auto;
+  line-height: 1.4;
+}
+
+.protocol-flow-arrow {
+  color: var(--accent);
+  font-size: 15px;
+  line-height: 1;
 }
 
 .answer-box,
@@ -464,18 +447,6 @@ select {
   border-left: 3px solid var(--accent);
   background: rgba(0, 194, 168, 0.1);
   color: var(--text);
-}
-
-.code-block {
-  overflow-x: auto;
-  padding: 14px;
-  border: 1px solid var(--line);
-  border-radius: 6px;
-  background: #101111;
-  color: #e8fffb;
-  font-size: 13px;
-  line-height: 1.6;
-  white-space: pre-wrap;
 }
 
 .level-note-body {
@@ -508,7 +479,7 @@ select {
   }
 
   .video-grid {
-    grid-template-columns: 1fr;
+    justify-content: center;
   }
 }
 
@@ -529,10 +500,6 @@ select {
 
   .viewer {
     min-height: 340px;
-  }
-
-  .feature-video {
-    max-height: 200px;
   }
 
   .section-title {

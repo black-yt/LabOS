@@ -171,39 +171,15 @@ const SECTIONS = [
           "Specify concrete arguments for instrument, plate, seal type, and runtime.",
           "Keep the step order consistent with the physical protocol.",
         ],
-        referenceSteps: [
-          {
-            title: "Aliquot master mix",
-            code: 'qpcr_plate = aliquot_master_mix(reagent_set="cytokine_qpcr_mix", destination_plate="96_well_plate", volume_ul=18)',
-          },
-          {
-            title: "Load samples",
-            code: 'loaded_plate = load_samples(sample_tubes="stimulated_rna_samples", destination_plate=qpcr_plate, layout="triplicate_layout")',
-          },
-          {
-            title: "Seal plate",
-            code: 'sealed_plate = seal_plate(plate=loaded_plate, seal_type="optical_film")',
-          },
-          {
-            title: "Load thermal cycler",
-            code: 'cycler_slot = place_plate_in_thermal_cycler(plate=sealed_plate, instrument="thermal_cycler_biorad_c1000")',
-          },
-          {
-            title: "Secure lid",
-            code: 'lid_state = close_thermal_cycler_lid(instrument="thermal_cycler_biorad_c1000", pressure_mode="heated_lid_secure")',
-          },
-          {
-            title: "Set PCR program",
-            code: 'program_state = set_pcr_program(instrument="thermal_cycler_biorad_c1000", protocol_name="cytokine_panel_qpcr")',
-          },
-          {
-            title: "Run PCR program",
-            code: 'run_state = run_pcr_program(instrument="thermal_cycler_biorad_c1000", runtime_min=95)',
-          },
-          {
-            title: "Unload plate",
-            code: 'completed_plate = unload_plate(instrument="thermal_cycler_biorad_c1000", plate=sealed_plate)',
-          },
+        referenceActions: [
+          "aliquot_master_mix",
+          "load_samples",
+          "seal_plate",
+          "place_plate_in_thermal_cycler",
+          "close_thermal_cycler_lid",
+          "set_pcr_program",
+          "run_pcr_program",
+          "unload_plate",
         ],
         evaluation: [
           "AST parse success for the generated Python program.",
@@ -236,39 +212,15 @@ const SECTIONS = [
           "Match the order required by the physical protocol.",
           "Preserve the relation between the mixer asset and the chosen control actions.",
         ],
-        referenceSteps: [
-          {
-            title: "Load tubes into mixer",
-            code: 'loaded_tubes = load_tubes_into_mixer(tube_set="binding_reaction_triplicates", rack_slot="thermomixer_block_a", instrument="thermal_mixer_eppendorf_c")',
-          },
-          {
-            title: "Lock mixer block",
-            code: 'block_state = lock_mixer_block(instrument="thermal_mixer_eppendorf_c", block_type="1.5mL_tube_block")',
-          },
-          {
-            title: "Set temperature",
-            code: 'temp_state = set_mixer_temperature(instrument="thermal_mixer_eppendorf_c", target_celsius=37)',
-          },
-          {
-            title: "Set shaking speed",
-            code: 'speed_state = set_mixer_speed(instrument="thermal_mixer_eppendorf_c", rpm=900, mode="interval_mix")',
-          },
-          {
-            title: "Set duration",
-            code: 'duration_state = set_mixer_duration(instrument="thermal_mixer_eppendorf_c", duration_min=45)',
-          },
-          {
-            title: "Start mixer run",
-            code: 'run_state = start_mixer_run(instrument="thermal_mixer_eppendorf_c")',
-          },
-          {
-            title: "Brief spin",
-            code: 'spin_state = pause_and_brief_spin(tube_set=loaded_tubes, spin_seconds=8)',
-          },
-          {
-            title: "Collect final aliquot",
-            code: 'aliquot_state = collect_post_incubation_aliquot(tube_set=loaded_tubes, volume_ul=25, destination="assay_plate_b")',
-          },
+        referenceActions: [
+          "load_tubes_into_mixer",
+          "lock_mixer_block",
+          "set_mixer_temperature",
+          "set_mixer_speed",
+          "set_mixer_duration",
+          "start_mixer_run",
+          "pause_and_brief_spin",
+          "collect_post_incubation_aliquot",
         ],
         evaluation: [
           "Allowed-call accuracy against the finite action space.",
@@ -645,6 +597,12 @@ function createVideoCard(source, index) {
   video.muted = true;
   video.loop = true;
   video.playsInline = true;
+  video.preload = "metadata";
+  video.addEventListener("loadedmetadata", () => {
+    if (video.videoWidth > 0) {
+      card.style.setProperty("--video-width", `${video.videoWidth}px`);
+    }
+  });
   video.src = assetUrl(source.src);
 
   meta.append(kicker, title);
@@ -813,22 +771,7 @@ function createOptionBlock(options) {
   return block;
 }
 
-function createCodeBlock(title, code) {
-  const block = document.createElement("section");
-  block.className = "detail-block";
-
-  const heading = document.createElement("h4");
-  heading.textContent = title;
-
-  const pre = document.createElement("pre");
-  pre.className = "code-block";
-  pre.textContent = code;
-
-  block.append(heading, pre);
-  return block;
-}
-
-function createProtocolStepsBlock(title, steps) {
+function createProtocolActionFlowBlock(title, actions) {
   const block = document.createElement("section");
   block.className = "detail-block";
 
@@ -836,30 +779,21 @@ function createProtocolStepsBlock(title, steps) {
   heading.textContent = title;
 
   const list = document.createElement("div");
-  list.className = "protocol-step-list";
+  list.className = "protocol-flow";
 
-  steps.forEach((step, index) => {
-    const card = document.createElement("article");
-    card.className = "protocol-step-card";
+  actions.forEach((action, index) => {
+    const card = document.createElement("div");
+    card.className = "protocol-flow-card";
+    card.textContent = action;
 
-    const meta = document.createElement("div");
-    meta.className = "protocol-step-meta";
-
-    const kicker = document.createElement("p");
-    kicker.className = "protocol-step-kicker";
-    kicker.textContent = `Step ${index + 1}`;
-
-    const titleNode = document.createElement("h5");
-    titleNode.className = "protocol-step-title";
-    titleNode.textContent = step.title;
-
-    const code = document.createElement("pre");
-    code.className = "protocol-step-code";
-    code.textContent = step.code;
-
-    meta.append(kicker, titleNode);
-    card.append(meta, code);
     list.appendChild(card);
+
+    if (index < actions.length - 1) {
+      const arrow = document.createElement("span");
+      arrow.className = "protocol-flow-arrow";
+      arrow.textContent = "→";
+      list.appendChild(arrow);
+    }
   });
 
   block.append(heading, list);
@@ -939,7 +873,7 @@ function renderItemBody(section, sample) {
     dom.itemBody.appendChild(createListBlock("Background", sample.context));
     dom.itemBody.appendChild(createTextBlock("Question", sample.prompt));
     dom.itemBody.appendChild(createListBlock("Output requirements", sample.outputRequirements));
-    dom.itemBody.appendChild(createProtocolStepsBlock("Reference output steps", sample.referenceSteps));
+    dom.itemBody.appendChild(createProtocolActionFlowBlock("Reference action order", sample.referenceActions));
     dom.itemBody.appendChild(createListBlock("Evaluation focus", sample.evaluation));
     return;
   }
