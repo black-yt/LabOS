@@ -24,8 +24,9 @@
           <p class="eyebrow">LabOS</p>
           <h1>Benchmark Explorer</h1>
           <p class="brand-copy">
-            The left sidebar only contains the three benchmark parts. The main area
-            focuses on the active part, its 3D asset, and its benchmark question.
+            The sidebar only contains Level 1, Level 2, and Level 3. The left-side
+            view changes with the active level: one 3D asset, multiple instruments,
+            or a video.
           </p>
         </div>
         <nav id="section-nav" class="section-nav"></nav>
@@ -42,23 +43,62 @@
         </header>
 
         <section class="main-grid">
-          <section class="viewer-panel">
-            <div class="panel-head viewer-head">
+          <section class="feature-panel">
+            <div class="panel-head feature-head">
               <div>
-                <p class="panel-label">3D Asset</p>
-                <h3 id="model-label"></h3>
+                <p id="feature-kicker" class="panel-label"></p>
+                <h3 id="feature-title"></h3>
               </div>
               <button id="reset-view" class="ghost-button" type="button">Reset View</button>
             </div>
 
-            <div class="viewer-shell">
-              <div id="viewer" class="viewer"></div>
-              <div id="viewer-status" class="viewer-status">Loading 3D asset...</div>
+            <div id="single-view-stage" class="single-view-stage">
+              <div class="viewer-shell">
+                <div id="viewer" class="viewer"></div>
+                <div id="viewer-status" class="viewer-status">Loading 3D asset...</div>
+              </div>
             </div>
 
-            <div class="viewer-foot">
-              <p id="viewer-description" class="viewer-description"></p>
-              <div id="viewer-tags" class="viewer-tags"></div>
+            <div id="multi-view-stage" class="multi-view-stage" hidden>
+              <article class="mini-view-card">
+                <div class="mini-view-meta">
+                  <p class="mini-view-kicker">Instrument 1</p>
+                  <h4 id="mini-title-0" class="mini-view-title"></h4>
+                </div>
+                <div class="mini-view-shell">
+                  <div id="mini-viewer-0" class="mini-viewer"></div>
+                  <div id="mini-status-0" class="mini-viewer-status">Loading 3D asset...</div>
+                </div>
+              </article>
+              <article class="mini-view-card">
+                <div class="mini-view-meta">
+                  <p class="mini-view-kicker">Instrument 2</p>
+                  <h4 id="mini-title-1" class="mini-view-title"></h4>
+                </div>
+                <div class="mini-view-shell">
+                  <div id="mini-viewer-1" class="mini-viewer"></div>
+                  <div id="mini-status-1" class="mini-viewer-status">Loading 3D asset...</div>
+                </div>
+              </article>
+              <article class="mini-view-card">
+                <div class="mini-view-meta">
+                  <p class="mini-view-kicker">Instrument 3</p>
+                  <h4 id="mini-title-2" class="mini-view-title"></h4>
+                </div>
+                <div class="mini-view-shell">
+                  <div id="mini-viewer-2" class="mini-viewer"></div>
+                  <div id="mini-status-2" class="mini-viewer-status">Loading 3D asset...</div>
+                </div>
+              </article>
+            </div>
+
+            <div id="video-stage" class="video-stage" hidden>
+              <video id="feature-video" class="feature-video" controls muted loop playsinline></video>
+            </div>
+
+            <div class="feature-foot">
+              <p id="feature-description" class="feature-description"></p>
+              <div id="feature-tags" class="feature-tags"></div>
             </div>
           </section>
 
@@ -71,15 +111,12 @@
           </section>
         </section>
 
-        <section id="media-panel" class="media-panel" hidden>
+        <section id="level-note" class="level-note">
           <div class="panel-head">
-            <p class="panel-label">Supplement</p>
-            <h3 id="media-title">Supplementary Media</h3>
+            <p class="panel-label">Level Logic</p>
+            <h3>Left-Side View</h3>
           </div>
-          <div class="media-grid">
-            <img id="media-image" class="media-image" alt="" hidden />
-            <video id="media-video" class="media-video" controls muted loop playsinline hidden></video>
-          </div>
+          <div id="level-note-body" class="level-note-body"></div>
         </section>
       </main>
     </div>

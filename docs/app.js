@@ -65,7 +65,7 @@ const MODEL_LIBRARY = {
   tube15ml: {
     label: "15 mL centrifuge tube",
     description:
-      "Two-piece STL assembly of a 15 mL screw-cap tube. It is used as a light-weight transfer object in the sim2real preview.",
+      "Two-piece STL assembly of a 15 mL screw-cap tube. It is used as a light-weight transfer object in embodied settings.",
     stl: [
       ["assets/models/tube_15ml/centrifuge_tube_15ml_body.STL", "#d1e95a"],
       ["assets/models/tube_15ml/centrifuge_tube_15ml_cap.STL", "#cdd0d4"],
@@ -79,13 +79,15 @@ const MODEL_LIBRARY = {
 const SECTIONS = [
   {
     id: "part-1",
-    label: "Part 1",
-    navTitle: "Experimental Asset Understanding",
-    navMeta: "3D asset + multiple-choice question",
-    kicker: "Part 1",
-    title: "Experimental Asset Understanding",
+    label: "Level 1",
+    navTitle: "Asset Understanding",
+    navMeta: "Single 3D asset + multiple-choice question",
+    kicker: "Level 1",
+    title: "Asset Understanding",
     summary:
-      "The first part asks the model to inspect a lab asset, understand how it is used, and answer a multiple-choice question.",
+      "Level 1 presents a single lab asset in 3D and asks a multiple-choice question about how that asset is used.",
+    note:
+      "Level 1 keeps the left-side view focused on one interactive 3D asset so the question is grounded in a single instrument.",
     samples: [
       {
         id: "asset-q1",
@@ -135,13 +137,15 @@ const SECTIONS = [
   },
   {
     id: "part-2",
-    label: "Part 2",
-    navTitle: "Long-Horizon Planning",
-    navMeta: "Concrete protocol question",
-    kicker: "Part 2",
-    title: "Long-Horizon Planning",
+    label: "Level 2",
+    navTitle: "Protocol Question",
+    navMeta: "Multiple instruments + long-horizon planning",
+    kicker: "Level 2",
+    title: "Protocol Question",
     summary:
-      "The second part is a concrete protocol question: the input includes background plus a finite action space, and the output is a long protocol program.",
+      "Level 2 shows multiple instruments in the left-side view because the protocol question depends on cross-instrument coordination.",
+    note:
+      "The left-side view switches to a multi-instrument layout in Level 2 so the protocol question is tied to a broader instrument set rather than a single asset.",
     samples: [
       {
         id: "plan-q1",
@@ -149,7 +153,11 @@ const SECTIONS = [
         tabMeta: "qPCR protocol",
         kind: "Protocol question",
         title: "qPCR protocol question under a finite action space",
-        modelKey: "thermalCycler",
+        modelKeys: ["thermalCycler", "centrifugeMini", "tube15ml"],
+        displayTitle: "Protocol instrument set",
+        displayDescription:
+          "This level shows multiple instruments because a concrete protocol question has to coordinate assets, containers, and device transitions across the workflow.",
+        displayTags: ["Multi-instrument view", "Protocol planning", "Finite action space"],
         context: [
           "Goal: quantify cytokine-response expression after stimulation with a fixed qPCR panel.",
           "Input to the model: experiment background, reagent list, equipment list, and a finite action space.",
@@ -187,7 +195,11 @@ const SECTIONS = [
         tabMeta: "Thermal mixer protocol",
         kind: "Protocol question",
         title: "Thermal mixer incubation protocol question",
-        modelKey: "thermalMixer",
+        modelKeys: ["thermalMixer", "centrifugeMini", "tube15ml"],
+        displayTitle: "Protocol instrument set",
+        displayDescription:
+          "The visible instrument set is broader than a single mixer because long-horizon planning has to reason across preparation, incubation, and post-incubation handling.",
+        displayTags: ["Multi-instrument view", "Protocol planning", "Cross-asset context"],
         context: [
           "Goal: execute a protein-binding incubation with heating, interval mixing, and post-incubation aliquoting.",
           "Input to the model: assay description plus a finite action space.",
@@ -223,13 +235,15 @@ const SECTIONS = [
   },
   {
     id: "part-3",
-    label: "Part 3",
-    navTitle: "Sim2Real Preview",
-    navMeta: "Transfer-oriented checks",
-    kicker: "Part 3",
-    title: "Sim2Real Preview",
+    label: "Level 3",
+    navTitle: "Video Preview",
+    navMeta: "Video + transfer-oriented question",
+    kicker: "Level 3",
+    title: "Sim2Real Video",
     summary:
-      "The third part stays as a preview lane. It keeps the benchmark tied to executable assets, transfer-oriented observations, and success conditions.",
+      "Level 3 replaces the 3D asset on the left side with a video so the question can focus on transfer-oriented observations.",
+    note:
+      "The left-side view switches to video in Level 3 because the benchmark is emphasizing observable execution and transfer conditions rather than static asset structure.",
     samples: [
       {
         id: "sim-q1",
@@ -237,9 +251,12 @@ const SECTIONS = [
         tabMeta: "Tube pickup",
         kind: "Transfer preview",
         title: "Tube pickup transfer check",
-        modelKey: "tube15ml",
+        videoTitle: "Tube pickup episode",
+        videoDescription:
+          "The left-side view is a video in Level 3. This clip is used to anchor the transfer-oriented question to an observable execution trace.",
+        videoTags: ["Embodied clip", "Transfer preview", "Tube handling"],
         prompt:
-          "Observe the transfer setup and inspect the tube in 3D. Which signals should matter before a simulated pickup is considered transferable to the real bench?",
+          "Observe the tube-pickup video and answer the following question. Which signals should matter before a simulated pickup is considered transferable to the real bench?",
         checks: [
           "The gripper contacts the tube body instead of clipping through the cap.",
           "The tube remains stable after lift-off instead of slipping or oscillating.",
@@ -256,9 +273,12 @@ const SECTIONS = [
         tabMeta: "Centrifuge lid",
         kind: "Transfer preview",
         title: "Mini centrifuge lid-closure transfer check",
-        modelKey: "centrifugeMini",
+        videoTitle: "Centrifuge lid-closure episode",
+        videoDescription:
+          "This clip keeps the left-side view tied to a concrete execution trace, so the question can focus on closure state, release, and transfer readiness.",
+        videoTags: ["Embodied clip", "Transfer preview", "Closure event"],
         prompt:
-          "Inspect the centrifuge in 3D and read the transfer question. Which conditions should stay consistent when the same close-lid routine is evaluated on the real instrument?",
+          "Observe the centrifuge lid-closure video and answer the following question. Which conditions should stay consistent when the same close-lid routine is evaluated on the real instrument?",
         checks: [
           "The lid follows a valid hinge path instead of intersecting the housing.",
           "The final state corresponds to a seated, closed lid rather than a near-miss pose.",
@@ -351,7 +371,6 @@ class InstrumentViewer {
 
     const loadVersion = ++this.loadVersion;
     const model = await this.getModelClone(modelKey, definition);
-
     if (loadVersion !== this.loadVersion) {
       return false;
     }
@@ -469,21 +488,28 @@ const dom = {
   sectionTitle: document.getElementById("section-title"),
   sectionSummary: document.getElementById("section-summary"),
   sampleTabs: document.getElementById("sample-tabs"),
-  modelLabel: document.getElementById("model-label"),
-  viewerDescription: document.getElementById("viewer-description"),
-  viewerTags: document.getElementById("viewer-tags"),
+  featureKicker: document.getElementById("feature-kicker"),
+  featureTitle: document.getElementById("feature-title"),
+  featureDescription: document.getElementById("feature-description"),
+  featureTags: document.getElementById("feature-tags"),
+  singleViewStage: document.getElementById("single-view-stage"),
+  multiViewStage: document.getElementById("multi-view-stage"),
+  videoStage: document.getElementById("video-stage"),
   viewerStatus: document.getElementById("viewer-status"),
-  mediaPanel: document.getElementById("media-panel"),
-  mediaImage: document.getElementById("media-image"),
-  mediaVideo: document.getElementById("media-video"),
+  featureVideo: document.getElementById("feature-video"),
+  miniCards: Array.from(document.querySelectorAll(".mini-view-card")),
+  miniTitles: [0, 1, 2].map((index) => document.getElementById(`mini-title-${index}`)),
+  miniStatuses: [0, 1, 2].map((index) => document.getElementById(`mini-status-${index}`)),
+  resetView: document.getElementById("reset-view"),
+  viewer: document.getElementById("viewer"),
   itemKind: document.getElementById("item-kind"),
   itemTitle: document.getElementById("item-title"),
   itemBody: document.getElementById("item-body"),
-  resetView: document.getElementById("reset-view"),
-  viewer: document.getElementById("viewer"),
+  levelNoteBody: document.getElementById("level-note-body"),
 };
 
-const viewer = new InstrumentViewer(dom.viewer);
+const mainViewer = new InstrumentViewer(dom.viewer);
+const miniViewers = [0, 1, 2].map((index) => new InstrumentViewer(document.getElementById(`mini-viewer-${index}`)));
 
 function getSectionById(sectionId) {
   return SECTIONS.find((entry) => entry.id === sectionId) || SECTIONS[0];
@@ -515,114 +541,130 @@ function syncUrl(sectionId, sampleId) {
   window.history.replaceState({}, "", `${window.location.pathname}?${params.toString()}`);
 }
 
-function setViewerStatus(text, visible) {
-  dom.viewerStatus.textContent = text;
-  dom.viewerStatus.classList.toggle("is-hidden", !visible);
+function setStatus(node, text, visible) {
+  node.textContent = text;
+  node.classList.toggle("is-hidden", !visible);
 }
 
-function renderNav() {
-  dom.sectionNav.innerHTML = "";
-
-  SECTIONS.forEach((section) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `nav-button${state.sectionId === section.id ? " active" : ""}`;
-    button.innerHTML = `
-      <span class="nav-label">${section.label} · ${section.navTitle}</span>
-      <span class="nav-meta">${section.navMeta}</span>
-    `;
-    button.addEventListener("click", () => {
-      state.sectionId = section.id;
-      state.sampleId = section.samples[0].id;
-      render();
-    });
-    dom.sectionNav.appendChild(button);
-  });
-}
-
-function renderSampleTabs(section) {
-  dom.sampleTabs.innerHTML = "";
-
-  section.samples.forEach((sample) => {
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = `sample-button${state.sampleId === sample.id ? " active" : ""}`;
-    button.innerHTML = `
-      <span class="sample-title">${sample.tabTitle}</span>
-      <span class="sample-meta">${sample.tabMeta}</span>
-    `;
-    button.addEventListener("click", () => {
-      state.sampleId = sample.id;
-      render();
-    });
-    dom.sampleTabs.appendChild(button);
-  });
-}
-
-async function renderViewer(sample) {
-  const model = MODEL_LIBRARY[sample.modelKey];
-  dom.modelLabel.textContent = model.label;
-  dom.viewerDescription.textContent = model.description;
-  dom.viewerTags.innerHTML = "";
-
-  model.tags.forEach((tag) => {
+function renderTags(tags) {
+  dom.featureTags.innerHTML = "";
+  tags.forEach((tag) => {
     const chip = document.createElement("span");
-    chip.className = "viewer-tag";
+    chip.className = "feature-tag";
     chip.textContent = tag;
-    dom.viewerTags.appendChild(chip);
+    dom.featureTags.appendChild(chip);
   });
+}
 
-  setViewerStatus("Loading 3D asset...", true);
+function showFeatureMode(mode) {
+  dom.singleViewStage.hidden = mode !== "single";
+  dom.multiViewStage.hidden = mode !== "multi";
+  dom.videoStage.hidden = mode !== "video";
+}
+
+function resetVideoStage() {
+  dom.featureVideo.pause();
+  dom.featureVideo.removeAttribute("src");
+  dom.featureVideo.load();
+}
+
+async function renderSingleAsset(sample) {
+  const model = MODEL_LIBRARY[sample.modelKey];
+
+  dom.featureKicker.textContent = "3D Asset";
+  dom.featureTitle.textContent = model.label;
+  dom.featureDescription.textContent = model.description;
+  renderTags(model.tags);
+  dom.resetView.hidden = false;
+
+  resetVideoStage();
+  showFeatureMode("single");
+  mainViewer.handleResize();
+  setStatus(dom.viewerStatus, "Loading 3D asset...", true);
 
   try {
-    const loaded = await viewer.loadModel(sample.modelKey);
+    const loaded = await mainViewer.loadModel(sample.modelKey);
     if (!loaded) {
       throw new Error("No model content was added to the scene.");
     }
-    setViewerStatus("", false);
+    setStatus(dom.viewerStatus, "", false);
   } catch (error) {
     console.error(error);
-    setViewerStatus(
+    setStatus(
+      dom.viewerStatus,
       "The 3D asset could not be rendered in this browser session. The model files are present, but the viewer failed to load them.",
       true
     );
   }
 }
 
-function renderMedia(sample) {
-  const hasImage = Boolean(sample.imageSrc);
-  const hasVideo = Boolean(sample.videoSrc);
+async function renderInstrumentSet(sample) {
+  const modelKeys = sample.modelKeys || [];
 
-  if (!hasImage && !hasVideo) {
-    dom.mediaPanel.hidden = true;
-    dom.mediaImage.hidden = true;
-    dom.mediaImage.removeAttribute("src");
-    dom.mediaVideo.hidden = true;
-    dom.mediaVideo.removeAttribute("src");
-    dom.mediaVideo.load();
+  dom.featureKicker.textContent = "Instrument Set";
+  dom.featureTitle.textContent = sample.displayTitle;
+  dom.featureDescription.textContent = sample.displayDescription;
+  renderTags(sample.displayTags || []);
+  dom.resetView.hidden = true;
+
+  resetVideoStage();
+  showFeatureMode("multi");
+  setStatus(dom.viewerStatus, "", false);
+
+  await Promise.all(
+    dom.miniCards.map(async (card, index) => {
+      const modelKey = modelKeys[index];
+      if (!modelKey) {
+        card.hidden = true;
+        return;
+      }
+
+      card.hidden = false;
+      const model = MODEL_LIBRARY[modelKey];
+      dom.miniTitles[index].textContent = model.label;
+      miniViewers[index].handleResize();
+      setStatus(dom.miniStatuses[index], "Loading 3D asset...", true);
+
+      try {
+        const loaded = await miniViewers[index].loadModel(modelKey);
+        if (!loaded) {
+          throw new Error("No model content was added to the scene.");
+        }
+        setStatus(dom.miniStatuses[index], "", false);
+      } catch (error) {
+        console.error(error);
+        setStatus(dom.miniStatuses[index], "The 3D asset failed to load.", true);
+      }
+    })
+  );
+}
+
+function renderVideo(sample) {
+  dom.featureKicker.textContent = "Video";
+  dom.featureTitle.textContent = sample.videoTitle;
+  dom.featureDescription.textContent = sample.videoDescription;
+  renderTags(sample.videoTags || []);
+  dom.resetView.hidden = true;
+
+  showFeatureMode("video");
+  setStatus(dom.viewerStatus, "", false);
+
+  dom.featureVideo.src = assetUrl(sample.videoSrc);
+  dom.featureVideo.load();
+}
+
+async function renderFeature(section, sample) {
+  if (section.id === "part-1") {
+    await renderSingleAsset(sample);
     return;
   }
 
-  dom.mediaPanel.hidden = false;
-  dom.mediaImage.hidden = !hasImage;
-  dom.mediaVideo.hidden = !hasVideo;
-
-  const mediaGrid = dom.mediaImage.parentElement;
-  mediaGrid.classList.toggle("single-media", hasImage !== hasVideo);
-
-  if (hasImage) {
-    dom.mediaImage.src = assetUrl(sample.imageSrc);
-    dom.mediaImage.alt = `${sample.title} supplementary image`;
-  } else {
-    dom.mediaImage.removeAttribute("src");
+  if (section.id === "part-2") {
+    await renderInstrumentSet(sample);
+    return;
   }
 
-  if (hasVideo) {
-    dom.mediaVideo.src = assetUrl(sample.videoSrc);
-  } else {
-    dom.mediaVideo.removeAttribute("src");
-    dom.mediaVideo.load();
-  }
+  renderVideo(sample);
 }
 
 function createTextBlock(title, content) {
@@ -708,6 +750,45 @@ function createAnswerBox(title, text, className) {
   return block;
 }
 
+function renderNav() {
+  dom.sectionNav.innerHTML = "";
+
+  SECTIONS.forEach((section) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `nav-button${state.sectionId === section.id ? " active" : ""}`;
+    button.innerHTML = `
+      <span class="nav-label">${section.label} · ${section.navTitle}</span>
+      <span class="nav-meta">${section.navMeta}</span>
+    `;
+    button.addEventListener("click", () => {
+      state.sectionId = section.id;
+      state.sampleId = section.samples[0].id;
+      render();
+    });
+    dom.sectionNav.appendChild(button);
+  });
+}
+
+function renderSampleTabs(section) {
+  dom.sampleTabs.innerHTML = "";
+
+  section.samples.forEach((sample) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `sample-button${state.sampleId === sample.id ? " active" : ""}`;
+    button.innerHTML = `
+      <span class="sample-title">${sample.tabTitle}</span>
+      <span class="sample-meta">${sample.tabMeta}</span>
+    `;
+    button.addEventListener("click", () => {
+      state.sampleId = sample.id;
+      render();
+    });
+    dom.sampleTabs.appendChild(button);
+  });
+}
+
 function renderItemBody(section, sample) {
   dom.itemKind.textContent = sample.kind;
   dom.itemTitle.textContent = sample.title;
@@ -722,6 +803,8 @@ function renderItemBody(section, sample) {
   }
 
   if (section.id === "part-2") {
+    const visibleInstruments = sample.modelKeys.map((modelKey) => MODEL_LIBRARY[modelKey].label);
+    dom.itemBody.appendChild(createListBlock("Visible instruments", visibleInstruments));
     dom.itemBody.appendChild(createListBlock("Background", sample.context));
     dom.itemBody.appendChild(createTextBlock("Question", sample.prompt));
     dom.itemBody.appendChild(createCodeBlock("Finite action space", sample.actionPool.join("\n")));
@@ -736,7 +819,7 @@ function renderItemBody(section, sample) {
   dom.itemBody.appendChild(createAnswerBox("Reference interpretation", sample.answer, "score-box"));
 }
 
-function render() {
+async function render() {
   const section = getSectionById(state.sectionId);
   const sample = getSampleById(section, state.sampleId);
 
@@ -749,13 +832,13 @@ function render() {
   dom.sectionKicker.textContent = section.kicker;
   dom.sectionTitle.textContent = section.title;
   dom.sectionSummary.textContent = section.summary;
+  dom.levelNoteBody.innerHTML = `<p>${section.note}</p>`;
 
-  renderViewer(sample);
-  renderMedia(sample);
   renderItemBody(section, sample);
+  await renderFeature(section, sample);
   syncUrl(section.id, sample.id);
 }
 
-dom.resetView.addEventListener("click", () => viewer.resetView());
+dom.resetView.addEventListener("click", () => mainViewer.resetView());
 
 render();
