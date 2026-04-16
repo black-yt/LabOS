@@ -366,7 +366,7 @@ select {
   aspect-ratio: 4 / 3;
   max-height: 240px;
   background: #101111;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .detail-panel {
@@ -412,6 +412,50 @@ select {
 .option-key {
   font-weight: 700;
   color: var(--accent-3);
+}
+
+.protocol-step-list {
+  display: grid;
+  gap: 12px;
+}
+
+.protocol-step-card {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  background: var(--panel-2);
+}
+
+.protocol-step-meta {
+  display: grid;
+  gap: 4px;
+}
+
+.protocol-step-kicker {
+  margin: 0;
+  font-size: 11px;
+  text-transform: uppercase;
+  color: var(--accent-2);
+}
+
+.protocol-step-title {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1.2;
+}
+
+.protocol-step-code {
+  margin: 0;
+  padding: 12px;
+  border-radius: 6px;
+  background: #101111;
+  color: #e8fffb;
+  font-size: 13px;
+  line-height: 1.6;
+  white-space: pre-wrap;
+  overflow-x: auto;
 }
 
 .answer-box,

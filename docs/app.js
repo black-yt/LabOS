@@ -165,23 +165,46 @@ const SECTIONS = [
         ],
         prompt:
           "Write a long-horizon protocol that prepares the plate, loads the thermal cycler, secures the lid, configures the program, runs it, and unloads the plate.",
-        actionPool: [
-          "def aliquot_master_mix(reagent_set: str, destination_plate: str, volume_ul: int) -> str: ...",
-          "def load_samples(sample_tubes: str, destination_plate: str, layout: str) -> str: ...",
-          "def seal_plate(plate: str, seal_type: str) -> str: ...",
-          "def place_plate_in_thermal_cycler(plate: str, instrument: str) -> str: ...",
-          "def close_thermal_cycler_lid(instrument: str, pressure_mode: str) -> str: ...",
-          "def set_pcr_program(instrument: str, protocol_name: str) -> str: ...",
-          "def run_pcr_program(instrument: str, runtime_min: int) -> str: ...",
-          "def unload_plate(instrument: str, plate: str) -> str: ...",
-        ],
         outputRequirements: [
           "Use only functions from the finite action space.",
           "Return a valid Python program that can be parsed with the Python AST.",
           "Specify concrete arguments for instrument, plate, seal type, and runtime.",
           "Keep the step order consistent with the physical protocol.",
         ],
-        referenceProgram: `qpcr_plate = aliquot_master_mix(\n    reagent_set="cytokine_qpcr_mix",\n    destination_plate="96_well_plate",\n    volume_ul=18,\n)\n\nloaded_plate = load_samples(\n    sample_tubes="stimulated_rna_samples",\n    destination_plate=qpcr_plate,\n    layout="triplicate_layout",\n)\n\nsealed_plate = seal_plate(\n    plate=loaded_plate,\n    seal_type="optical_film",\n)\n\ncycler_slot = place_plate_in_thermal_cycler(\n    plate=sealed_plate,\n    instrument="thermal_cycler_biorad_c1000",\n)\n\nlid_state = close_thermal_cycler_lid(\n    instrument="thermal_cycler_biorad_c1000",\n    pressure_mode="heated_lid_secure",\n)\n\nprogram_state = set_pcr_program(\n    instrument="thermal_cycler_biorad_c1000",\n    protocol_name="cytokine_panel_qpcr",\n)\n\nrun_state = run_pcr_program(\n    instrument="thermal_cycler_biorad_c1000",\n    runtime_min=95,\n)\n\ncompleted_plate = unload_plate(\n    instrument="thermal_cycler_biorad_c1000",\n    plate=sealed_plate,\n)`,
+        referenceSteps: [
+          {
+            title: "Aliquot master mix",
+            code: 'qpcr_plate = aliquot_master_mix(reagent_set="cytokine_qpcr_mix", destination_plate="96_well_plate", volume_ul=18)',
+          },
+          {
+            title: "Load samples",
+            code: 'loaded_plate = load_samples(sample_tubes="stimulated_rna_samples", destination_plate=qpcr_plate, layout="triplicate_layout")',
+          },
+          {
+            title: "Seal plate",
+            code: 'sealed_plate = seal_plate(plate=loaded_plate, seal_type="optical_film")',
+          },
+          {
+            title: "Load thermal cycler",
+            code: 'cycler_slot = place_plate_in_thermal_cycler(plate=sealed_plate, instrument="thermal_cycler_biorad_c1000")',
+          },
+          {
+            title: "Secure lid",
+            code: 'lid_state = close_thermal_cycler_lid(instrument="thermal_cycler_biorad_c1000", pressure_mode="heated_lid_secure")',
+          },
+          {
+            title: "Set PCR program",
+            code: 'program_state = set_pcr_program(instrument="thermal_cycler_biorad_c1000", protocol_name="cytokine_panel_qpcr")',
+          },
+          {
+            title: "Run PCR program",
+            code: 'run_state = run_pcr_program(instrument="thermal_cycler_biorad_c1000", runtime_min=95)',
+          },
+          {
+            title: "Unload plate",
+            code: 'completed_plate = unload_plate(instrument="thermal_cycler_biorad_c1000", plate=sealed_plate)',
+          },
+        ],
         evaluation: [
           "AST parse success for the generated Python program.",
           "Allowed-call accuracy against the finite action space.",
@@ -207,23 +230,46 @@ const SECTIONS = [
         ],
         prompt:
           "Write a long-horizon protocol that loads tubes, locks the block, sets temperature and shaking parameters, runs the incubation, performs a brief spin, and collects the final aliquot.",
-        actionPool: [
-          "def load_tubes_into_mixer(tube_set: str, rack_slot: str, instrument: str) -> str: ...",
-          "def lock_mixer_block(instrument: str, block_type: str) -> str: ...",
-          "def set_mixer_temperature(instrument: str, target_celsius: int) -> str: ...",
-          "def set_mixer_speed(instrument: str, rpm: int, mode: str) -> str: ...",
-          "def set_mixer_duration(instrument: str, duration_min: int) -> str: ...",
-          "def start_mixer_run(instrument: str) -> str: ...",
-          "def pause_and_brief_spin(tube_set: str, spin_seconds: int) -> str: ...",
-          "def collect_post_incubation_aliquot(tube_set: str, volume_ul: int, destination: str) -> str: ...",
-        ],
         outputRequirements: [
           "Use only functions from the finite action space.",
           "Return a valid Python program with explicit parameter settings.",
           "Match the order required by the physical protocol.",
           "Preserve the relation between the mixer asset and the chosen control actions.",
         ],
-        referenceProgram: `loaded_tubes = load_tubes_into_mixer(\n    tube_set="binding_reaction_triplicates",\n    rack_slot="thermomixer_block_a",\n    instrument="thermal_mixer_eppendorf_c",\n)\n\nblock_state = lock_mixer_block(\n    instrument="thermal_mixer_eppendorf_c",\n    block_type="1.5mL_tube_block",\n)\n\ntemp_state = set_mixer_temperature(\n    instrument="thermal_mixer_eppendorf_c",\n    target_celsius=37,\n)\n\nspeed_state = set_mixer_speed(\n    instrument="thermal_mixer_eppendorf_c",\n    rpm=900,\n    mode="interval_mix",\n)\n\nduration_state = set_mixer_duration(\n    instrument="thermal_mixer_eppendorf_c",\n    duration_min=45,\n)\n\nrun_state = start_mixer_run(\n    instrument="thermal_mixer_eppendorf_c",\n)\n\nspin_state = pause_and_brief_spin(\n    tube_set=loaded_tubes,\n    spin_seconds=8,\n)\n\naliquot_state = collect_post_incubation_aliquot(\n    tube_set=loaded_tubes,\n    volume_ul=25,\n    destination="assay_plate_b",\n)`,
+        referenceSteps: [
+          {
+            title: "Load tubes into mixer",
+            code: 'loaded_tubes = load_tubes_into_mixer(tube_set="binding_reaction_triplicates", rack_slot="thermomixer_block_a", instrument="thermal_mixer_eppendorf_c")',
+          },
+          {
+            title: "Lock mixer block",
+            code: 'block_state = lock_mixer_block(instrument="thermal_mixer_eppendorf_c", block_type="1.5mL_tube_block")',
+          },
+          {
+            title: "Set temperature",
+            code: 'temp_state = set_mixer_temperature(instrument="thermal_mixer_eppendorf_c", target_celsius=37)',
+          },
+          {
+            title: "Set shaking speed",
+            code: 'speed_state = set_mixer_speed(instrument="thermal_mixer_eppendorf_c", rpm=900, mode="interval_mix")',
+          },
+          {
+            title: "Set duration",
+            code: 'duration_state = set_mixer_duration(instrument="thermal_mixer_eppendorf_c", duration_min=45)',
+          },
+          {
+            title: "Start mixer run",
+            code: 'run_state = start_mixer_run(instrument="thermal_mixer_eppendorf_c")',
+          },
+          {
+            title: "Brief spin",
+            code: 'spin_state = pause_and_brief_spin(tube_set=loaded_tubes, spin_seconds=8)',
+          },
+          {
+            title: "Collect final aliquot",
+            code: 'aliquot_state = collect_post_incubation_aliquot(tube_set=loaded_tubes, volume_ul=25, destination="assay_plate_b")',
+          },
+        ],
         evaluation: [
           "Allowed-call accuracy against the finite action space.",
           "Argument-match accuracy for temperature, speed, duration, and aliquot volume.",
@@ -782,6 +828,44 @@ function createCodeBlock(title, code) {
   return block;
 }
 
+function createProtocolStepsBlock(title, steps) {
+  const block = document.createElement("section");
+  block.className = "detail-block";
+
+  const heading = document.createElement("h4");
+  heading.textContent = title;
+
+  const list = document.createElement("div");
+  list.className = "protocol-step-list";
+
+  steps.forEach((step, index) => {
+    const card = document.createElement("article");
+    card.className = "protocol-step-card";
+
+    const meta = document.createElement("div");
+    meta.className = "protocol-step-meta";
+
+    const kicker = document.createElement("p");
+    kicker.className = "protocol-step-kicker";
+    kicker.textContent = `Step ${index + 1}`;
+
+    const titleNode = document.createElement("h5");
+    titleNode.className = "protocol-step-title";
+    titleNode.textContent = step.title;
+
+    const code = document.createElement("pre");
+    code.className = "protocol-step-code";
+    code.textContent = step.code;
+
+    meta.append(kicker, titleNode);
+    card.append(meta, code);
+    list.appendChild(card);
+  });
+
+  block.append(heading, list);
+  return block;
+}
+
 function createAnswerBox(title, text, className) {
   const block = document.createElement("section");
   block.className = "detail-block";
@@ -854,9 +938,8 @@ function renderItemBody(section, sample) {
     dom.itemBody.appendChild(createListBlock("Visible instruments", visibleInstruments));
     dom.itemBody.appendChild(createListBlock("Background", sample.context));
     dom.itemBody.appendChild(createTextBlock("Question", sample.prompt));
-    dom.itemBody.appendChild(createCodeBlock("Finite action space", sample.actionPool.join("\n")));
     dom.itemBody.appendChild(createListBlock("Output requirements", sample.outputRequirements));
-    dom.itemBody.appendChild(createCodeBlock("Reference Python program", sample.referenceProgram));
+    dom.itemBody.appendChild(createProtocolStepsBlock("Reference output steps", sample.referenceSteps));
     dom.itemBody.appendChild(createListBlock("Evaluation focus", sample.evaluation));
     return;
   }
