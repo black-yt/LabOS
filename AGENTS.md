@@ -15,7 +15,7 @@
 - 这个仓库是 `LabOS` 的公开主页仓库。
 - `README.md` 负责描述 benchmark 的总体设计。
 - `docs/` 是 GitHub Pages 使用的静态站点目录。
-- `data/protocol_v1/` 是仓库里已有的一份本地语料快照，不要默认改动。
+- `data/protocol_v1/` 是仓库里已经落地的 `Nature Protocols` 本地工作集，不要默认改动。
 
 ## 3. Benchmark 设计主线
 
@@ -26,6 +26,7 @@
 - 设计目标是同时对齐两类来源：
   - `Nature Protocols`：提供科学语义、实验步骤细节、仪器用途理解
   - `AutoBio + LabUtopia`：提供可复用的资产、动作、具身任务对齐方式
+- 在当前仓库口径里，`protocol_v1` 不应再被写成第三个独立来源；它就是 `Nature Protocols` 在仓库内的本地工作集/工程落地形态。
 - 其中长程规划部分参考 `SGI-WetExperiment` 的评测形式：
   - 输入包含有限动作空间
   - 输出是动作组合与参数设置
