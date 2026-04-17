@@ -911,7 +911,651 @@ parser 逻辑：
 
 不是说后者没有价值，而是它们当前 release 里的结构稳定性明显不如前者。
 
-## 15. 最后给一个务实判断
+## 15. 面向 Benchmark 的最小结构建议
+
+前面几节主要是在解释：
+
+- 当前 `protocol_v1` 目录里真实有什么
+- 各字段实际覆盖率如何
+- 哪些字段只是 parser / 构建痕迹
+
+但如果后续目标是：
+
+- 从 `all.jsonl` 继续清洗
+- 构造 Level 1 / Level 2 / Level 3 benchmark
+- 把 protocol 作为一个长期稳定的“中间层底座”
+
+那么直接沿用原始 schema 其实并不合适，因为原始 schema 同时混合了：
+
+1. 真实监督信息
+2. 论文元信息
+3. parser fallback 字段
+4. 构建过程字段
+5. QC 辅助字段
+
+从 benchmark 的角度看，更合理的做法是先定义一层更小、更干净、语义更稳定的 protocol 中间表示。下面这一节给出建议的最小结构。
+
+### 15.1 建议的最小结构
+
+建议把 benchmark 用的 protocol 底座收成如下结构：
+
+```json
+{
+  "id": "...",
+  "title": "...",
+  "background": "...",
+  "materials": {
+    "reagents": [
+      {
+        "name": "...",
+        "vendor": "...",
+        "identifier": "..."
+      }
+    ],
+    "equipment": [
+      {
+        "name": "...",
+        "vendor": "...",
+        "identifier": "..."
+      }
+    ]
+  },
+  "procedure": {
+    "steps": [
+      {
+        "idx": 1,
+        "stage": "...",
+        "description": "..."
+      }
+    ],
+    "troubleshooting": [
+      {
+        "problem": "...",
+        "solution": "..."
+      }
+    ]
+  }
+}
+```
+
+这个结构的设计目标是：
+
+1. 只保留 benchmark 构造真正会用到的有效信息
+2. 去掉论文元信息和 parser 痕迹
+3. 保持和原始 `all.jsonl` 的回溯关系
+4. 让后续 planning / asset mapping / question generation 都能在同一结构上工作
+
+### 15.2 为什么顶层只保留这几个字段
+
+#### `id`
+
+必须保留。
+
+作用：
+
+- 唯一主键
+- 回源到原始 `all.jsonl`
+- 去重
+- 和后续派生样本表建立连接
+
+这里不再单独保留：
+
+- `source`
+- `doi`
+- `pmcid`
+- `pmid`
+
+原因是：
+
+- `source` 已经编码在 `id` 前缀里，例如 `star:...`、`nprot:...`
+- 真要回到原始样本，只需要 `id`
+- 对 benchmark 本体来说，多留一批 trace 字段并没有实际收益
+
+#### `title`
+
+必须保留。
+
+作用：
+
+- 表示整个 protocol 的主题
+- 适合做检索、聚类、去重
+- 后续构造任务背景时是最短、最稳定的摘要
+
+#### `background`
+
+必须保留。
+
+这个字段不是原始 schema 直接给出的字段名，而是一个归一化后的字段。
+
+建议构造规则：
+
+1. 优先用原始 `abstract`
+2. 如果 `abstract` 为空，则退化成 `title`
+
+这样做的原因是：
+
+- benchmark 构造时需要的是一个可直接给模型的背景描述
+- 不希望下游每次都自己判断 `abstract` 是否为空
+
+### 15.3 `materials` 为什么分成 `reagents` 和 `equipment`
+
+两者不能合并。
+
+虽然它们都属于“实验对象”，但在 benchmark 里的作用明显不同：
+
+- `reagents`
+  - 更偏试剂、样本、缓冲液、抗体、酶、培养基、试剂盒
+  - 主要影响实验语义、配方、参数、约束
+- `equipment`
+  - 更偏仪器、设备、工具、耐用品
+  - 直接关系到 Level 1 的 asset understanding 和 Level 3 的具身对象对齐
+
+所以更优雅的结构不是把两者混成一个 `materials_items`，而是保留：
+
+- `materials.reagents`
+- `materials.equipment`
+
+这样后续做：
+
+- asset canonicalization
+- action space 映射
+- 问题构造
+
+都会更清楚。
+
+### 15.4 `reagents` 和 `equipment` 的 item 为什么统一成 `{name, vendor, identifier}`
+
+原始数据里这两个字段的子结构并不相同。
+
+原始 `reagents` item：
+
+```json
+{
+  "name": "...",
+  "vendor": "...",
+  "catalog_id": "...",
+  "rrid": "...",
+  "category": "..."
+}
+```
+
+原始 `equipment` item：
+
+```json
+{
+  "name": "...",
+  "vendor": "...",
+  "model": "..."
+}
+```
+
+在 benchmark 用的最小结构里，建议统一写成：
+
+```json
+{
+  "name": "...",
+  "vendor": "...",
+  "identifier": "..."
+}
+```
+
+原因如下。
+
+#### 第一，`name` 是核心语义字段，必须留
+
+无论是 reagent 还是 equipment，真正稳定、最重要的字段都是：
+
+- `name`
+
+这个字段后续会直接参与：
+
+- 实体归一化
+- 题目构造
+- step 对齐
+- asset / action 映射
+
+#### 第二，`vendor` 保留成本低，但价值很高
+
+真实数据里：
+
+- `reagent.vendor` 非空率约 `80.1%`
+- `equipment.vendor` 非空率约 `90.0%`
+
+它不是绝对刚需，但很值得保留，因为它对：
+
+- 去重
+- 更细粒度对齐
+- 同名不同品牌区分
+
+都很有帮助。
+
+#### 第三，把 `catalog_id` 和 `model` 统一为 `identifier` 更优雅
+
+原始数据里：
+
+- reagent 的规格字段叫 `catalog_id`
+- equipment 的规格字段叫 `model`
+
+但从 benchmark 角度看，这两个字段在更高层都在回答同一个问题：
+
+> 这个对象更具体是哪一个版本 / 规格 / 产品实例？
+
+因此，把它们统一成：
+
+- `identifier`
+
+会让结构更整洁，也更利于下游代码统一处理。
+
+也就是说：
+
+- `reagent.identifier` 通常来自原始 `catalog_id`
+- `equipment.identifier` 通常来自原始 `model`
+
+#### 第四，为什么 `rrid` 和 `category` 不进最小版
+
+原始 `reagents` 里还有：
+
+- `rrid`
+- `category`
+
+但当前 release 中：
+
+- `rrid` 覆盖率很低，只在少量 STAR 样本里有
+- `category` 的可用性也强烈依赖 source，跨源稳定性一般
+
+因此，它们可以在以后做 richer schema 时再加回去，但不适合进入最小版。
+
+### 15.5 `steps` 为什么建议写成 `{idx, stage, description}`
+
+这是整个最小结构里最重要的一层。
+
+原始 `steps` 子结构是：
+
+```json
+{
+  "step_no": "...",
+  "text": "...",
+  "section": "...",
+  "duration": "..."
+}
+```
+
+建议映射成：
+
+```json
+{
+  "idx": 1,
+  "stage": "...",
+  "description": "..."
+}
+```
+
+#### `idx`
+
+`idx` 是重新编号后的整数顺序。
+
+保留它是为了：
+
+- 明确 step 序
+- 避免受原始 `step_no` 形式波动影响
+- 方便后续直接做顺序级处理
+
+原始 `step_no` 可以不进入最小版，因为：
+
+- 有些 source 用 `1a`、`2.3`
+- 有些 source 基本没有稳定编号
+- 对 benchmark 主体来说，顺序比原始编号样式更重要
+
+如果后续确实要保留原始编号，可以在 richer schema 中再加：
+
+- `orig_step_no`
+
+但不属于最小必要字段。
+
+#### `description`
+
+原始 `text` 建议改名为：
+
+- `description`
+
+原因是：
+
+- `text` 太像 parser 原始字段
+- `description` 更贴近“这一步在做什么”的语义
+- 更适合作为 benchmark 输入输出中的自然语言描述字段
+
+#### `stage`
+
+原始 `section` 建议改名为：
+
+- `stage`
+
+这是本次讨论中最关键的命名决策之一。
+
+### 15.6 为什么 `section` 不是 `action`
+
+这里必须明确：
+
+- 原始数据里的 `section`
+- 不是具身原子动作
+- 也不是 Level 2 最终 action space 里的 python function
+
+它更像：
+
+- protocol 中的高层阶段
+- subtask
+- 多个细步骤的语义标题
+
+来自真实数据的例子包括：
+
+- `Preparation of the plate coating and cell plating`
+- `A. Stereotaxic surgery: DREADD approach with viral vector microinjection`
+- `AMPure XP Cleanup. Timing: 1 h`
+- `Design and expression of protein constructs`
+- `Plate Vero-E6 cells for infection`
+
+这些标题显然都不是：
+
+- `grasp_tube`
+- `move_to_slot`
+- `close_lid`
+
+这类具身原子 action。
+
+它们描述的是：
+
+- 一个任务块
+- 一个实验阶段
+- 一串动作的高层组合语义
+
+因此，如果直接把 `section` 改名成 `action`，会造成两个问题：
+
+1. 混淆 protocol 高层阶段和具身原子动作
+2. 让 Level 2 / Level 3 的动作空间语义变得不清楚
+
+更合适的理解层级应该是：
+
+1. `title/background`
+   - 整个 protocol / 整个任务
+2. `stage`
+   - protocol 内部的高层阶段
+3. `description`
+   - 每个具体步骤的自然语言描述
+4. `action`
+   - AutoBio / LabUtopia 中真正可执行、可评分的有限动作空间
+
+所以，`section` 改成 `stage` 比改成 `action` 更准确，也更优雅。
+
+### 15.7 为什么 `troubleshooting` 要保留
+
+原始 schema 里有：
+
+- `troubleshooting`
+
+它不能删掉，原因主要有两个。
+
+#### 第一，Level 1 会用到
+
+`troubleshooting` 很适合构造：
+
+- 仪器使用错误题
+- 常见失败原因题
+- 安全 / 注意事项题
+- 纠错题
+
+#### 第二，Level 2 也可能用到
+
+它可以作为：
+
+- 约束条件
+- negative rule
+- 失败恢复提示
+
+所以 `troubleshooting` 虽然不是每条记录都很强，但在最小版里仍然值得保留。
+
+保留形式建议和原始结构一致：
+
+```json
+{
+  "problem": "...",
+  "solution": "..."
+}
+```
+
+不要压成字符串列表，因为：
+
+- `problem` 和 `solution` 在下游题目构造里角色不同
+
+### 15.8 新 key 和老 key 的对应关系
+
+下面给出建议的最小结构与原始 `all.jsonl` key 的对应关系。
+
+| 最小结构 key | 原始 key | 处理方式 |
+|---|---|---|
+| `id` | `id` | 原样保留 |
+| `title` | `title` | 原样保留 |
+| `background` | `abstract` / `title` | 优先 `abstract`，空则退化成 `title` |
+| `materials.reagents[].name` | `reagents[].name` | 原样保留 |
+| `materials.reagents[].vendor` | `reagents[].vendor` | 原样保留 |
+| `materials.reagents[].identifier` | `reagents[].catalog_id` | 重命名并统一 |
+| `materials.equipment[].name` | `equipment[].name` | 原样保留 |
+| `materials.equipment[].vendor` | `equipment[].vendor` | 原样保留 |
+| `materials.equipment[].identifier` | `equipment[].model` | 重命名并统一 |
+| `procedure.steps[].idx` | 派生字段 | 由 step 顺序重新编号 |
+| `procedure.steps[].stage` | `steps[].section` | 重命名 |
+| `procedure.steps[].description` | `steps[].text` | 重命名 |
+| `procedure.troubleshooting[].problem` | `troubleshooting[].problem` | 原样保留 |
+| `procedure.troubleshooting[].solution` | `troubleshooting[].solution` | 原样保留 |
+
+### 15.9 哪些原始字段明确不进入最小版
+
+建议从最小版中移除以下字段：
+
+- `source`
+- `doi`
+- `pmcid`
+- `pmid`
+- `license`
+- `journal`
+- `pub_year`
+- `authors`
+- `domain_tags`
+- `materials_raw`
+- `timing`
+- `safety`
+- `references_count`
+- `fetched_at`
+- `parser_version`
+- `qc_pass`
+- `qc_score`
+- `qc_flags`
+- `steps[].step_no`
+- `steps[].duration`
+- `reagents[].rrid`
+- `reagents[].category`
+
+这些字段并不是完全无价值，而是：
+
+- 对 benchmark 本体不是最小必要条件
+- 或者当前覆盖率不足
+- 或者属于构建 / 审计 / parser 过程信息
+
+其中：
+
+- `qc_pass`、`qc_score`、`qc_flags`
+  - 只适合保留在预处理阶段
+  - 不应进入最终 benchmark 用的最小协议底座
+
+### 15.10 为什么这个结构既最小又优雅
+
+这个结构之所以适合做 benchmark 中间层，是因为它把 protocol 信息压到了三个稳定层级：
+
+1. 顶层语义：
+   - `id`
+   - `title`
+   - `background`
+2. 实体层：
+   - `materials.reagents`
+   - `materials.equipment`
+3. 流程层：
+   - `procedure.steps`
+   - `procedure.troubleshooting`
+
+它的优点是：
+
+- 比原始 `all.jsonl` 干净很多
+- 比完全平铺更有结构感
+- 不会和后续的具身动作空间发生语义冲突
+- 既适合做 Level 1 题目构造，也适合做 Level 2 / Level 3 的 planning 和对齐
+
+如果后续需要 richer schema，可以在这个最小结构之上再扩：
+
+- `orig_step_no`
+- `identifier_type`
+- `stage_fn`
+- `canonical_name`
+- `source`
+
+但这些都不属于第一版最小必要字段。
+
+### 15.11 当前唯一版本的筛选规则
+
+当前仓库不再并行维护“宽松最小版”和“严格 benchmark 版”两套 protocol 中间文件，而是只维护一套：
+
+- `protocol_min_v1`
+
+但这里的 `min` 指的是：
+
+- schema 足够小
+- 字段语义足够稳定
+
+不代表筛选条件会放得很松。
+
+相反，这一版的默认过滤规则已经直接按 benchmark 需求收紧，目标是让保留下来的 protocol 更适合：
+
+- Level 1 的资产理解题构造
+- Level 2 的长程 planning 监督
+- Level 3 的 sim2real 长链任务对齐
+
+默认要求如下：
+
+1. `id` 非空
+2. `title` 非空
+3. `background` 非空
+4. `materials.reagents` 数量 `>= 5`
+5. `materials.equipment` 数量 `>= 2`
+6. `procedure.steps` 数量 `>= 20`
+7. `procedure.steps.stage` 的唯一值数量 `>= 3`
+
+这些条件分别对应不同目标。
+
+#### 为什么 `steps >= 20`
+
+这批 protocol 原始数据本身就很长。
+
+从 `all.jsonl` 的实际分布看：
+
+- `steps` 的 `p10` 已经是 `20`
+- 中位数约 `56`
+
+这意味着：
+
+- `steps >= 3` 这种阈值几乎没有任何筛选力
+- 如果想让数据真正适合 long-horizon benchmark，就至少应保留一个明显长链的下限
+
+因此，`20` 是一个更合理的第一版门槛。
+
+#### 为什么还要加 `unique_stages >= 3`
+
+只看 step 数仍然不够。
+
+有些 protocol 虽然 step 多，但本质上只是：
+
+- 单一阶段下的细碎展开
+- 或者 parser 把一段说明拆成很多连续句子
+
+如果用于 benchmark，这类样本会带来两个问题：
+
+1. 长度够了，但缺少真正的阶段结构
+2. 不利于后续把 protocol 高层阶段映射到动作链和资产链
+
+所以这里额外要求：
+
+- 唯一 `stage` 数量至少为 `3`
+
+这能保证保留下来的 protocol 不只是“长”，而且更像一个有阶段组织的完整实验流程。
+
+#### 为什么把 `reagents` 和 `equipment` 的门槛也提高
+
+把门槛设置为：
+
+- `reagents >= 5`
+- `equipment >= 2`
+
+主要不是为了材料越多越好看，而是为了后续 benchmark 构造时有足够上下文。
+
+对 `reagents` 来说：
+
+- 太少时，很难稳定恢复实验配方、条件约束和关键输入物
+
+对 `equipment` 来说：
+
+- 只有 `1` 个仪器通常不足以支撑 asset understanding 和 sim2real 对齐
+- 至少有 `2` 个设备，更容易形成真实的实验工作流环境
+
+#### 为什么暂时不把 `troubleshooting` 当成硬门槛
+
+`troubleshooting` 很有价值，但它更适合：
+
+- 作为 Level 1 的题目来源
+- 作为额外约束或错误恢复信息
+
+而不是作为全局过滤开关。
+
+原因是：
+
+- 没有 troubleshooting 不代表 protocol 不适合 long-horizon planning
+- 如果把它设成硬门槛，会无谓减少可用样本
+
+所以当前做法是：
+
+- 保留 `troubleshooting`
+- 但不要求每条记录都必须有
+
+#### 为什么暂时不按 step 文本长度硬筛
+
+另一个可选维度是每步文本长度。
+
+直觉上：
+
+- 太短的 step 可能过于提纲化
+- 太长的 step 可能把多个动作糅在一个自然语言段落里
+
+但这个维度暂时不适合作为第一轮硬筛选条件，因为：
+
+1. 不同 source 的写作风格差异很大
+2. 长文本不一定差，很多协议会把参数、注意事项和动作写在一起
+3. 这个问题更适合在后续 benchmark 构造阶段，通过动作可解析性再做二次筛选
+
+因此，目前默认不过早引入：
+
+- 平均 step 长度门槛
+- 单步最大长度门槛
+- 单步最小长度门槛
+
+### 15.12 这一版的定位
+
+所以，当前 `protocol_min_v1` 的定位可以概括为：
+
+> 一套字段最小、但过滤已经面向 benchmark 需求收紧的 protocol 统一底座。
+
+它不是“尽可能多留样本”的宽松清洗结果，而是：
+
+- 保留能支撑后续任务构造的关键信息
+- 提前去掉明显不适合长链 benchmark 的样本
+- 给后续 asset / action / planning 对齐留出足够结构空间
+
+## 16. 最后给一个务实判断
 
 从真实数据来看，`protocol_v1` 更适合被理解成：
 
