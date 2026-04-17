@@ -15,7 +15,7 @@
 
 - 这个仓库是 `LabOS` 的公开主页仓库。
 - `README.md` 负责描述 benchmark 的总体设计。
-- `autobio_labutopia_assets_actions.md` 记录了 AutoBio 与 LabUtopia 的资产、动作、场景、controller 组合与对 benchmark 的映射，是后续设计具身 benchmark 时的主索引文档。
+- `data/assets_actions/autobio_labutopia_assets_actions.md` 记录了 AutoBio 与 LabUtopia 的资产、动作、场景、controller 组合与对 benchmark 的映射，是后续设计具身 benchmark 时的主索引文档。
 - `README.md` 当前应保持固定的编号结构：
   - `1. 数据构造管线`
   - `2. Level 1`

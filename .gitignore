@@ -210,4 +210,13 @@ __marimo__/
 .codex
 
 # Local benchmark data
-data/
+/data/protocol_v1/all.jsonl
+/data/protocol_v1/manifest.jsonl
+/data/protocol_v1/stats.json
+/data/protocol_v1/README.md
+/data/protocol_v1/docs/
+/data/protocol_v1/pipeline/
+/data/protocol_v1/records/
+/data/protocol_v1/rejected/
+/data/protocol_v1/protocol_min_v1.jsonl
+/data/protocol_v1/protocol_min_v1.stats.json
