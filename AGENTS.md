@@ -27,6 +27,17 @@
   - `protocol` / `protocol_v1`：也就是爬取下来的 `Nature Protocols` 语料，提供科学语义、实验步骤细节、仪器用途理解
   - `AutoBio`：提供一部分可复用的资产、动作、具身任务对齐方式
   - `LabUtopia`：提供另一部分可复用的资产、动作、长链动作组织方式
+- README 里的主框图应保持为三列直连结构：
+  - 第一列：`Protocols`、`AutoBio`、`LabUtopia`
+  - 第二列：`Steps`、`Assets`、`Actions`
+  - 第三列：`Level 1: Asset Understanding`、`Level 2: Long-Horizon Planing`、`Level 3: Sim2Real`
+  - 连线规则：
+    - `Protocols -> Steps`
+    - `AutoBio -> Assets`、`AutoBio -> Actions`
+    - `LabUtopia -> Assets`、`LabUtopia -> Actions`
+    - `Steps + Assets -> Level 1`
+    - `Steps + Actions -> Level 2`
+    - `Steps + Assets + Actions -> Level 3`
 - 其中长程规划部分参考 `SGI-WetExperiment` 的评测形式：
   - 输入包含有限动作空间
   - 输出是动作组合与参数设置

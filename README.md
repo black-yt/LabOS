@@ -22,21 +22,21 @@ LabOS 现在拆成三个部分：
 
 ```mermaid
 flowchart LR
-    A[protocol<br/>Nature Protocols crawl / protocol_v1] --> B[Biological Grounding]
-    C[AutoBio<br/>assets / actions] --> D[Asset Ontology]
-    E[LabUtopia<br/>assets / actions] --> F[Action Ontology]
+    A[Protocols] --> D[Steps]
+    B[AutoBio] --> E[Assets]
+    B --> F[Actions]
+    C[LabUtopia] --> E
+    C --> F
 
-    B --> G[Experimental Asset Understanding]
-    D --> G
-    F --> G
+    D --> G[Level 1:<br/>Asset Understanding]
+    E --> G
 
-    B --> H[Long-Horizon Planning]
-    D --> H
+    D --> H[Level 2:<br/>Long-Horizon Planing]
     F --> H
 
-    D --> I[Sim2Real interface]
+    D --> I[Level 3:<br/>Sim2Real]
+    E --> I
     F --> I
-    H --> I
 ```
 
 ## 当前判断
@@ -486,26 +486,30 @@ cytokine_panel = analyze_cytokines(
 
 建议共享下面三层接口：
 
-1. **Biological Grounding**
-   由 `protocol` 提供实验阶段、设备用途和步骤语义。
-2. **Canonical Asset / Action Ontology**
-   统一设备类别、部件、状态、典型操作和别名。
-3. **Python Action Program / Protocol AST IR**
-   统一 planning 的目标输出格式，以及评测器内部使用的 AST 归一化表示。
+1. **Steps**
+   由 `protocol_v1` 提供实验步骤、阶段结构和参数线索。
+2. **Assets**
+   由 `AutoBio` 和 `LabUtopia` 提供设备、容器、部件和可操作对象。
+3. **Actions**
+   由 `AutoBio` 和 `LabUtopia` 提供动作词表、动作约束和长链动作组织方式。
 
 ```mermaid
-flowchart TD
-    A[protocol<br/>Nature Protocols crawl / protocol_v1] --> B[Biological Grounding]
-    C[AutoBio] --> D[Canonical Asset Ontology]
-    E[LabUtopia] --> F[Canonical Action Ontology]
-    B --> G[Asset MCQ generation]
-    D --> G
-    F --> G
-    B --> H[Python Action Program]
-    D --> H
+flowchart LR
+    A[Protocols] --> D[Steps]
+    B[AutoBio] --> E[Assets]
+    B --> F[Actions]
+    C[LabUtopia] --> E
+    C --> F
+
+    D --> G[Level 1:<br/>Asset Understanding]
+    E --> G
+
+    D --> H[Level 2:<br/>Long-Horizon Planing]
     F --> H
-    G --> I[Asset Understanding Bench]
-    H --> J[Long-Horizon Planning Bench]
+
+    D --> I[Level 3:<br/>Sim2Real]
+    E --> I
+    F --> I
 ```
 
 这有两个直接好处：
