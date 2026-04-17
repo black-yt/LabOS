@@ -9,6 +9,7 @@
 - 不要记录口令、令牌、账号、私有地址、未公开数据集、机器专属敏感信息。
 - 不要把本地临时命令输出原样大段贴进来。
 - 只记录对后续工作真正有帮助的结构信息、踩坑经验和公开资料来源。
+- 除非用户在当前对话里明确说了 `push`，否则不要执行 `git commit`，也不要执行 `git push`；完成修改后只做检查并汇报当前状态。
 
 ## 2. 仓库定位
 
@@ -49,6 +50,26 @@
   - 输入包含有限动作空间
   - 输出是动作组合与参数设置
   - 在本仓库的方案里，进一步收紧为合法的 Python 函数调用，便于用 Python AST 做解析和评测
+- 当前 README 中三个 level 的任务定义需要保持一致：
+  - `Level 1`
+    - 输入是单个 `asset` 的三视图，加上一道选择题和候选项
+    - 输出分成两部分：`reasoning_steps: list[string]` 与单字母 `answer`
+    - 指标固定为 `Reasoning Step Accuracy` 与 `Answer Exact Match Accuracy`
+  - `Level 2`
+    - 输入固定为三部分：实验背景、实验约束与要求、动作空间
+    - 其中动作空间来自 `AutoBio` 与 `LabUtopia`，并以 Python 函数定义形式给出
+    - 实验约束不能直接泄露标准答案步骤
+    - 输出是代码形式的动作序列
+    - 评分逻辑对齐 `SGI-Bench` 的 `evaluation/task_3_wet_experiment/step_2_score.py`
+    - 但实现上不再用正则解析自定义结构，而是直接解析 Python AST
+    - 主指标写成 `Action Sequence Similarity` 与 `Parameter Accuracy`
+    - `Action Sequence Similarity` 采用 SGI 脚本同款的 Kendall tau 风格顺序相似度，不是 LCS
+    - `Parameter Accuracy` 不是逐 token 文本匹配，而是逐步检查动作名、参数键集合、raw/generated 引用类型以及变量依赖映射
+  - `Level 3`
+    - 评测逻辑与 `AutoBio` 官方仓库保持一致
+    - 输入接口应对齐 `autobio/evaluator.py` 的 runtime observation 形式
+    - 输出接口应对齐策略返回的低层 action chunk，而不是自然语言或符号步骤
+    - 当前变化点只是任务链条更长、步骤更多、依赖更深
 
 ## 4. 静态站点结构
 
@@ -96,6 +117,11 @@
 - SGI-WetExperiment：`https://huggingface.co/datasets/InternScience/SGI-WetExperiment`
 - AutoBio：`https://github.com/autobio-bench/AutoBio`
 - LabUtopia：`https://github.com/Rui-li023/LabUtopia`
+- SGI-Bench `step_2_score.py`：`https://github.com/InternScience/SGI-Bench/blob/main/evaluation/task_3_wet_experiment/step_2_score.py`
+- AutoBio `autobio/evaluate.py`：`https://github.com/autobio-bench/AutoBio/blob/main/autobio/evaluate.py`
+- AutoBio `autobio/evaluator.py`：`https://github.com/autobio-bench/AutoBio/blob/main/autobio/evaluator.py`
+- AutoBio `autobio/task.py`：`https://github.com/autobio-bench/AutoBio/blob/main/autobio/task.py`
+- AutoBio `autobio/mani_thermal_cycler.py`：`https://github.com/autobio-bench/AutoBio/blob/main/autobio/mani_thermal_cycler.py`
 - AutoBio thermal cycler close Sim2Real 视频：`https://huggingface.co/datasets/autobio-bench/thermal_cycler_close-mujoco`
 - AutoBio insert Sim2Real 视频：`https://huggingface.co/datasets/autobio-bench/insert-mujoco`
 - 当前页面接入过的公开原始视频直链包括：
@@ -165,7 +191,42 @@
   - `ldd /tmp/pw-browsers/.../chrome-headless-shell | grep 'not found'`
 - 安装完成后，再用 Playwright 截图验证页面是否真的能打开，而不是只停留在静态文件检查。
 
-## 11. 公共文档写作约束
+## 11. 评测逻辑经验
+
+- Level 2 不能再写成“顺序相似度 + 参数准确率”这种只讲名字、不讲算法的描述；需要明确说明其来源和计算方式。
+- 对照 `SGI-Bench` 的 `step_2_score.py`，真正的 Level 2 评分逻辑有三层：
+  - 先把程序解析成 step list，每一步包含 `action / input / output`
+  - `Action Sequence Similarity` 比较的是动作顺序，SGI 用的是 Kendall tau 风格相似度
+  - `Parameter Accuracy` 比较的是动作接口和依赖链是否一致，而不是纯字符串完全匹配
+- 在 LabOS 里，因为动作输出本来就是 Python 代码，最稳妥的实现方式是：
+  - 用 Python AST 抽取函数调用
+  - 识别每一步的输出变量
+  - 区分某个参数是在引用原始输入，还是在引用前序步骤生成变量
+  - 用预测输出变量到标准输出变量的映射去检查后续依赖
+- 对齐 SGI 时要注意：
+  - 如果预测步骤数和标准步骤数不同，SGI 的顺序相似度会直接记 `0`
+  - `Parameter Accuracy` 会把动作名错误、参数键错误、变量类型错误、依赖映射错误，以及多出 / 缺失步骤都记入 `error_count`
+  - SGI 额外会计算 `final_score = (action_sequence_similarity + parameter_accuracy) / 2`，但公开文档里仍应先把基础指标解释清楚
+- Level 3 不能只写“沿用 AutoBio 评测逻辑”；需要说明具体沿用了什么。
+- 对照 AutoBio 官方代码：
+  - `autobio/task.py` 定义了任务注册、`time_limit`、`early_stop` 和 `check()`
+  - `autobio/evaluator.py` 定义了 runtime observation 结构，包括 `prompt`、`observation/state`、`observation/image`、`observation/wrist_image` 和可选历史图像
+  - `autobio/evaluator.py` 也定义了 rollout 逻辑：策略输出二维 action chunk，逐行写入 `data.ctrl[action_indices]`，每行 action 默认推进 10 个 simulator steps
+  - `autobio/evaluate.py` 负责按多个 seed 跑 episode，并把每个 episode 的二值结果保存下来
+  - 具体任务文件如 `autobio/mani_thermal_cycler.py` 会给出 `task_info['prefix']`、`state_indices`、`action_indices`、`camera_mapping` 和 `check()` 的任务完成条件
+- 因此，LabOS 的 Level 3 如果要保持“和 AutoBio 一致”，就应该保持：
+  - episode 级 rollout
+  - `task.check()` 作为成功判据
+  - `time_limit` 与 `early_stop` 控制 episode 终止
+  - 仿真 warning / FatalError 直接记失败
+  - 最终按多 seed episode 的平均 success rate 报告结果
+- LabOS 的扩展点不在评测器骨架，而在任务本身：
+  - 把单个短任务扩展成更长的 protocol 段
+  - 让 `prompt` 覆盖更长的实验目标
+  - 让 `check()` 覆盖多阶段子目标
+  - 让 `time_limit` 足以容纳更长的执行链
+
+## 12. 公共文档写作约束
 
 - 面向公开仓库的说明应尽量稳定、读者导向。
 - 非必要不要在公开文档里写机器绝对路径。
@@ -177,7 +238,7 @@
   - 各资料源各自承担的角色
 - 少写过程流水账，多写结构性结论。
 
-## 12. 后续代理建议
+## 13. 后续代理建议
 
 - 如果继续扩展 GitHub Pages，优先保持静态化和轻依赖。
 - 如果继续补题目，先保持每个 part 有代表性样例，再逐步扩到完整数据组织。
