@@ -1,7 +1,7 @@
 # LabOS
 
 > 面向实验室智能体的三段式 benchmark。
-> 本文档反映截至 2026-04-16 的最新规划：`Nature Protocols` 提供科学语义与详细 protocol；仓库中的 `protocol_v1` 是这批 `Nature Protocols` 语料在本仓库里的本地工作集；`AutoBio + LabUtopia` 提供可复用的 assets 和 actions。
+> 本文档反映截至 2026-04-16 的最新规划：LabOS 当前直接使用三个数据源：`protocol`（即 `Nature Protocols` 爬取并落地后的 `protocol_v1`）、`AutoBio`、`LabUtopia`。
 
 ## 项目概述
 
@@ -14,27 +14,28 @@ LabOS 现在拆成三个部分：
 3. **Sim2Real**
    面向仿真与真实执行的评测接口，后续再展开。
 
-这三个部分不是孤立的。它们背后有两类核心来源，以及一个仓库内的本地落地形态：
+这三个部分不是孤立的。它们背后直接对应三个数据源：
 
-- `Nature Protocols`：提供实验目的、实验步骤、设备用途和科学语义；
-- `AutoBio + LabUtopia`：提供实验室场景里真正要对齐的 assets 与 actions；
-- `protocol_v1`：不是第三个独立来源，而是 `Nature Protocols` 在当前仓库里已经落好的本地工作集，适合做工程启动、数据清洗和 benchmark 原型构造。
+- `protocol`：也就是 `Nature Protocols` 爬取并整理后的 `protocol_v1`，提供实验目的、实验步骤、设备用途和科学语义；
+- `AutoBio`：提供实验室场景里真正要对齐的一部分 assets 与 actions；
+- `LabUtopia`：提供另一部分可复用的 assets、actions 与具身任务组织方式。
 
 ```mermaid
 flowchart LR
-    A[Nature Protocols<br/>scientific semantics / detailed protocols] --> B[Biological Grounding]
-    C[AutoBio + LabUtopia<br/>assets / actions / embodied alignment] --> D[Asset & Action Ontology]
-    A --> E[data/protocol_v1<br/>local Nature Protocols snapshot]
-    E --> F[Repo Working Set]
+    A[protocol<br/>Nature Protocols crawl / protocol_v1] --> B[Biological Grounding]
+    C[AutoBio<br/>assets / actions] --> D[Asset Ontology]
+    E[LabUtopia<br/>assets / actions] --> F[Action Ontology]
 
     B --> G[Experimental Asset Understanding]
     D --> G
+    F --> G
 
     B --> H[Long-Horizon Planning]
     D --> H
     F --> H
 
     D --> I[Sim2Real interface]
+    F --> I
     H --> I
 ```
 
@@ -42,13 +43,13 @@ flowchart LR
 
 这次调整以后，LabOS 的重点不是把 `AutoBio` 和 `LabUtopia` 拿掉，而是把它们放到更准确的位置：
 
-- `Nature Protocols` 负责 benchmark 的**科学对齐**；
-- `AutoBio + LabUtopia` 负责 benchmark 的**具身对齐**；
+- `protocol` 负责 benchmark 的**科学对齐**；
+- `AutoBio` 与 `LabUtopia` 负责 benchmark 的**具身对齐**；
 - 前两块 benchmark 则负责把这两种对齐方式接到一起。
 
 也就是说，LabOS 不是单纯做一个“实验文本 benchmark”，而是在做一座桥：
 
-1. 一端对齐 `Nature Protocols` 这样的高质量生物实验知识；
+1. 一端对齐 `protocol` 这批高质量生物实验语料；
 2. 一端对齐 `AutoBio`、`LabUtopia` 这样的具身资产与动作空间；
 3. 中间通过 asset understanding 和 long-horizon planning 完成映射。
 
@@ -60,30 +61,38 @@ flowchart LR
 
 ## 核心原则
 
-- **一方面对齐 Nature Protocols，另一方面对齐 AutoBio / LabUtopia。**
-- **优先复用已有素材**，尤其是当前仓库里已经落地的 `Nature Protocols` 本地工作集 `protocol_v1`，以及已有具身工作里的 asset / action 设计。
+- **一方面对齐 `protocol`，另一方面对齐 `AutoBio` 与 `LabUtopia`。**
+- **优先复用已有素材**，尤其是当前仓库里的 `protocol_v1`，以及已有具身工作里的 asset / action 设计。
 - **先做可评分的 benchmark**，避免开放式任务难以比较。
 - **输出保持结构化**，后续才能接自动评测和 sim2real。
 - **设备知识、动作知识与 protocol 知识共享接口**，避免第一块和第二块完全分裂。
 
-## 两类来源与一个本地工作集
+## 三个数据源
 
-### Nature Protocols
+### protocol
 
-`Nature Protocols` 在 LabOS 里承担的是**生物理解与科学正确性锚点**：
+`protocol` 在 LabOS 里承担的是**生物理解与科学正确性锚点**。这里的 `protocol` 指的就是 `Nature Protocols` 爬取下来并落地为 `protocol_v1` 的语料：
 
 - 定义某类实验的目标和阶段；
 - 提供高质量、非常详细的步骤；
 - 提供设备为什么使用、什么时候使用、如何使用的语义背景；
 - 为前三个部分都提供“这件事在生物实验上是否合理”的依据。
 
-### AutoBio 与 LabUtopia
+### AutoBio
 
-`AutoBio` 与 `LabUtopia` 在 LabOS 里承担的是**可执行世界的本体锚点**：
+`AutoBio` 在 LabOS 里承担的是**可执行世界的一部分本体锚点**：
 
 - 有哪些实验室 assets；
 - 有哪些 canonical actions；
-- 哪些 assets / actions 已经在具身环境中被建模；
+- 哪些 assets / actions 已经在具身环境中被建模。
+
+### LabUtopia
+
+`LabUtopia` 在 LabOS 里承担的是**另一部分可执行世界本体锚点**：
+
+- 有哪些实验室 assets；
+- 有哪些 canonical actions；
+- 动作如何被组织成更长链的 protocol；
 - 后续 sim2real 最可能接到什么动作空间和场景对象。
 
 因此，这两个项目的价值不只是“以后做 sim2real 再看”，而是从现在开始就应该决定：
@@ -94,20 +103,15 @@ flowchart LR
 
 ### protocol_v1
 
-当前仓库里的 [data/protocol_v1/README.md](data/protocol_v1/README.md) 在 LabOS 的语境里更适合被看作**Nature Protocols 的本地工作集**：
-
-- 它不是第三个独立来源，而是当前仓库里已经落地好的 `Nature Protocols` 处理结果；
-- 它可以帮助快速抽设备名、动作词、阶段模板；
-- 它可以帮助第一版 planning benchmark 先做起来；
-- benchmark 的科学锚点与工程启动语料，在这里应被统一理解为同一套 `Nature Protocols` 来源。
+当前仓库里的 [data/protocol_v1/README.md](data/protocol_v1/README.md) 就是这里说的 `protocol` 数据源在仓库内的目录名。
 
 ## 关键对齐来源
 
-- Nature Protocols: <https://www.nature.com/nprot/>
+- protocol / Nature Protocols: <https://www.nature.com/nprot/>
 - AutoBio: <https://github.com/autobio-bench/AutoBio>
 - LabUtopia: <https://github.com/Rui-li023/LabUtopia>
 - SGI-WetExperiment: <https://huggingface.co/datasets/InternScience/SGI-WetExperiment>
-- protocol_v1（Nature Protocols 本地工作集）: [data/protocol_v1/README.md](data/protocol_v1/README.md)
+- protocol_v1: [data/protocol_v1/README.md](data/protocol_v1/README.md)
 
 ## Part I: Experimental Asset Understanding
 
@@ -142,8 +146,8 @@ flowchart LR
 
 更具体地说，这一块要同时满足两种对齐：
 
-- 和 `Nature Protocols` 对齐：设备在实验中到底用来做什么；
-- 和 `AutoBio / LabUtopia` 对齐：这个设备在具身世界里对应哪个 asset family。
+- 和 `protocol` 对齐：设备在实验中到底用来做什么；
+- 和 `AutoBio`、`LabUtopia` 对齐：这个设备在具身世界里对应哪个 asset family。
 
 ### 建议的题目类型
 
@@ -169,9 +173,9 @@ flowchart LR
 
 这块目前仓库里还没有成型图像集，所以最快路线不是从零发明视觉语料，而是先做三步对齐：
 
-1. 用 `AutoBio + LabUtopia` 确定优先覆盖的 asset family；
-2. 用 `Nature Protocols` 提供这些 assets 在真实实验中的用途和使用语义；
-3. 用现有 `protocol_v1` 这个 Nature Protocols 本地工作集扩大设备名覆盖与长尾变体。
+1. 用 `AutoBio` 和 `LabUtopia` 确定优先覆盖的 asset family；
+2. 用 `protocol` 提供这些 assets 在真实实验中的用途和使用语义；
+3. 用现有 `protocol_v1` 扩大设备名覆盖与长尾变体。
 
 #### Step 1: 先定 asset family，再抽设备词表
 
@@ -184,7 +188,7 @@ flowchart LR
 - vortex / thermal mixer
 - tube / plate / rack / lid / drawer 这类高频可操作对象
 
-然后再直接用 [data/protocol_v1/README.md](data/protocol_v1/README.md) 这个仓库内的 Nature Protocols 本地工作集去补充：
+然后再直接用 [data/protocol_v1/README.md](data/protocol_v1/README.md) 去补充：
 
 - 已抽取的 `equipment`、`reagents`、`steps`、`abstract` 等字段；
 - 设备名、步骤短语和阶段模板；
@@ -212,7 +216,7 @@ flowchart LR
 
 - 设备覆盖要代表真实 wet-lab 高频资产；
 - 图像来源要多样，避免只学会某个产品宣传图风格；
-- 尽量贴近 `AutoBio / LabUtopia` 中真正出现过的设备家族；
+- 尽量贴近 `AutoBio` 和 `LabUtopia` 中真正出现过的设备家族；
 - 每个设备至少要有不同视角、不同状态、不同背景的图片。
 
 #### Step 3: 题目必须围绕用途，而不只围绕识别
@@ -223,7 +227,7 @@ flowchart LR
 - 图片里可见的状态；
 - 设备类别决定的操作语义。
 
-同时，题目的语义来源最好来自 `Nature Protocols` 风格描述，对象来源则来自 `AutoBio / LabUtopia` 的 asset family。
+同时，题目的语义来源最好来自 `protocol` 里的描述，对象来源则来自 `AutoBio` 和 `LabUtopia` 的 asset family。
 
 一个更稳的规则是：每道题都标一个 `evidence` 字段，记录出题依据来自哪一处视觉信息或哪条设备知识。
 
@@ -300,16 +304,16 @@ flowchart LR
 
 当前最直接的基础有两层：
 
-1. `Nature Protocols`
-   提供高质量、非常详细的实验流程和设备用途语义；
-2. [data/protocol_v1/README.md](data/protocol_v1/README.md)
-   是当前仓库里已经落地好的 `Nature Protocols` 本地工作集，可直接用于 prompt 构造、字段清洗和 benchmark 原型启动。
+1. `protocol` / [data/protocol_v1/README.md](data/protocol_v1/README.md)
+   提供高质量、非常详细的实验流程和设备用途语义，也提供当前仓库里可直接使用的结构化字段；
+2. `AutoBio` 与 `LabUtopia`
+   提供 assets / actions 的可执行本体。
 
-这意味着第二块最合理的策略不是把 `Nature Protocols` 和 `protocol_v1` 拆成两个不同语料源，而是把它们视为同一来源的“科学锚点 + 本地工作集”两种形态：
+这意味着第二块最合理的策略就是直接围绕三个数据源做对齐：
 
-- 用 `Nature Protocols` 作为科学锚点和高质量对齐来源；
-- 用 `protocol_v1` 作为仓库内已经结构化好的工程工作集；
-- 用 `AutoBio + LabUtopia` 提供 assets / actions 的可执行本体。
+- 用 `protocol` 提供实验语义、详细步骤和参数线索；
+- 用 `AutoBio` 提供一部分 assets / actions；
+- 用 `LabUtopia` 提供另一部分 assets / actions 和长链动作组织方式。
 
 ### 这块真正要测什么
 
@@ -337,7 +341,7 @@ flowchart LR
 3. **P3: Sparse Planning**
    只给高层实验描述和有限动作空间，要求输出长步骤 program。
 
-这三档里，`P1` 最适合先跑通基线，因为当前仓库里的 `protocol_v1` 已经承载了这批 `Nature Protocols` 记录对应的结构化字段。随后可以把 `AutoBio / LabUtopia` 的 asset / action 约束逐步加进 `P2` 和 `P3`。
+这三档里，`P1` 最适合先跑通基线，因为当前仓库里的 `protocol_v1` 已经具备对应字段。随后可以把 `AutoBio` 与 `LabUtopia` 的 asset / action 约束逐步加进 `P2` 和 `P3`。
 
 ### 建议的输出格式
 
@@ -420,9 +424,9 @@ cytokine_panel = analyze_cytokines(
 
 基于当前设计，第二块的数据构造应该分三步：
 
-1. **Nature Protocols（本地工作集为 protocol_v1） -> biological protocol**
+1. **protocol / protocol_v1 -> biological protocol**
    提取目标、阶段、详细步骤、设备用途和关键参数。
-2. **AutoBio / LabUtopia -> canonical asset & action space**
+2. **AutoBio and LabUtopia -> canonical asset & action space**
    整理每一步可能对应的资产与动作词表。
 3. **alignment**
    把 protocol 中的设备与操作映射到统一的 `asset/action ontology`，再转成 Python 函数签名。
@@ -431,9 +435,9 @@ cytokine_panel = analyze_cytokines(
 
 1. 以 `all.jsonl` 作为主输入；
 2. 规范化 `steps`、`equipment`、`reagents` 字段；
-3. 从 `protocol_v1` 中优先抽长而细的 Nature Protocols 记录做 dev/test；
+3. 从 `protocol_v1` 中优先抽长而细的 protocol 记录做 dev/test；
 4. 从 `title`、`abstract`、`materials/equipment` 自动构造 prompt；
-5. 先把 step 中的操作词映射到 `AutoBio / LabUtopia` 的 canonical actions；
+5. 先把 step 中的操作词映射到 `AutoBio` 与 `LabUtopia` 的 canonical actions；
 6. 再把 canonical actions 定义成 Python 函数签名；
 7. 把 gold protocol 转成 Python action program；
 8. 评测时再从程序反解出 `Protocol AST IR`；
@@ -483,7 +487,7 @@ cytokine_panel = analyze_cytokines(
 建议共享下面三层接口：
 
 1. **Biological Grounding**
-   由 `Nature Protocols` 提供实验阶段、设备用途和步骤语义。
+   由 `protocol` 提供实验阶段、设备用途和步骤语义。
 2. **Canonical Asset / Action Ontology**
    统一设备类别、部件、状态、典型操作和别名。
 3. **Python Action Program / Protocol AST IR**
@@ -491,12 +495,12 @@ cytokine_panel = analyze_cytokines(
 
 ```mermaid
 flowchart TD
-    A[Nature Protocols] --> B[Biological Grounding]
-    C[AutoBio + LabUtopia] --> D[Canonical Asset / Action Ontology]
-    A --> E[protocol_v1<br/>local Nature Protocols snapshot]
-    E --> F[Repo Working Set]
+    A[protocol<br/>Nature Protocols crawl / protocol_v1] --> B[Biological Grounding]
+    C[AutoBio] --> D[Canonical Asset Ontology]
+    E[LabUtopia] --> F[Canonical Action Ontology]
     B --> G[Asset MCQ generation]
     D --> G
+    F --> G
     B --> H[Python Action Program]
     D --> H
     F --> H
@@ -507,7 +511,7 @@ flowchart TD
 这有两个直接好处：
 
 - 第一块不会只学视觉分类，而会学到对后续 planning 真有用的设备语义；
-- 第二块不会只生成漂亮文本，而会天然受 `AutoBio / LabUtopia` 的 asset / action 空间约束。
+- 第二块不会只生成漂亮文本，而会天然受 `AutoBio` 与 `LabUtopia` 的 asset / action 空间约束。
 
 ## Part III: Sim2Real
 
@@ -517,7 +521,7 @@ flowchart TD
 
 - 先把 `biological grounding`、`asset/action ontology`、Python action spec 和 `Protocol AST IR` 定稳；
 - 先把前两块 benchmark 做到可跑、可评分、可扩展；
-- 等第一块和第二块稳定后，再把输出更自然地接到 `AutoBio / LabUtopia` 风格的仿真与执行接口。
+- 等第一块和第二块稳定后，再把输出更自然地接到 `AutoBio` 与 `LabUtopia` 风格的仿真与执行接口。
 
 ## 建议的 MVP 路线
 
@@ -532,16 +536,16 @@ flowchart TD
 
 ### Phase 1: Asset Understanding MVP
 
-- 从 `AutoBio / LabUtopia` 整理高频 asset family
-- 用 `Nature Protocols` 及其仓库内本地工作集 `protocol_v1` 补设备用途与别名
+- 从 `AutoBio` 与 `LabUtopia` 整理高频 asset family
+- 用 `protocol_v1` 补设备用途与别名
 - 选 20 到 30 个高频设备 family
 - 每个 family 收若干公开图片
 - 做 300 到 1000 条高质量单选题
 
 ### Phase 2: Long-Horizon Planning MVP
 
-- 基于 `Nature Protocols` 及其本地工作集 `protocol_v1` 构造 `P1` 任务
-- 接入 `AutoBio / LabUtopia` 的 asset / action 词表
+- 基于 `protocol_v1` 构造 `P1` 任务
+- 接入 `AutoBio` 与 `LabUtopia` 的 asset / action 词表
 - 先做 100 到 300 条高质量 dev/test
 - 跑通结构化协议生成与自动评分
 - 再扩到 `P2` / `P3`
@@ -557,16 +561,15 @@ flowchart TD
 
 如果现在目标是尽快把 benchmark 做成形，那么最稳的落地顺序是：
 
-1. 先以 `Nature Protocols` 定义 benchmark 的科学锚点；
-2. 再用 `AutoBio / LabUtopia` 定义 assets 和 actions 的可执行锚点；
-3. 用仓库内的 `protocol_v1` 这个 Nature Protocols 本地工作集，把 planning 数据准备和设备覆盖快速做起来；
+1. 先以 `protocol_v1` 定义 benchmark 的科学锚点和规划语料；
+2. 再用 `AutoBio` 与 `LabUtopia` 定义 assets 和 actions 的可执行锚点；
+3. 用这三个数据源的对齐结果，把 planning 数据准备和设备覆盖快速做起来；
 4. 围绕高频资产做 `experimental asset understanding` 的图像题；
 5. 最后再考虑 sim2real。
 
 换句话说，LabOS 的主线应该写成：
 
-- **Nature Protocols 提供生物理解与详细步骤；**
-- **`protocol_v1` 是 Nature Protocols 在当前仓库中的本地工作集，而不是第三个独立来源；**
-- **AutoBio + LabUtopia 提供 assets 与 actions；**
+- **`protocol_v1` 就是 protocol 数据源本身，也就是爬取下来的 Nature Protocols 语料；**
+- **AutoBio 与 LabUtopia 提供 assets 与 actions；**
 - **前两块 benchmark 负责把这两套世界观对齐起来；**
 - **后续 sim2real 再承接这个统一接口。**
