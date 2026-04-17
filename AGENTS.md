@@ -14,12 +14,13 @@
 
 - 这个仓库是 `LabOS` 的公开主页仓库。
 - `README.md` 负责描述 benchmark 的总体设计。
-- `README.md` 当前应保持紧凑的编号结构：
+- `README.md` 当前应保持固定的编号结构：
   - `1. 数据构造管线`
   - `2. Level 1`
   - `3. Level 2`
   - `4. Level 3`
   - 每个 level 默认写成“整体介绍 / 输入 / 输出 / 指标”
+  - 在不改章节骨架的前提下，应尽量把任务定义、数据来源、输出约束和指标计算方式写清楚，不能只停留在一句话定义
 - `docs/` 是 GitHub Pages 使用的静态站点目录。
 - `data/protocol_v1/` 就是 protocol 数据源本身，也就是爬取下来的 `Nature Protocols` 语料，不要默认改动。
 
