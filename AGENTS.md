@@ -16,6 +16,8 @@
 - 这个仓库是 `LabOS` 的公开主页仓库。
 - `README.md` 负责描述 benchmark 的总体设计。
 - `data/assets_actions/autobio_labutopia_assets_actions.md` 记录了 AutoBio 与 LabUtopia 的资产、动作、场景、controller 组合与对 benchmark 的映射，是后续设计具身 benchmark 时的主索引文档。
+- `data/benchmark_inventory/` 是统一的实验室条目目录，不再只按 asset 口径组织；这里要同时覆盖独立对象、组合对象、场景内对象引用、完整场景与少量场景相关文件。
+- `data/benchmark_inventory/README.md` 是这个目录唯一需要长期维护的说明文档；旧的拆分文档如 `benchmark_asset_catalog.md`、`upstream_repo_inventory.md` 都已经废弃，不要再恢复双份说明。
 - `README.md` 当前应保持固定的编号结构：
   - `1. 数据构造管线`
   - `2. Level 1`
@@ -253,10 +255,20 @@
     - `sse-starlette 3.3.3` 需要 `starlette>=0.49.1`，当前是 `0.41.3`
   - 这两条冲突在本次截图工作里不是直接 blocker，但说明 `agent` 环境不适合作为 3D 渲染的首选环境
 - 做渲染或图片生成时，缓存目录也要显式改到仓库可见位置，避免 Matplotlib / pip / XDG 默认写到仓库外：
-  - `MPLCONFIGDIR=/当前仓库/data/benchmark_assets/runtime/mplconfig`
-  - `XDG_CACHE_HOME=/当前仓库/data/benchmark_assets/runtime/cache`
-  - `PIP_CACHE_DIR=/当前仓库/data/benchmark_assets/runtime/pip_cache`
-- 当前仓库在 shell 下向 `data/benchmark_assets/` 新建目录或批量写文件时，沙箱可能报 `Read-only file system`；这类生成型任务应直接使用正规提权执行，不要改写到外部临时目录规避。
+  - `MPLCONFIGDIR=/当前仓库/data/benchmark_inventory/runtime/mplconfig`
+  - `XDG_CACHE_HOME=/当前仓库/data/benchmark_inventory/runtime/cache`
+  - `PIP_CACHE_DIR=/当前仓库/data/benchmark_inventory/runtime/pip_cache`
+- 当前仓库在 shell 下向 `data/benchmark_inventory/` 新建目录或批量写文件时，沙箱可能报 `Read-only file system`；这类生成型任务应直接使用正规提权执行，不要改写到外部临时目录规避。
+- `AutoBio` 预览渲染的稳定做法已经确认：
+  - 需要在 `autobio` 环境里先加载 `libmjlab.so.3.3.0`
+  - 加载 XML 前把当前工作目录切到外部 `AutoBio/autobio` 根目录，否则相对 mesh / plugin 引用容易失败
+  - 对 `model/object/` 下同时存在 `.xml` 与 `.gen.xml` 的 family，静态预览优先使用 `.gen.xml`
+  - 某些复制到当前仓库内的 `data/benchmark_inventory/files/autobio/...` 路径在渲染时应映射回外部只读 `AutoBio` 根目录，再交给 MuJoCo 加载
+- `benchmark_inventory` 目录下本地会生成三类 protocol 匹配结果：
+  - `protocol_min_v1_with_inventory.jsonl`
+  - `protocol_min_v1_inventory_matches.jsonl`
+  - `protocol_min_v1_inventory_matches.stats.json`
+  这些文件默认 `gitignore`，用于本地构造和验证，不是公开仓库的核心展示文件。
 - 介绍 benchmark 时，优先写清：
   - 任务定义
   - 输入输出形式
