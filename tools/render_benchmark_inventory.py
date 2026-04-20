@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 from __future__ import annotations
 
+import html
 import json
 import math
 import os
@@ -1140,33 +1141,62 @@ def merged_scene_rows(manifest: dict[str, dict[str, str]]) -> list[TableRow]:
     return rows
 
 
-def core_inventory_rows(
+def html_anchor(href: str, label: str) -> str:
+    return f'<a href="{html.escape(href, quote=True)}">{html.escape(label)}</a>'
+
+
+def path_link_html(path: str, label: str | None = None) -> str:
+    href = readme_href(path)
+    if href is None:
+        return f"<code>{html.escape(path)}</code>"
+    target, fragment = href
+    text = html_anchor(target, label or short_path_label(path))
+    if fragment:
+        return f"{text}<br><code>#{html.escape(fragment)}</code>"
+    return text
+
+
+def core_inventory_html_blocks(
     manifest: dict[str, dict[str, str]],
     entries: list[dict[str, Any]],
-) -> list[TableRow]:
-    rows = []
+) -> str:
+    blocks: list[str] = []
     for entry in entries:
-        rows.append(
-            TableRow(
-                [
-                    image_cell(
-                        manifest["core_entries"].get(entry["entry_id"]),
-                        entry["entry_name"],
-                        width=360,
-                    ),
-                    entry["entry_name"],
-                    source_label(entry["source_project"]),
-                    REFERENCE_KIND_LABELS[entry["reference_kind"]],
-                    entry["match_group"],
-                    "<br>".join(entry["aliases"]),
-                    entry["purpose"],
-                    path_link(entry["local_relative_path"]),
-                    render_status_label(entry["render_status"]),
-                    f"[源文件]({entry['original_url']})",
-                ]
-            )
+        image_path = manifest["core_entries"].get(entry["entry_id"])
+        image_html = (
+            f'<img src="{html.escape(image_path, quote=True)}" width="420" alt="{html.escape(entry["entry_name"], quote=True)}">'
+            if image_path
+            else ""
         )
-    return rows
+        aliases = "<br>".join(html.escape(alias) for alias in entry["aliases"])
+        original_link = html_anchor(entry["original_url"], "源文件")
+        block = "\n".join(
+            [
+                '<table>',
+                "  <tr>",
+                '    <td valign="top" width="450">',
+                f"      {image_html}",
+                "    </td>",
+                '    <td valign="top">',
+                f'      <p><strong>{html.escape(entry["entry_name"])}</strong></p>',
+                f'      <p><strong>来源：</strong>{html.escape(source_label(entry["source_project"]))}<br>',
+                f'      <strong>层级：</strong>{html.escape(REFERENCE_KIND_LABELS[entry["reference_kind"]])}<br>',
+                f'      <strong>匹配组：</strong><code>{html.escape(entry["match_group"])}</code></p>',
+                f'      <p><strong>用途：</strong>{html.escape(entry["purpose"])}</p>',
+                f'      <p><strong>本地文件：</strong>{path_link_html(entry["local_relative_path"])}</p>',
+                f'      <p><strong>可视化状态：</strong>{html.escape(render_status_label(entry["render_status"]))}<br>',
+                f'      <strong>原始链接：</strong>{original_link}</p>',
+                "      <details>",
+                "        <summary><strong>别名</strong></summary>",
+                f"        <p>{aliases}</p>",
+                "      </details>",
+                "    </td>",
+                "  </tr>",
+                "</table>",
+            ]
+        )
+        blocks.append(block)
+    return "\n\n".join(blocks)
 
 
 def write_readme(manifest: dict[str, dict[str, str]]) -> None:
@@ -1177,7 +1207,7 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
     standalone_rows = merged_standalone_rows(manifest)
     composite_rows = merged_composite_rows(manifest)
     scene_rows = merged_scene_rows(manifest)
-    core_rows = core_inventory_rows(manifest, entries)
+    core_blocks = core_inventory_html_blocks(manifest, entries)
 
     auto_core_count = sum(1 for entry in entries if entry["source_project"] == "autobio")
     lab_core_count = sum(1 for entry in entries if entry["source_project"] == "labutopia")
@@ -1268,10 +1298,9 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "",
         "### 5.2 核心条目表",
         "",
-        make_table(
-            ["预览", "条目名称", "来源", "层级", "匹配组", "别名", "用途", "本地文件", "可视化状态", "原始链接"],
-            core_rows,
-        ),
+        "这一节改为 HTML 两列布局：左侧固定放大预览图，右侧放条目字段，避免 GitHub Markdown 表格把图片继续压缩。",
+        "",
+        core_blocks,
         "",
         "## 6. 当前结论",
         "",

@@ -192,37 +192,645 @@ flowchart LR
 
 ### 5.2 核心条目表
 
-| 预览 | 条目名称 | 来源 | 层级 | 匹配组 | 别名 | 用途 | 本地文件 | 可视化状态 | 原始链接 |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| <img src="previews/core/autobio/autobio-cell-dish-100.png" width="360" alt="100 mm Cell Dish"> | 100 mm Cell Dish | AutoBio | 独立对象 | cell_dish | cell dish<br>cell dishes<br>cell culture dish<br>cell culture dishes<br>culture dish<br>culture dishes<br>petri dish<br>petri dishes | Cell culture plate for seeding, incubation, washing, and imaging. | [cell_dish_100_vis.obj](files/autobio/autobio/assets/container/cell_dish_100_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/cell_dish_100_vis.obj) |
-| <img src="previews/core/autobio/autobio-centrifuge-1-5ml-screw.png" width="360" alt="1.5 mL Screw-Cap Microcentrifuge Tube"> | 1.5 mL Screw-Cap Microcentrifuge Tube | AutoBio | 独立对象 | microcentrifuge_tube_1_5ml | microcentrifuge tube<br>microcentrifuge tubes<br>eppendorf tube<br>eppendorf tubes<br>1.5 ml tube<br>1.5 ml tubes<br>1.5 ml microcentrifuge tube<br>1.5 ml centrifuge tube<br>1.5 ml screw cap tube | Small sample tube for aliquoting, mixing, incubation, and centrifugation. | [centrifuge_1-5ml_screw_vis/](files/autobio/autobio/assets/container/centrifuge_1-5ml_screw_vis) | 可直接按 mesh 渲染 | [源文件](https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_1-5ml_screw_vis) |
-| <img src="previews/core/autobio/autobio-centrifuge-10ml.png" width="360" alt="10 mL Centrifuge Tube"> | 10 mL Centrifuge Tube | AutoBio | 独立对象 | centrifuge_tube_10ml | 10 ml centrifuge tube<br>10 ml centrifuge tubes<br>10ml centrifuge tube<br>10 ml tube<br>10 ml tubes | Medium-volume sample tube for transfer and centrifugation. | [centrifuge_10ml_vis.obj](files/autobio/autobio/assets/container/centrifuge_10ml_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_10ml_vis.obj) |
-| <img src="previews/core/autobio/autobio-centrifuge-1500ul-open.png" width="360" alt="1.5 mL Open Microcentrifuge Tube"> | 1.5 mL Open Microcentrifuge Tube | AutoBio | 独立对象 | microcentrifuge_tube_1_5ml | microcentrifuge tube<br>microcentrifuge tubes<br>eppendorf tube<br>eppendorf tubes<br>1.5 ml tube<br>1.5 ml tubes<br>1.5 ml microcentrifuge tube<br>1.5 ml centrifuge tube<br>1.5 ml screw cap tube | Open microcentrifuge tube for liquid handling and insertion tasks. | [centrifuge_1500ul_no_lid_vis.obj](files/autobio/autobio/assets/container/centrifuge_1500ul_no_lid_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_1500ul_no_lid_vis.obj) |
-| <img src="previews/core/autobio/autobio-centrifuge-15ml-screw.png" width="360" alt="15 mL Screw-Cap Centrifuge Tube"> | 15 mL Screw-Cap Centrifuge Tube | AutoBio | 独立对象 | centrifuge_tube_15ml | 15 ml centrifuge tube<br>15 ml centrifuge tubes<br>15ml centrifuge tube<br>15 ml conical tube<br>15 ml conical tubes<br>15ml conical tube<br>15 ml falcon tube<br>15 ml falcon tubes | Conical sample tube for medium-volume transfer and centrifugation. | [centrifuge_15ml_screw_vis/](files/autobio/autobio/assets/container/centrifuge_15ml_screw_vis) | 可直接按 mesh 渲染 | [源文件](https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_15ml_screw_vis) |
-| <img src="previews/core/autobio/autobio-centrifuge-50ml.png" width="360" alt="50 mL Centrifuge Tube"> | 50 mL Centrifuge Tube | AutoBio | 独立对象 | centrifuge_tube_50ml | 50 ml centrifuge tube<br>50 ml centrifuge tubes<br>50ml centrifuge tube<br>50 ml conical tube<br>50 ml conical tubes<br>50ml conical tube<br>50 ml falcon tube<br>50 ml falcon tubes<br>falcon tube<br>falcon tubes | Large conical tube for reagent preparation and centrifugation. | [centrifuge_50ml_vis.obj](files/autobio/autobio/assets/container/centrifuge_50ml_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_50ml_vis.obj) |
-| <img src="previews/core/autobio/autobio-centrifuge-50ml-screw.png" width="360" alt="50 mL Screw-Cap Centrifuge Tube"> | 50 mL Screw-Cap Centrifuge Tube | AutoBio | 独立对象 | centrifuge_tube_50ml | 50 ml centrifuge tube<br>50 ml centrifuge tubes<br>50ml centrifuge tube<br>50 ml conical tube<br>50 ml conical tubes<br>50ml conical tube<br>50 ml falcon tube<br>50 ml falcon tubes<br>falcon tube<br>falcon tubes | Large screw-cap tube for sealed transfer and centrifugation. | [centrifuge_50ml_screw_vis/](files/autobio/autobio/assets/container/centrifuge_50ml_screw_vis) | 可直接按 mesh 渲染 | [源文件](https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_50ml_screw_vis) |
-| <img src="previews/core/autobio/autobio-cryovial-1-8ml.png" width="360" alt="1.8 mL Cryovial"> | 1.8 mL Cryovial | AutoBio | 独立对象 | cryovial | cryovial<br>cryovials<br>cryo vial<br>cryo vials<br>cryogenic vial<br>cryogenic vials | Cryogenic storage vial for frozen samples and aliquots. | [cryovial_1-8ml_vis/](files/autobio/autobio/assets/container/cryovial_1-8ml_vis) | 可直接按 mesh 渲染 | [源文件](https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/cryovial_1-8ml_vis) |
-| <img src="previews/core/autobio/autobio-pcr-plate-96well.png" width="360" alt="96-Well PCR Plate"> | 96-Well PCR Plate | AutoBio | 独立对象 | pcr_plate | pcr plate<br>pcr plates<br>96 well pcr plate<br>96 well pcr plates<br>96 well plate<br>96 well plates<br>96 well microplate<br>96 well microplates | Plate for PCR setup, thermal cycling, and sample organization. | [pcr_plate_96well_vis.obj](files/autobio/autobio/assets/container/pcr_plate_96well_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/pcr_plate_96well_vis.obj) |
-| <img src="previews/core/autobio/autobio-tip-200ul.png" width="360" alt="200 uL Pipette Tip"> | 200 uL Pipette Tip | AutoBio | 独立对象 | pipette_tip | pipette tip<br>pipette tips<br>micropipette tip<br>micropipette tips<br>200 ul tip<br>200 ul tips<br>200 ul pipette tip<br>200 ul pipette tips | Disposable liquid-handling tip for pipetting small volumes. | [visual.obj](files/autobio/autobio/assets/container/tip_200ul_vis/visual.obj) | 可直接按 mesh 渲染 | [源文件](https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/tip_200ul_vis) |
-| <img src="previews/core/autobio/autobio-pipette.png" width="360" alt="Micropipette"> | Micropipette | AutoBio | 组合对象 | pipette | pipette<br>pipettes<br>micropipette<br>micropipettes<br>single channel pipette<br>single channel pipettes | Manual pipette for aspirating and dispensing liquids. | [pipette.gen.xml](files/autobio/autobio/model/object/pipette.gen.xml) | 可直接按 MJCF 装配渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/object/pipette.gen.xml) |
-| <img src="previews/core/autobio/autobio-tip-box-24slot.png" width="360" alt="24-Slot Tip Box"> | 24-Slot Tip Box | AutoBio | 独立对象 | tip_box | tip box<br>tip boxes<br>pipette tip box<br>pipette tip boxes | Container for storing and presenting pipette tips. | [tip_box_24slot_vis.obj](files/autobio/autobio/assets/rack/tip_box_24slot_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/tip_box_24slot_vis.obj) |
-| <img src="previews/core/autobio/autobio-pipette-rack-tri.png" width="360" alt="Triangular Pipette Rack"> | Triangular Pipette Rack | AutoBio | 独立对象 | pipette_rack | pipette rack<br>pipette racks<br>pipette holder<br>pipette holders<br>pipette stand<br>pipette stands | Rack for holding pipettes upright between operations. | [pipette_rack_tri_vis.obj](files/autobio/autobio/assets/rack/pipette_rack_tri_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/pipette_rack_tri_vis.obj) |
-| <img src="previews/core/autobio/autobio-centrifuge-10slot-rack.png" width="360" alt="10-Slot Centrifuge Tube Rack"> | 10-Slot Centrifuge Tube Rack | AutoBio | 独立对象 | tube_rack | tube rack<br>tube racks<br>centrifuge tube rack<br>centrifuge tube racks<br>microcentrifuge tube rack<br>microcentrifuge tube racks<br>test tube rack<br>test tube racks | Rack for organizing and positioning sample tubes. | [centrifuge_10slot_vis.obj](files/autobio/autobio/assets/rack/centrifuge_10slot_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/centrifuge_10slot_vis.obj) |
-| <img src="previews/core/autobio/autobio-centrifuge-plate-60well.png" width="360" alt="60-Well Plate Rack"> | 60-Well Plate Rack | AutoBio | 独立对象 | tube_rack | tube rack<br>tube racks<br>centrifuge tube rack<br>centrifuge tube racks<br>microcentrifuge tube rack<br>microcentrifuge tube racks<br>test tube rack<br>test tube racks | Multi-well rack for arranging small tubes or vials. | [centrifuge_plate_60well_vis.obj](files/autobio/autobio/assets/rack/centrifuge_plate_60well_vis.obj) | 可直接按 mesh 渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/centrifuge_plate_60well_vis.obj) |
-| <img src="previews/core/autobio/autobio-centrifuge-5430.png" width="360" alt="Eppendorf 5430 Centrifuge"> | Eppendorf 5430 Centrifuge | AutoBio | 组合对象 | centrifuge | centrifuge<br>centrifuges<br>microcentrifuge<br>microcentrifuges<br>bench centrifuge<br>bench centrifuges<br>refrigerated centrifuge<br>refrigerated centrifuges | Bench centrifuge for spinning small sample tubes. | [centrifuge_eppendorf_5430.xml](files/autobio/autobio/model/instrument/centrifuge_eppendorf_5430.xml) | 可直接按 MJCF 装配渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_eppendorf_5430.xml) |
-| <img src="previews/core/autobio/autobio-centrifuge-5910-ri.png" width="360" alt="Eppendorf 5910 Ri Centrifuge"> | Eppendorf 5910 Ri Centrifuge | AutoBio | 组合对象 | centrifuge | centrifuge<br>centrifuges<br>microcentrifuge<br>microcentrifuges<br>bench centrifuge<br>bench centrifuges<br>refrigerated centrifuge<br>refrigerated centrifuges | Large refrigerated centrifuge for higher-volume tube spinning. | [centrifuge_eppendorf_5910_ri.xml](files/autobio/autobio/model/instrument/centrifuge_eppendorf_5910_ri.xml) | 可直接按 MJCF 装配渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_eppendorf_5910_ri.xml) |
-| <img src="previews/core/autobio/autobio-centrifuge-tgear-mini.png" width="360" alt="Tiangen Tgear Mini Centrifuge"> | Tiangen Tgear Mini Centrifuge | AutoBio | 组合对象 | centrifuge | centrifuge<br>centrifuges<br>microcentrifuge<br>microcentrifuges<br>bench centrifuge<br>bench centrifuges<br>refrigerated centrifuge<br>refrigerated centrifuges | Compact mini centrifuge for quick spin-down operations. | [centrifuge_tiangen_tgear_mini.xml](files/autobio/autobio/model/instrument/centrifuge_tiangen_tgear_mini.xml) | 可直接按 MJCF 装配渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_tiangen_tgear_mini.xml) |
-| <img src="previews/core/autobio/autobio-thermal-cycler-c1000.png" width="360" alt="Bio-Rad C1000 Thermal Cycler"> | Bio-Rad C1000 Thermal Cycler | AutoBio | 组合对象 | thermal_cycler | thermal cycler<br>thermal cyclers<br>thermocycler<br>thermocyclers<br>pcr machine<br>pcr machines | PCR instrument for running thermal cycling programs. | [thermal_cycler_biorad_c1000.xml](files/autobio/autobio/model/instrument/thermal_cycler_biorad_c1000.xml) | 可直接按 MJCF 装配渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/thermal_cycler_biorad_c1000.xml) |
-| <img src="previews/core/autobio/autobio-thermal-mixer-eppendorf-c.png" width="360" alt="Eppendorf C Thermal Mixer"> | Eppendorf C Thermal Mixer | AutoBio | 组合对象 | thermal_mixer | thermal mixer<br>thermal mixers<br>thermomixer<br>thermomixers<br>heat shaker<br>heat shakers | Instrument for controlled heating and shaking of samples. | [thermal_mixer_eppendorf_c.xml](files/autobio/autobio/model/instrument/thermal_mixer_eppendorf_c.xml) | 可直接按 MJCF 装配渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/thermal_mixer_eppendorf_c.xml) |
-| <img src="previews/core/autobio/autobio-vortex-mixer-genie-2.png" width="360" alt="Genie 2 Vortex Mixer"> | Genie 2 Vortex Mixer | AutoBio | 组合对象 | vortex_mixer | vortex mixer<br>vortex mixers<br>vortexer<br>vortexers<br>vortex genie | Mixer for vortexing tubes and suspensions. | [vortex_mixer_genie_2.xml](files/autobio/autobio/model/instrument/vortex_mixer_genie_2.xml) | 可直接按 MJCF 装配渲染 | [源文件](https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/vortex_mixer_genie_2.xml) |
-| <img src="previews/core/labutopia/labutopia-beaker-family.png" width="360" alt="Beaker Family"> | Beaker Family | LabUtopia | 场景内对象引用 | beaker | beaker<br>beakers<br>glass beaker<br>glass beakers | General glass container for mixing, pouring, heating, and transfer. | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd)<br><code>#/World/beaker</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd) |
-| <img src="previews/core/labutopia/labutopia-conical-bottle-family.png" width="360" alt="Conical Bottle / Flask Family"> | Conical Bottle / Flask Family | LabUtopia | 场景内对象引用 | conical_bottle | conical bottle<br>conical bottles<br>erlenmeyer flask<br>erlenmeyer flasks<br>conical flask<br>conical flasks | Flask-style glassware for liquid storage, mixing, and pouring. | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd)<br><code>#/World/conical_bottle02</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd) |
-| <img src="previews/core/labutopia/labutopia-graduated-cylinder-03.png" width="360" alt="Graduated Cylinder"> | Graduated Cylinder | LabUtopia | 场景内对象引用 | graduated_cylinder | graduated cylinder<br>graduated cylinders<br>measuring cylinder<br>measuring cylinders | Volumetric cylinder for measuring and dispensing liquids. | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd)<br><code>#/World/graduated_cylinder_03</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd) |
-| <img src="previews/core/labutopia/labutopia-glass-rod.png" width="360" alt="Glass Rod"> | Glass Rod | LabUtopia | 场景内对象引用 | glass_rod | glass rod<br>glass rods<br>stirring rod<br>stirring rods<br>glass stirring rod<br>glass stirring rods | Rod for manual stirring and mixing. | [lab_003.usd](files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd)<br><code>#/World/glass_rod</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd) |
-| <img src="previews/core/labutopia/labutopia-test-tube-rack.png" width="360" alt="Test Tube Rack"> | Test Tube Rack | LabUtopia | 场景内对象引用 | tube_rack | tube rack<br>tube racks<br>centrifuge tube rack<br>centrifuge tube racks<br>microcentrifuge tube rack<br>microcentrifuge tube racks<br>test tube rack<br>test tube racks | Rack for holding tubes upright during preparation and storage. | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd)<br><code>#/World/test_tube_rack</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd) |
-| <img src="previews/core/labutopia/labutopia-drying-box-family.png" width="360" alt="Drying Box Family"> | Drying Box Family | LabUtopia | 场景内对象引用 | drying_box | drying box<br>drying boxes<br>dry box<br>dry boxes<br>drying oven<br>drying ovens<br>drying chamber<br>drying chambers | Device used for drying or enclosed heating workflows. | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd)<br><code>#/World/DryingBox_01</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd) |
-| <img src="previews/core/labutopia/labutopia-heat-device.png" width="360" alt="Heat Device / Hot Plate"> | Heat Device / Hot Plate | LabUtopia | 场景内对象引用 | heating_device | hot plate<br>hot plates<br>heating plate<br>heating plates<br>heating device<br>heating devices<br>heat device<br>heat devices<br>heater<br>heaters | Heating surface or device used to activate thermal tasks. | [lab_003.usd](files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd)<br><code>#/World/heat_device</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd) |
-| <img src="previews/core/labutopia/labutopia-muffle-furnace.png" width="360" alt="Muffle Furnace"> | Muffle Furnace | LabUtopia | 场景内对象引用 | muffle_furnace | muffle furnace<br>muffle furnaces<br>laboratory furnace<br>laboratory furnaces | High-temperature heating device for enclosed furnace operations. | [Scene1_hard.usd](files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd)<br><code>#/World/MuffleFurnace</code> | 当前使用 USD 场景缩略图展示 | [源文件](https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/hard_task/Scene1_hard.usd) |
+这一节改为 HTML 两列布局：左侧固定放大预览图，右侧放条目字段，避免 GitHub Markdown 表格把图片继续压缩。
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-cell-dish-100.png" width="420" alt="100 mm Cell Dish">
+    </td>
+    <td valign="top">
+      <p><strong>100 mm Cell Dish</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>cell_dish</code></p>
+      <p><strong>用途：</strong>Cell culture plate for seeding, incubation, washing, and imaging.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/cell_dish_100_vis.obj">cell_dish_100_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/cell_dish_100_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>cell dish<br>cell dishes<br>cell culture dish<br>cell culture dishes<br>culture dish<br>culture dishes<br>petri dish<br>petri dishes</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-1-5ml-screw.png" width="420" alt="1.5 mL Screw-Cap Microcentrifuge Tube">
+    </td>
+    <td valign="top">
+      <p><strong>1.5 mL Screw-Cap Microcentrifuge Tube</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>microcentrifuge_tube_1_5ml</code></p>
+      <p><strong>用途：</strong>Small sample tube for aliquoting, mixing, incubation, and centrifugation.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/centrifuge_1-5ml_screw_vis">centrifuge_1-5ml_screw_vis/</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_1-5ml_screw_vis">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>microcentrifuge tube<br>microcentrifuge tubes<br>eppendorf tube<br>eppendorf tubes<br>1.5 ml tube<br>1.5 ml tubes<br>1.5 ml microcentrifuge tube<br>1.5 ml centrifuge tube<br>1.5 ml screw cap tube</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-10ml.png" width="420" alt="10 mL Centrifuge Tube">
+    </td>
+    <td valign="top">
+      <p><strong>10 mL Centrifuge Tube</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>centrifuge_tube_10ml</code></p>
+      <p><strong>用途：</strong>Medium-volume sample tube for transfer and centrifugation.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/centrifuge_10ml_vis.obj">centrifuge_10ml_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_10ml_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>10 ml centrifuge tube<br>10 ml centrifuge tubes<br>10ml centrifuge tube<br>10 ml tube<br>10 ml tubes</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-1500ul-open.png" width="420" alt="1.5 mL Open Microcentrifuge Tube">
+    </td>
+    <td valign="top">
+      <p><strong>1.5 mL Open Microcentrifuge Tube</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>microcentrifuge_tube_1_5ml</code></p>
+      <p><strong>用途：</strong>Open microcentrifuge tube for liquid handling and insertion tasks.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/centrifuge_1500ul_no_lid_vis.obj">centrifuge_1500ul_no_lid_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_1500ul_no_lid_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>microcentrifuge tube<br>microcentrifuge tubes<br>eppendorf tube<br>eppendorf tubes<br>1.5 ml tube<br>1.5 ml tubes<br>1.5 ml microcentrifuge tube<br>1.5 ml centrifuge tube<br>1.5 ml screw cap tube</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-15ml-screw.png" width="420" alt="15 mL Screw-Cap Centrifuge Tube">
+    </td>
+    <td valign="top">
+      <p><strong>15 mL Screw-Cap Centrifuge Tube</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>centrifuge_tube_15ml</code></p>
+      <p><strong>用途：</strong>Conical sample tube for medium-volume transfer and centrifugation.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/centrifuge_15ml_screw_vis">centrifuge_15ml_screw_vis/</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_15ml_screw_vis">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>15 ml centrifuge tube<br>15 ml centrifuge tubes<br>15ml centrifuge tube<br>15 ml conical tube<br>15 ml conical tubes<br>15ml conical tube<br>15 ml falcon tube<br>15 ml falcon tubes</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-50ml.png" width="420" alt="50 mL Centrifuge Tube">
+    </td>
+    <td valign="top">
+      <p><strong>50 mL Centrifuge Tube</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>centrifuge_tube_50ml</code></p>
+      <p><strong>用途：</strong>Large conical tube for reagent preparation and centrifugation.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/centrifuge_50ml_vis.obj">centrifuge_50ml_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_50ml_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>50 ml centrifuge tube<br>50 ml centrifuge tubes<br>50ml centrifuge tube<br>50 ml conical tube<br>50 ml conical tubes<br>50ml conical tube<br>50 ml falcon tube<br>50 ml falcon tubes<br>falcon tube<br>falcon tubes</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-50ml-screw.png" width="420" alt="50 mL Screw-Cap Centrifuge Tube">
+    </td>
+    <td valign="top">
+      <p><strong>50 mL Screw-Cap Centrifuge Tube</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>centrifuge_tube_50ml</code></p>
+      <p><strong>用途：</strong>Large screw-cap tube for sealed transfer and centrifugation.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/centrifuge_50ml_screw_vis">centrifuge_50ml_screw_vis/</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_50ml_screw_vis">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>50 ml centrifuge tube<br>50 ml centrifuge tubes<br>50ml centrifuge tube<br>50 ml conical tube<br>50 ml conical tubes<br>50ml conical tube<br>50 ml falcon tube<br>50 ml falcon tubes<br>falcon tube<br>falcon tubes</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-cryovial-1-8ml.png" width="420" alt="1.8 mL Cryovial">
+    </td>
+    <td valign="top">
+      <p><strong>1.8 mL Cryovial</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>cryovial</code></p>
+      <p><strong>用途：</strong>Cryogenic storage vial for frozen samples and aliquots.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/cryovial_1-8ml_vis">cryovial_1-8ml_vis/</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/cryovial_1-8ml_vis">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>cryovial<br>cryovials<br>cryo vial<br>cryo vials<br>cryogenic vial<br>cryogenic vials</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-pcr-plate-96well.png" width="420" alt="96-Well PCR Plate">
+    </td>
+    <td valign="top">
+      <p><strong>96-Well PCR Plate</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>pcr_plate</code></p>
+      <p><strong>用途：</strong>Plate for PCR setup, thermal cycling, and sample organization.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/pcr_plate_96well_vis.obj">pcr_plate_96well_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/pcr_plate_96well_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>pcr plate<br>pcr plates<br>96 well pcr plate<br>96 well pcr plates<br>96 well plate<br>96 well plates<br>96 well microplate<br>96 well microplates</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-tip-200ul.png" width="420" alt="200 uL Pipette Tip">
+    </td>
+    <td valign="top">
+      <p><strong>200 uL Pipette Tip</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>pipette_tip</code></p>
+      <p><strong>用途：</strong>Disposable liquid-handling tip for pipetting small volumes.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/container/tip_200ul_vis/visual.obj">visual.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/tip_200ul_vis">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>pipette tip<br>pipette tips<br>micropipette tip<br>micropipette tips<br>200 ul tip<br>200 ul tips<br>200 ul pipette tip<br>200 ul pipette tips</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-pipette.png" width="420" alt="Micropipette">
+    </td>
+    <td valign="top">
+      <p><strong>Micropipette</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>组合对象<br>
+      <strong>匹配组：</strong><code>pipette</code></p>
+      <p><strong>用途：</strong>Manual pipette for aspirating and dispensing liquids.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/model/object/pipette.gen.xml">pipette.gen.xml</a></p>
+      <p><strong>可视化状态：</strong>可直接按 MJCF 装配渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/object/pipette.gen.xml">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>pipette<br>pipettes<br>micropipette<br>micropipettes<br>single channel pipette<br>single channel pipettes</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-tip-box-24slot.png" width="420" alt="24-Slot Tip Box">
+    </td>
+    <td valign="top">
+      <p><strong>24-Slot Tip Box</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>tip_box</code></p>
+      <p><strong>用途：</strong>Container for storing and presenting pipette tips.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/rack/tip_box_24slot_vis.obj">tip_box_24slot_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/tip_box_24slot_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>tip box<br>tip boxes<br>pipette tip box<br>pipette tip boxes</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-pipette-rack-tri.png" width="420" alt="Triangular Pipette Rack">
+    </td>
+    <td valign="top">
+      <p><strong>Triangular Pipette Rack</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>pipette_rack</code></p>
+      <p><strong>用途：</strong>Rack for holding pipettes upright between operations.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/rack/pipette_rack_tri_vis.obj">pipette_rack_tri_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/pipette_rack_tri_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>pipette rack<br>pipette racks<br>pipette holder<br>pipette holders<br>pipette stand<br>pipette stands</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-10slot-rack.png" width="420" alt="10-Slot Centrifuge Tube Rack">
+    </td>
+    <td valign="top">
+      <p><strong>10-Slot Centrifuge Tube Rack</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>tube_rack</code></p>
+      <p><strong>用途：</strong>Rack for organizing and positioning sample tubes.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/rack/centrifuge_10slot_vis.obj">centrifuge_10slot_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/centrifuge_10slot_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>tube rack<br>tube racks<br>centrifuge tube rack<br>centrifuge tube racks<br>microcentrifuge tube rack<br>microcentrifuge tube racks<br>test tube rack<br>test tube racks</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-plate-60well.png" width="420" alt="60-Well Plate Rack">
+    </td>
+    <td valign="top">
+      <p><strong>60-Well Plate Rack</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>独立对象<br>
+      <strong>匹配组：</strong><code>tube_rack</code></p>
+      <p><strong>用途：</strong>Multi-well rack for arranging small tubes or vials.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/assets/rack/centrifuge_plate_60well_vis.obj">centrifuge_plate_60well_vis.obj</a></p>
+      <p><strong>可视化状态：</strong>可直接按 mesh 渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/centrifuge_plate_60well_vis.obj">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>tube rack<br>tube racks<br>centrifuge tube rack<br>centrifuge tube racks<br>microcentrifuge tube rack<br>microcentrifuge tube racks<br>test tube rack<br>test tube racks</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-5430.png" width="420" alt="Eppendorf 5430 Centrifuge">
+    </td>
+    <td valign="top">
+      <p><strong>Eppendorf 5430 Centrifuge</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>组合对象<br>
+      <strong>匹配组：</strong><code>centrifuge</code></p>
+      <p><strong>用途：</strong>Bench centrifuge for spinning small sample tubes.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/model/instrument/centrifuge_eppendorf_5430.xml">centrifuge_eppendorf_5430.xml</a></p>
+      <p><strong>可视化状态：</strong>可直接按 MJCF 装配渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_eppendorf_5430.xml">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>centrifuge<br>centrifuges<br>microcentrifuge<br>microcentrifuges<br>bench centrifuge<br>bench centrifuges<br>refrigerated centrifuge<br>refrigerated centrifuges</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-5910-ri.png" width="420" alt="Eppendorf 5910 Ri Centrifuge">
+    </td>
+    <td valign="top">
+      <p><strong>Eppendorf 5910 Ri Centrifuge</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>组合对象<br>
+      <strong>匹配组：</strong><code>centrifuge</code></p>
+      <p><strong>用途：</strong>Large refrigerated centrifuge for higher-volume tube spinning.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/model/instrument/centrifuge_eppendorf_5910_ri.xml">centrifuge_eppendorf_5910_ri.xml</a></p>
+      <p><strong>可视化状态：</strong>可直接按 MJCF 装配渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_eppendorf_5910_ri.xml">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>centrifuge<br>centrifuges<br>microcentrifuge<br>microcentrifuges<br>bench centrifuge<br>bench centrifuges<br>refrigerated centrifuge<br>refrigerated centrifuges</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-centrifuge-tgear-mini.png" width="420" alt="Tiangen Tgear Mini Centrifuge">
+    </td>
+    <td valign="top">
+      <p><strong>Tiangen Tgear Mini Centrifuge</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>组合对象<br>
+      <strong>匹配组：</strong><code>centrifuge</code></p>
+      <p><strong>用途：</strong>Compact mini centrifuge for quick spin-down operations.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/model/instrument/centrifuge_tiangen_tgear_mini.xml">centrifuge_tiangen_tgear_mini.xml</a></p>
+      <p><strong>可视化状态：</strong>可直接按 MJCF 装配渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_tiangen_tgear_mini.xml">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>centrifuge<br>centrifuges<br>microcentrifuge<br>microcentrifuges<br>bench centrifuge<br>bench centrifuges<br>refrigerated centrifuge<br>refrigerated centrifuges</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-thermal-cycler-c1000.png" width="420" alt="Bio-Rad C1000 Thermal Cycler">
+    </td>
+    <td valign="top">
+      <p><strong>Bio-Rad C1000 Thermal Cycler</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>组合对象<br>
+      <strong>匹配组：</strong><code>thermal_cycler</code></p>
+      <p><strong>用途：</strong>PCR instrument for running thermal cycling programs.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/model/instrument/thermal_cycler_biorad_c1000.xml">thermal_cycler_biorad_c1000.xml</a></p>
+      <p><strong>可视化状态：</strong>可直接按 MJCF 装配渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/thermal_cycler_biorad_c1000.xml">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>thermal cycler<br>thermal cyclers<br>thermocycler<br>thermocyclers<br>pcr machine<br>pcr machines</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-thermal-mixer-eppendorf-c.png" width="420" alt="Eppendorf C Thermal Mixer">
+    </td>
+    <td valign="top">
+      <p><strong>Eppendorf C Thermal Mixer</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>组合对象<br>
+      <strong>匹配组：</strong><code>thermal_mixer</code></p>
+      <p><strong>用途：</strong>Instrument for controlled heating and shaking of samples.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/model/instrument/thermal_mixer_eppendorf_c.xml">thermal_mixer_eppendorf_c.xml</a></p>
+      <p><strong>可视化状态：</strong>可直接按 MJCF 装配渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/thermal_mixer_eppendorf_c.xml">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>thermal mixer<br>thermal mixers<br>thermomixer<br>thermomixers<br>heat shaker<br>heat shakers</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/autobio/autobio-vortex-mixer-genie-2.png" width="420" alt="Genie 2 Vortex Mixer">
+    </td>
+    <td valign="top">
+      <p><strong>Genie 2 Vortex Mixer</strong></p>
+      <p><strong>来源：</strong>AutoBio<br>
+      <strong>层级：</strong>组合对象<br>
+      <strong>匹配组：</strong><code>vortex_mixer</code></p>
+      <p><strong>用途：</strong>Mixer for vortexing tubes and suspensions.</p>
+      <p><strong>本地文件：</strong><a href="files/autobio/autobio/model/instrument/vortex_mixer_genie_2.xml">vortex_mixer_genie_2.xml</a></p>
+      <p><strong>可视化状态：</strong>可直接按 MJCF 装配渲染<br>
+      <strong>原始链接：</strong><a href="https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/vortex_mixer_genie_2.xml">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>vortex mixer<br>vortex mixers<br>vortexer<br>vortexers<br>vortex genie</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-beaker-family.png" width="420" alt="Beaker Family">
+    </td>
+    <td valign="top">
+      <p><strong>Beaker Family</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>beaker</code></p>
+      <p><strong>用途：</strong>General glass container for mixing, pouring, heating, and transfer.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/beaker</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>beaker<br>beakers<br>glass beaker<br>glass beakers</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-conical-bottle-family.png" width="420" alt="Conical Bottle / Flask Family">
+    </td>
+    <td valign="top">
+      <p><strong>Conical Bottle / Flask Family</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>conical_bottle</code></p>
+      <p><strong>用途：</strong>Flask-style glassware for liquid storage, mixing, and pouring.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/conical_bottle02</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>conical bottle<br>conical bottles<br>erlenmeyer flask<br>erlenmeyer flasks<br>conical flask<br>conical flasks</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-graduated-cylinder-03.png" width="420" alt="Graduated Cylinder">
+    </td>
+    <td valign="top">
+      <p><strong>Graduated Cylinder</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>graduated_cylinder</code></p>
+      <p><strong>用途：</strong>Volumetric cylinder for measuring and dispensing liquids.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/graduated_cylinder_03</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>graduated cylinder<br>graduated cylinders<br>measuring cylinder<br>measuring cylinders</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-glass-rod.png" width="420" alt="Glass Rod">
+    </td>
+    <td valign="top">
+      <p><strong>Glass Rod</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>glass_rod</code></p>
+      <p><strong>用途：</strong>Rod for manual stirring and mixing.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd">lab_003.usd</a><br><code>#/World/glass_rod</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>glass rod<br>glass rods<br>stirring rod<br>stirring rods<br>glass stirring rod<br>glass stirring rods</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-test-tube-rack.png" width="420" alt="Test Tube Rack">
+    </td>
+    <td valign="top">
+      <p><strong>Test Tube Rack</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>tube_rack</code></p>
+      <p><strong>用途：</strong>Rack for holding tubes upright during preparation and storage.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/test_tube_rack</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>tube rack<br>tube racks<br>centrifuge tube rack<br>centrifuge tube racks<br>microcentrifuge tube rack<br>microcentrifuge tube racks<br>test tube rack<br>test tube racks</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-drying-box-family.png" width="420" alt="Drying Box Family">
+    </td>
+    <td valign="top">
+      <p><strong>Drying Box Family</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>drying_box</code></p>
+      <p><strong>用途：</strong>Device used for drying or enclosed heating workflows.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/DryingBox_01</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>drying box<br>drying boxes<br>dry box<br>dry boxes<br>drying oven<br>drying ovens<br>drying chamber<br>drying chambers</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-heat-device.png" width="420" alt="Heat Device / Hot Plate">
+    </td>
+    <td valign="top">
+      <p><strong>Heat Device / Hot Plate</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>heating_device</code></p>
+      <p><strong>用途：</strong>Heating surface or device used to activate thermal tasks.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd">lab_003.usd</a><br><code>#/World/heat_device</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>hot plate<br>hot plates<br>heating plate<br>heating plates<br>heating device<br>heating devices<br>heat device<br>heat devices<br>heater<br>heaters</p>
+      </details>
+    </td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td valign="top" width="450">
+      <img src="previews/core/labutopia/labutopia-muffle-furnace.png" width="420" alt="Muffle Furnace">
+    </td>
+    <td valign="top">
+      <p><strong>Muffle Furnace</strong></p>
+      <p><strong>来源：</strong>LabUtopia<br>
+      <strong>层级：</strong>场景内对象引用<br>
+      <strong>匹配组：</strong><code>muffle_furnace</code></p>
+      <p><strong>用途：</strong>High-temperature heating device for enclosed furnace operations.</p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd">Scene1_hard.usd</a><br><code>#/World/MuffleFurnace</code></p>
+      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/hard_task/Scene1_hard.usd">源文件</a></p>
+      <details>
+        <summary><strong>别名</strong></summary>
+        <p>muffle furnace<br>muffle furnaces<br>laboratory furnace<br>laboratory furnaces</p>
+      </details>
+    </td>
+  </tr>
+</table>
 
 ## 6. 当前结论
 
