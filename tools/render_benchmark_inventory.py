@@ -101,10 +101,10 @@ def path_cell(paths: list[str] | str) -> str:
     return "<br>".join(f"`{item}`" for item in paths)
 
 
-def image_cell(path: str | None, alt: str) -> str:
+def image_cell(path: str | None, alt: str, width: int = 160) -> str:
     if not path:
         return ""
-    return f'<img src="{path}" width="160" alt="{alt}">'
+    return f'<img src="{path}" width="{width}" alt="{alt}">'
 
 
 def media_url(path: str) -> str:
@@ -185,9 +185,72 @@ def placeholder_image(title: str, subtitle: str) -> Image.Image:
     return image
 
 
+def reference_card(title: str, subtitle: str, detail: str | None = None) -> Image.Image:
+    image = Image.new("RGB", (SCENE_WIDTH, SCENE_HEIGHT), color=(245, 247, 250))
+    draw = ImageDraw.Draw(image)
+    frame = (28, 28, image.width - 28, image.height - 84)
+    draw.rounded_rectangle(frame, radius=16, outline=(148, 163, 184), width=2, fill=(255, 255, 255))
+    draw.rounded_rectangle((52, 56, 136, 116), radius=10, outline=(59, 130, 246), width=2, fill=(239, 246, 255))
+    draw.rounded_rectangle((184, 56, 268, 116), radius=10, outline=(16, 185, 129), width=2, fill=(236, 253, 245))
+    draw.line((136, 86, 184, 86), fill=(100, 116, 139), width=3)
+    draw.polygon([(176, 79), (176, 93), (186, 86)], fill=(100, 116, 139))
+    icon_font = load_font(14)
+    draw.text((68, 75), "XML", font=icon_font, fill=(30, 64, 175))
+    draw.text((200, 75), "3D", font=icon_font, fill=(6, 95, 70))
+    note_font = load_font(16)
+    note = detail or "Use metadata card"
+    note_lines = wrap_text(draw, note, note_font, image.width - 88)
+    y = 132
+    for line in note_lines[:2]:
+        box = draw.textbbox((0, 0), line, font=note_font)
+        x = (image.width - (box[2] - box[0])) // 2
+        draw.text((x, y), line, font=note_font, fill=(71, 85, 105))
+        y += 20
+    return add_label(image, title, subtitle)
+
+
 def save_image(image: Image.Image, out_path: Path) -> None:
     ensure_dir(out_path.parent)
     image.save(out_path)
+
+
+def humanize_render_error(exc: Exception) -> str:
+    message = str(exc)
+    if "No such file or directory" in message:
+        return "上游缺少 mesh 文件，使用结构卡片展示"
+    if "mesh" in message and "not found" in message:
+        return "上游 XML / mesh 引用异常，使用结构卡片展示"
+    if "plugin" in message:
+        return "上游插件依赖未满足，使用结构卡片展示"
+    return "当前改用结构卡片展示"
+
+
+AUTOBIO_PREVIEW_FALLBACKS = {
+    "model/object/centrifuge_1-5ml.xml": (
+        AUTOBIO_ROOT / "assets" / "container" / "centrifuge_1500ul_no_lid_vis.obj",
+        "mesh",
+        "使用相近的开放式 1.5 mL 管体预览",
+    ),
+    "model/object/centrifuge_15ml.xml": (
+        AUTOBIO_ROOT / "assets" / "container" / "centrifuge_15ml_screw_vis",
+        "mesh",
+        "使用相近的 15 mL screw-cap 管体预览",
+    ),
+    "model/object/centrifuge_50ml_screw.xml": (
+        AUTOBIO_ROOT / "assets" / "container" / "centrifuge_50ml_screw_vis",
+        "mesh",
+        "使用对应的 50 mL screw-cap mesh 预览",
+    ),
+}
+
+
+def fallback_render_source(source_path: Path) -> tuple[Path, str, str] | None:
+    resolved = resolve_autobio_render_source(source_path)
+    try:
+        relative = resolved.relative_to(AUTOBIO_ROOT).as_posix()
+    except ValueError:
+        return None
+    return AUTOBIO_PREVIEW_FALLBACKS.get(relative)
 
 
 def corner_background_color(image: Image.Image, sample: int = 16) -> np.ndarray:
@@ -327,7 +390,7 @@ def load_mesh_list(source: Path) -> list[trimesh.Trimesh]:
 def render_mesh_preview(source: Path, out_path: Path, title: str) -> None:
     meshes = load_mesh_list(source)
     if not meshes:
-        save_image(placeholder_image(title, "Preview unavailable"), out_path)
+        save_image(reference_card(title, "结构卡片", "未找到可渲染的 mesh 文件"), out_path)
         return
     mesh = trimesh.util.concatenate(meshes)
     vertices = mesh.vertices.copy()
@@ -379,7 +442,19 @@ def write_preview(source_path: Path, out_path: Path, title: str, preview_kind: s
         else:
             render_mesh_preview(source_path, out_path, title)
     except Exception as exc:
-        save_image(placeholder_image(title, f"{type(exc).__name__}: preview unavailable"), out_path)
+        fallback = fallback_render_source(source_path)
+        if fallback is not None:
+            fallback_source, fallback_kind, fallback_reason = fallback
+            try:
+                if fallback_kind == "mjcf":
+                    render_mjcf_preview(fallback_source, out_path, title)
+                else:
+                    render_mesh_preview(fallback_source, out_path, title)
+                return
+            except Exception:
+                save_image(reference_card(title, "结构卡片", fallback_reason), out_path)
+                return
+        save_image(reference_card(title, "结构卡片", humanize_render_error(exc)), out_path)
 
 
 def local_labutopia_thumb(scene_path: str) -> Path | None:
@@ -842,7 +917,11 @@ def core_inventory_rows(
         rows.append(
             TableRow(
                 [
-                    image_cell(manifest["core_entries"].get(entry["entry_id"]), entry["entry_name"]),
+                    image_cell(
+                        manifest["core_entries"].get(entry["entry_id"]),
+                        entry["entry_name"],
+                        width=320,
+                    ),
                     entry["entry_name"],
                     source_label(entry["source_project"]),
                     REFERENCE_KIND_LABELS[entry["reference_kind"]],
@@ -921,7 +1000,9 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "- `LabUtopia` 的主脉络是 `assets/chemistry_lab/`。它本质上更偏 scene-first，很多对象只能通过 `xxx.usd#/World/...` 这种场景内路径来引用。",
         "- 因此两者合并时，不能只看独立对象；必须把场景、场景内对象引用和组合对象一起纳入统一清单。",
         "",
-        "## 4. 合并后的可视化清单",
+        "## 4. 全部资产 / 场景",
+        "",
+        "这一章展示的是上游范围内所有值得盘点和可视化的条目，不等于最终全部纳入 benchmark。少数上游条目如果存在缺失 mesh 或坏引用，会使用结构卡片代替失败 placeholder。",
         "",
         "### 4.1 场景内对象引用",
         "",
@@ -939,9 +1020,21 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "",
         make_table(["预览", "来源", "类别", "名称", "路径", "说明"], scene_rows),
         "",
-        "## 5. 核心条目清单",
+        "## 5. 筛选后的 Benchmark 资产 / 场景",
         "",
         "这一节对应 `benchmark_core_inventory.json`。它只保留当前 benchmark 直接需要复用的核心条目，而不是上游仓库的全部文件。",
+        "",
+        "### 5.1 纳入标准",
+        "",
+        "只有同时满足下面这些条件的条目，才会进入这一章：",
+        "",
+        "1. 能直接服务 benchmark 任务，而不是只提供环境背景。",
+        "2. 能稳定归入一个明确的语义类别，并绑定 `match_group` 与别名集合。",
+        "3. 能整理成结构化数据单元，而不只是上游仓库里的孤立文件。",
+        "4. 粒度适合题目构造与 protocol 匹配，不会过细到单个环境碎片，也不会过粗到整张场景。",
+        "5. 至少具备可追溯的来源路径、用途说明和可视化状态，便于后续扩展与人工核查。",
+        "",
+        "### 5.2 核心条目表",
         "",
         make_table(
             ["预览", "条目名称", "来源", "层级", "匹配组", "别名", "用途", "本地相对路径", "可视化状态", "原始链接"],
