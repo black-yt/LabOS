@@ -23,7 +23,7 @@ import matplotlib.pyplot as plt
 import mujoco
 import numpy as np
 import trimesh
-from PIL import Image, ImageDraw, ImageFont, ImageOps
+from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageFilter
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
@@ -39,6 +39,8 @@ AUTOBIO_LOCAL_ROOT = BENCH_ROOT / "files" / "autobio" / "autobio"
 AUTOBIO_PLUGIN_LIB = AUTOBIO_ROOT / "libmjlab.so.3.3.0"
 LABUTOPIA_LOCAL_ROOT = BENCH_ROOT / "files" / "labutopia"
 LABUTOPIA_REPO = "Rui-li023/LabUtopia"
+AUTOBIO_BLOB_ROOT = "https://github.com/autobio-bench/AutoBio/blob/main"
+LABUTOPIA_BLOB_ROOT = f"https://github.com/{LABUTOPIA_REPO}/blob/main"
 _AUTOBIO_PLUGIN_LOADED = False
 
 IMAGE_WIDTH = 320
@@ -95,13 +97,57 @@ def is_autobio_render_source(source: Path) -> bool:
         return False
 
 
+def readme_target(path: str) -> tuple[str, str | None]:
+    fragment: str | None = None
+    if "#" in path:
+        path, fragment = path.split("#", 1)
+    clean = path.removeprefix("data/benchmark_inventory/")
+    if clean.startswith("autobio/"):
+        return f"files/autobio/{clean}", fragment
+    if clean.startswith("assets/"):
+        return f"files/labutopia/{clean}", fragment
+    return clean, fragment
+
+
+def short_path_label(path: str) -> str:
+    clean = path.split("#", 1)[0].rstrip("/")
+    name = Path(clean).name or clean
+    if not Path(clean).suffix and not name.endswith("/"):
+        return f"{name}/"
+    return name
+
+
+def readme_href(path: str) -> tuple[str, str | None] | None:
+    if path.startswith("/"):
+        return None
+    target, fragment = readme_target(path)
+    if (BENCH_ROOT / target).exists():
+        return target, fragment
+    if path.startswith("autobio/"):
+        return f"{AUTOBIO_BLOB_ROOT}/{path}", fragment
+    if path.startswith("assets/"):
+        return f"{LABUTOPIA_BLOB_ROOT}/{path}", fragment
+    return target, fragment
+
+
+def path_link(path: str, label: str | None = None) -> str:
+    href = readme_href(path)
+    if href is None:
+        return f"<code>{path}</code>"
+    target, fragment = href
+    text = f"[{label or short_path_label(path)}]({target})"
+    if fragment:
+        return f"{text}<br><code>#{fragment}</code>"
+    return text
+
+
 def path_cell(paths: list[str] | str) -> str:
     if isinstance(paths, str):
-        return f"`{paths}`"
-    return "<br>".join(f"`{item}`" for item in paths)
+        return path_link(paths)
+    return "<br>".join(path_link(item) for item in paths)
 
 
-def image_cell(path: str | None, alt: str, width: int = 160) -> str:
+def image_cell(path: str | None, alt: str, width: int = 200) -> str:
     if not path:
         return ""
     return f'<img src="{path}" width="{width}" alt="{alt}">'
@@ -198,7 +244,7 @@ def reference_card(title: str, subtitle: str, detail: str | None = None) -> Imag
     draw.text((68, 75), "XML", font=icon_font, fill=(30, 64, 175))
     draw.text((200, 75), "3D", font=icon_font, fill=(6, 95, 70))
     note_font = load_font(16)
-    note = detail or "Use metadata card"
+    note = detail or "Metadata fallback"
     note_lines = wrap_text(draw, note, note_font, image.width - 88)
     y = 132
     for line in note_lines[:2]:
@@ -217,12 +263,12 @@ def save_image(image: Image.Image, out_path: Path) -> None:
 def humanize_render_error(exc: Exception) -> str:
     message = str(exc)
     if "No such file or directory" in message:
-        return "上游缺少 mesh 文件，使用结构卡片展示"
+        return "Missing mesh in upstream source"
     if "mesh" in message and "not found" in message:
-        return "上游 XML / mesh 引用异常，使用结构卡片展示"
+        return "Broken XML or mesh reference"
     if "plugin" in message:
-        return "上游插件依赖未满足，使用结构卡片展示"
-    return "当前改用结构卡片展示"
+        return "Missing upstream plugin dependency"
+    return "Fallback metadata preview"
 
 
 AUTOBIO_PREVIEW_FALLBACKS = {
@@ -243,6 +289,14 @@ AUTOBIO_PREVIEW_FALLBACKS = {
     ),
 }
 
+AUTOBIO_PROXY_PREVIEWS = {
+    "model/robot/dualrm.xml": "dualrm",
+    "model/robot/piper.xml": "piper",
+    "model/hand/shadowhand_left.xml": "shadowhand_left",
+    "model/hand/shadowhand_right.xml": "shadowhand_right",
+    "model/hand/shadowhand_right_mjx.xml": "shadowhand_right",
+}
+
 
 def fallback_render_source(source_path: Path) -> tuple[Path, str, str] | None:
     resolved = resolve_autobio_render_source(source_path)
@@ -251,6 +305,180 @@ def fallback_render_source(source_path: Path) -> tuple[Path, str, str] | None:
     except ValueError:
         return None
     return AUTOBIO_PREVIEW_FALLBACKS.get(relative)
+
+
+def fallback_proxy_kind(source_path: Path) -> str | None:
+    resolved = resolve_autobio_render_source(source_path)
+    try:
+        relative = resolved.relative_to(AUTOBIO_ROOT).as_posix()
+    except ValueError:
+        return None
+    return AUTOBIO_PROXY_PREVIEWS.get(relative)
+
+
+def vertical_gradient(
+    size: tuple[int, int],
+    top: tuple[int, int, int],
+    bottom: tuple[int, int, int],
+) -> Image.Image:
+    width, height = size
+    top_arr = np.array(top, dtype=np.float32)
+    bottom_arr = np.array(bottom, dtype=np.float32)
+    ramp = np.linspace(0.0, 1.0, height, dtype=np.float32)[:, None]
+    colors = top_arr * (1.0 - ramp) + bottom_arr * ramp
+    image = np.repeat(colors[:, None, :], width, axis=1).astype(np.uint8)
+    return Image.fromarray(image, mode="RGB")
+
+
+def make_proxy_canvas() -> tuple[Image.Image, ImageDraw.ImageDraw]:
+    scale = 2
+    image = vertical_gradient(
+        (SCENE_WIDTH * scale, SCENE_HEIGHT * scale),
+        (249, 251, 253),
+        (227, 233, 240),
+    ).convert("RGBA")
+    return image, ImageDraw.Draw(image)
+
+
+def add_ground_shadow(image: Image.Image, bbox: tuple[int, int, int, int], opacity: int = 82) -> None:
+    layer = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    draw = ImageDraw.Draw(layer)
+    draw.ellipse(bbox, fill=(44, 62, 80, opacity))
+    blurred = layer.filter(ImageFilter.GaussianBlur(radius=18))
+    image.alpha_composite(blurred)
+
+
+def draw_segment(
+    draw: ImageDraw.ImageDraw,
+    start: tuple[int, int],
+    end: tuple[int, int],
+    width: int,
+    base: tuple[int, int, int],
+    highlight: tuple[int, int, int] | None = None,
+) -> None:
+    draw.line((start, end), fill=base, width=width)
+    radius = width // 2
+    for cx, cy in (start, end):
+        draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), fill=base)
+    if highlight:
+        inner = max(4, width // 3)
+        draw.line((start, end), fill=highlight, width=inner)
+
+
+def draw_joint(
+    draw: ImageDraw.ImageDraw,
+    center: tuple[int, int],
+    radius: int,
+    outer: tuple[int, int, int],
+    inner: tuple[int, int, int],
+) -> None:
+    cx, cy = center
+    draw.ellipse((cx - radius, cy - radius, cx + radius, cy + radius), fill=outer)
+    inner_radius = max(3, radius - 8)
+    draw.ellipse(
+        (cx - inner_radius, cy - inner_radius, cx + inner_radius, cy + inner_radius),
+        fill=inner,
+    )
+
+
+def finalize_proxy_image(image: Image.Image, title: str) -> Image.Image:
+    proxy = image.resize((SCENE_WIDTH, SCENE_HEIGHT), Image.LANCZOS).convert("RGB")
+    proxy = ImageOps.autocontrast(proxy, cutoff=1)
+    return add_label(proxy, title)
+
+
+def render_dualarm_proxy(title: str) -> Image.Image:
+    image, draw = make_proxy_canvas()
+    add_ground_shadow(image, (110, 338, 610, 440))
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle((176, 250, 544, 360), radius=34, fill=(69, 82, 96))
+    draw.rounded_rectangle((200, 226, 520, 286), radius=28, fill=(91, 106, 122))
+    draw.rounded_rectangle((304, 124, 416, 252), radius=24, fill=(231, 236, 242))
+    draw.rounded_rectangle((286, 102, 434, 150), radius=24, fill=(245, 248, 250))
+    draw.rounded_rectangle((350, 66, 370, 126), radius=10, fill=(90, 102, 118))
+    draw.rounded_rectangle((324, 50, 396, 82), radius=12, fill=(46, 58, 72))
+    draw.rounded_rectangle((334, 58, 386, 74), radius=8, fill=(121, 208, 255))
+    for wheel_x in (216, 504):
+        draw.ellipse((wheel_x - 38, 336, wheel_x + 38, 410), fill=(28, 37, 48))
+        draw.ellipse((wheel_x - 24, 350, wheel_x + 24, 396), fill=(109, 123, 140))
+
+    left_points = [(300, 164), (238, 152), (192, 184), (166, 224)]
+    right_points = [(420, 164), (482, 152), (528, 184), (554, 224)]
+    for points in (left_points, right_points):
+        draw_segment(draw, points[0], points[1], 28, (233, 238, 243), (252, 252, 252))
+        draw_segment(draw, points[1], points[2], 26, (241, 244, 247), (255, 255, 255))
+        draw_segment(draw, points[2], points[3], 22, (232, 237, 242), (255, 255, 255))
+        for joint in points[1:-1]:
+            draw_joint(draw, joint, 16, (88, 98, 112), (198, 207, 218))
+    for claw_x, claw_y, direction in ((166, 224, -1), (554, 224, 1)):
+        draw.line((claw_x, claw_y, claw_x + 20 * direction, claw_y - 16), fill=(47, 55, 66), width=8)
+        draw.line((claw_x, claw_y, claw_x + 20 * direction, claw_y + 16), fill=(47, 55, 66), width=8)
+
+    return finalize_proxy_image(image, title)
+
+
+def render_piper_proxy(title: str) -> Image.Image:
+    image, draw = make_proxy_canvas()
+    add_ground_shadow(image, (154, 344, 586, 430))
+    draw = ImageDraw.Draw(image)
+    draw.rounded_rectangle((244, 270, 440, 354), radius=28, fill=(56, 64, 75))
+    draw.rounded_rectangle((284, 208, 398, 286), radius=26, fill=(230, 233, 237))
+    draw.rounded_rectangle((312, 170, 370, 230), radius=20, fill=(246, 247, 248))
+    arm_points = [(340, 184), (336, 132), (388, 96), (462, 112), (516, 152)]
+    arm_colors = [
+        ((231, 235, 240), (255, 255, 255)),
+        ((221, 44, 44), (247, 118, 118)),
+        ((236, 239, 243), (255, 255, 255)),
+        ((221, 44, 44), (247, 118, 118)),
+    ]
+    widths = [30, 28, 24, 20]
+    for idx, (start, end) in enumerate(zip(arm_points, arm_points[1:])):
+        base, highlight = arm_colors[idx]
+        draw_segment(draw, start, end, widths[idx], base, highlight)
+        draw_joint(draw, end, max(12, widths[idx] // 2 + 2), (63, 72, 84), (188, 195, 204))
+    draw.line((516, 152, 548, 144), fill=(40, 49, 60), width=8)
+    draw.line((516, 152, 544, 172), fill=(40, 49, 60), width=8)
+    draw.ellipse((320, 274, 364, 318), fill=(190, 198, 208))
+    return finalize_proxy_image(image, title)
+
+
+def render_shadowhand_proxy(title: str, mirrored: bool = False) -> Image.Image:
+    image, draw = make_proxy_canvas()
+    add_ground_shadow(image, (116, 338, 618, 424))
+    draw = ImageDraw.Draw(image)
+    draw_segment(draw, (182, 288), (278, 248), 52, (70, 77, 87), (110, 118, 128))
+    palm = [(266, 154), (360, 136), (428, 194), (384, 284), (286, 284), (242, 212)]
+    draw.polygon(palm, fill=(54, 61, 71))
+    highlight = [(280, 168), (352, 154), (404, 198), (374, 256), (300, 254), (264, 202)]
+    draw.polygon(highlight, fill=(95, 103, 114))
+
+    finger_bases = [(294, 166), (324, 152), (354, 146), (384, 152)]
+    finger_targets = [(270, 84), (326, 70), (378, 76), (430, 98)]
+    for base, target in zip(finger_bases, finger_targets):
+        mid = ((base[0] + target[0]) // 2, (base[1] + target[1]) // 2 - 10)
+        tip = (target[0] + 10, target[1] + 34)
+        draw_segment(draw, base, mid, 20, (44, 50, 59), (88, 95, 106))
+        draw_joint(draw, mid, 10, (36, 42, 51), (151, 160, 170))
+        draw_segment(draw, mid, tip, 18, (55, 61, 71), (100, 107, 118))
+    thumb = [(262, 208), (218, 184), (180, 160), (158, 124)]
+    for start, end, width in zip(thumb, thumb[1:], (22, 18, 16)):
+        draw_segment(draw, start, end, width, (43, 49, 58), (94, 100, 110))
+
+    if mirrored:
+        image = ImageOps.mirror(image)
+    return finalize_proxy_image(image, title)
+
+
+def render_proxy_preview(kind: str, title: str) -> Image.Image:
+    if kind == "dualrm":
+        return render_dualarm_proxy(title)
+    if kind == "piper":
+        return render_piper_proxy(title)
+    if kind == "shadowhand_left":
+        return render_shadowhand_proxy(title, mirrored=False)
+    if kind == "shadowhand_right":
+        return render_shadowhand_proxy(title, mirrored=True)
+    return reference_card(title, "metadata card", "Proxy preview unavailable")
 
 
 def corner_background_color(image: Image.Image, sample: int = 16) -> np.ndarray:
@@ -390,7 +618,7 @@ def load_mesh_list(source: Path) -> list[trimesh.Trimesh]:
 def render_mesh_preview(source: Path, out_path: Path, title: str) -> None:
     meshes = load_mesh_list(source)
     if not meshes:
-        save_image(reference_card(title, "结构卡片", "未找到可渲染的 mesh 文件"), out_path)
+        save_image(reference_card(title, "metadata card", "No renderable mesh found"), out_path)
         return
     mesh = trimesh.util.concatenate(meshes)
     vertices = mesh.vertices.copy()
@@ -452,9 +680,13 @@ def write_preview(source_path: Path, out_path: Path, title: str, preview_kind: s
                     render_mesh_preview(fallback_source, out_path, title)
                 return
             except Exception:
-                save_image(reference_card(title, "结构卡片", fallback_reason), out_path)
+                save_image(reference_card(title, "metadata card", fallback_reason), out_path)
                 return
-        save_image(reference_card(title, "结构卡片", humanize_render_error(exc)), out_path)
+        proxy_kind = fallback_proxy_kind(source_path)
+        if proxy_kind is not None:
+            save_image(render_proxy_preview(proxy_kind, title), out_path)
+            return
+        save_image(reference_card(title, "metadata card", humanize_render_error(exc)), out_path)
 
 
 def local_labutopia_thumb(scene_path: str) -> Path | None:
@@ -762,7 +994,7 @@ def repo_overview_rows(entries: list[dict[str, Any]]) -> list[TableRow]:
                 "对象优先，兼有完整 MuJoCo XML 场景",
                 f"独立对象 {len(autobio_standalone_rows())}<br>组合对象 {len(autobio_composite_rows())}<br>完整场景 {len(autobio_scene_rows())}",
                 str(core_counts["autobio"]),
-                "`autobio/assets/`、`autobio/model/`",
+                f"{path_link('autobio/assets', 'assets/')}<br>{path_link('autobio/model', 'model/')}",
             ]
         ),
         TableRow(
@@ -771,7 +1003,7 @@ def repo_overview_rows(entries: list[dict[str, Any]]) -> list[TableRow]:
                 "场景优先，核心文件是 USD 场景",
                 f"场景内对象引用 {len(LAB_SCENE_OBJECTS)}<br>完整场景 {len(LAB_SCENES)}<br>场景相关文件 {len(extra_lab_scene_files())}",
                 str(core_counts["labutopia"]),
-                "`assets/chemistry_lab/`",
+                path_link("assets/chemistry_lab", "chemistry_lab/"),
             ]
         ),
     ]
@@ -784,7 +1016,7 @@ def type_overview_rows() -> list[TableRow]:
                 "`scene`",
                 "完整场景入口，加载后看到的是整张实验台、整台设备或整个实验室。",
                 "是",
-                "`autobio/model/scene/lab.xml`<br>`assets/chemistry_lab/lab_001/lab_001.usd`",
+                f"{path_link('autobio/model/scene/lab.xml')}<br>{path_link('assets/chemistry_lab/lab_001/lab_001.usd')}",
             ]
         ),
         TableRow(
@@ -792,7 +1024,7 @@ def type_overview_rows() -> list[TableRow]:
                 "`standalone_mesh_root`",
                 "独立对象的 mesh 根入口，通常对应单个对象或单个对象目录。",
                 "是",
-                "`autobio/assets/container/pcr_plate_96well_vis.obj`",
+                path_link("autobio/assets/container/pcr_plate_96well_vis.obj"),
             ]
         ),
         TableRow(
@@ -800,7 +1032,7 @@ def type_overview_rows() -> list[TableRow]:
                 "`package_entrypoint`",
                 "组合对象入口，会继续引用多个部件、材质或子文件。",
                 "是",
-                "`autobio/model/instrument/centrifuge_eppendorf_5430.xml`",
+                path_link("autobio/model/instrument/centrifuge_eppendorf_5430.xml"),
             ]
         ),
         TableRow(
@@ -808,7 +1040,7 @@ def type_overview_rows() -> list[TableRow]:
                 "`scene_prim_reference`",
                 "场景内对象引用，依附在某个 USD 场景里，本身不是独立文件。",
                 "否",
-                "`assets/chemistry_lab/lab_001/lab_001.usd#/World/conical_bottle02`",
+                path_link("assets/chemistry_lab/lab_001/lab_001.usd#/World/conical_bottle02"),
             ]
         ),
     ]
@@ -824,7 +1056,7 @@ def merged_scene_object_rows(manifest: dict[str, dict[str, str]]) -> list[TableR
                     "LabUtopia",
                     family,
                     path_cell(object_paths),
-                    f"`{scene_path}`",
+                    path_link(scene_path),
                 ]
             )
         )
@@ -920,7 +1152,7 @@ def core_inventory_rows(
                     image_cell(
                         manifest["core_entries"].get(entry["entry_id"]),
                         entry["entry_name"],
-                        width=320,
+                        width=360,
                     ),
                     entry["entry_name"],
                     source_label(entry["source_project"]),
@@ -928,7 +1160,7 @@ def core_inventory_rows(
                     entry["match_group"],
                     "<br>".join(entry["aliases"]),
                     entry["purpose"],
-                    f"`{entry['local_relative_path']}`",
+                    path_link(entry["local_relative_path"]),
                     render_status_label(entry["render_status"]),
                     f"[源文件]({entry['original_url']})",
                 ]
@@ -1002,7 +1234,7 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "",
         "## 4. 全部资产 / 场景",
         "",
-        "这一章展示的是上游范围内所有值得盘点和可视化的条目，不等于最终全部纳入 benchmark。少数上游条目如果存在缺失 mesh 或坏引用，会使用结构卡片代替失败 placeholder。",
+        "这一章展示的是上游范围内所有值得盘点和可视化的条目，不等于最终全部纳入 benchmark。少数上游条目如果缺失 mesh 或存在坏引用，会回退到本地代理预览或信息卡，不再保留失败 placeholder。",
         "",
         "### 4.1 场景内对象引用",
         "",
@@ -1037,7 +1269,7 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "### 5.2 核心条目表",
         "",
         make_table(
-            ["预览", "条目名称", "来源", "层级", "匹配组", "别名", "用途", "本地相对路径", "可视化状态", "原始链接"],
+            ["预览", "条目名称", "来源", "层级", "匹配组", "别名", "用途", "本地文件", "可视化状态", "原始链接"],
             core_rows,
         ),
         "",

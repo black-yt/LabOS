@@ -166,6 +166,10 @@
 - 对低分辨率仿真视频，页面上应限制展示尺寸，不要把视频区域放得过大；当前实现通过限制 `video-grid` 的最大宽度和视频高度来避免画面发糊。
 - 如果用户明确要求“视频框就是原始视频大小”，不要再用固定 `aspect-ratio` 或 `object-fit: contain` 容器；更合适的做法是按视频元数据里的原始宽度渲染卡片，并只在视口更窄时缩小。
 - Level 2 的公开页面展示里，不再直接铺开有限动作空间的 `def ...` 定义，也不需要展示带参数的整段参考程序；更适合只保留动作顺序，用小圆角矩形卡片承载动作名，再用排列顺序或箭头表达流程。
+- `data/benchmark_inventory/` 里的 AutoBio 预览不能假设所有 `model/robot/*.xml`、`model/hand/*.xml`、`model/scene/*.xml` 都已经复制到当前仓库；链接生成时要先检查本地文件是否真的存在，不存在就退回上游 GitHub 源文件链接。
+- `dualrm`、`piper`、`shadowhand_left`、`shadowhand_right`、`shadowhand_right_mjx` 这 5 个条目，在当前本地只读快照里缺少对应 mesh；`robot/assets/AutoBio/robot/` 下没有 `dualarm`、`piper`、`shadow_hand` 目录，直接按 XML 渲染会失败。
+- 对这 5 个条目，`data/benchmark_inventory/previews/` 当前采用“本地代理预览图”而不是文字框图：目标是保证 README 中至少看到对象风格图，而不是乱码信息卡。
+- 预览 fallback 卡片里的文案要保持 ASCII / 英文，避免 GitHub 上因为字体或编码问题出现中文乱码。
 
 ## 10. 浏览器验证经验
 
@@ -258,6 +262,16 @@
   - `MPLCONFIGDIR=/当前仓库/data/benchmark_inventory/runtime/mplconfig`
   - `XDG_CACHE_HOME=/当前仓库/data/benchmark_inventory/runtime/cache`
   - `PIP_CACHE_DIR=/当前仓库/data/benchmark_inventory/runtime/pip_cache`
+- 如果只是为了重写 `data/benchmark_inventory/README.md` 而导入 `tools/render_benchmark_inventory.py`，也一样要带上上面这三组缓存环境变量；因为这个脚本顶层会导入 `matplotlib`，不设的话会把缓存写去仓库外。
+
+## 13. README 链接约束
+
+- `data/benchmark_inventory/README.md` 里的“本地文件 / 路径”列不要再直接展示长路径字符串。
+- 更合适的格式是：
+  - 本地已复制文件：显示短标签，例如 `[piper.xml](files/autobio/autobio/model/robot/piper.xml)`
+  - 场景内 prim 引用：显示文件链接 + 下一行 `#/World/...` 代码片段
+  - 本地未复制、但上游存在的文件：直接链接到上游 GitHub `blob/main/...`
+- 不要在这份 README 里留下裸 URL，也不要把长的本地相对路径整段裸露在表格里。
 - 当前仓库在 shell 下向 `data/benchmark_inventory/` 新建目录或批量写文件时，沙箱可能报 `Read-only file system`；这类生成型任务应直接使用正规提权执行，不要改写到外部临时目录规避。
 - `AutoBio` 预览渲染的稳定做法已经确认：
   - 需要在 `autobio` 环境里先加载 `libmjlab.so.3.3.0`
