@@ -243,6 +243,20 @@
 - 如果任务确实需要落盘输出，优先写到当前仓库中用户可见的目录；如果沙箱权限不够，应直接使用正规提权执行，不要通过外部临时目录绕过。
 - 如果之前误写到了仓库外的临时目录，应在当前回合尽快清理掉这些文件，并在回复里说明。
 - 运行 Python 命令时，默认使用 `conda activate agent` 之后的 `python`；如果需要提权执行，也保持在 `agent` 环境里运行，并尽量带上 `PYTHONDONTWRITEBYTECODE=1`，避免额外生成缓存文件。
+- 但如果任务明确涉及 `AutoBio` 的 3D / MuJoCo 渲染、场景截图、资产预览生成，优先改用 `conda activate autobio`：
+  - 该环境已确认可直接导入 `mujoco`、`trimesh`、`imageio`、`PIL`、`numpy`、`matplotlib`
+  - 做 `AutoBio` 的 XML scene / XML instrument / OBJ mesh 截图时，比 `agent` 环境更合适
+- `agent` 环境在 `2026-04-20` 的快速检查结果：
+  - 新装的渲染相关包 `mujoco`、`trimesh`、`imageio`、`glfw`、`OpenGL` 可以正常导入
+  - 但 `python -m pip check` 显示有两条现存依赖冲突：
+    - `nanobot-ai 0.1.4.post5` 需要 `pydantic-settings>=2.12.0,<3.0.0`，当前是 `2.7.1`
+    - `sse-starlette 3.3.3` 需要 `starlette>=0.49.1`，当前是 `0.41.3`
+  - 这两条冲突在本次截图工作里不是直接 blocker，但说明 `agent` 环境不适合作为 3D 渲染的首选环境
+- 做渲染或图片生成时，缓存目录也要显式改到仓库可见位置，避免 Matplotlib / pip / XDG 默认写到仓库外：
+  - `MPLCONFIGDIR=/当前仓库/data/benchmark_assets/runtime/mplconfig`
+  - `XDG_CACHE_HOME=/当前仓库/data/benchmark_assets/runtime/cache`
+  - `PIP_CACHE_DIR=/当前仓库/data/benchmark_assets/runtime/pip_cache`
+- 当前仓库在 shell 下向 `data/benchmark_assets/` 新建目录或批量写文件时，沙箱可能报 `Read-only file system`；这类生成型任务应直接使用正规提权执行，不要改写到外部临时目录规避。
 - 介绍 benchmark 时，优先写清：
   - 任务定义
   - 输入输出形式

@@ -220,3 +220,8 @@ __marimo__/
 /data/protocol_v1/rejected/
 /data/protocol_v1/protocol_min_v1.jsonl
 /data/protocol_v1/protocol_min_v1.stats.json
+/data/benchmark_assets/files/
+/data/benchmark_assets/runtime/
+/data/benchmark_assets/protocol_min_v1_asset_matches.jsonl
+/data/benchmark_assets/protocol_min_v1_asset_matches.stats.json
+/data/benchmark_assets/protocol_min_v1_with_assets.jsonl
