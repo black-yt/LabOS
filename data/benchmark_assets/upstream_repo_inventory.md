@@ -1,4 +1,4 @@
-# AutoBio / LabUtopia 场景与资产清单
+# AutoBio / LabUtopia 上游结构清单
 
 这份文档只做两件事：
 

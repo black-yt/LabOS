@@ -21,7 +21,7 @@ import matplotlib.pyplot as plt
 import mujoco
 import numpy as np
 import trimesh
-from PIL import Image, ImageDraw, ImageFont
+from PIL import Image, ImageDraw, ImageFont, ImageOps
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
 
 
@@ -29,9 +29,9 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 BENCH_ROOT = REPO_ROOT / "data" / "benchmark_assets"
 PREVIEW_ROOT = BENCH_ROOT / "previews"
 MANIFEST_PATH = BENCH_ROOT / "preview_manifest.json"
-CATALOG_JSON_PATH = BENCH_ROOT / "merged_asset_catalog.json"
-CATALOG_MD_PATH = BENCH_ROOT / "merged_asset_catalog.md"
-INVENTORY_MD_PATH = BENCH_ROOT / "repo_asset_scene_inventory.md"
+CATALOG_JSON_PATH = BENCH_ROOT / "benchmark_asset_catalog.json"
+CATALOG_MD_PATH = BENCH_ROOT / "benchmark_asset_catalog.md"
+INVENTORY_MD_PATH = BENCH_ROOT / "upstream_repo_inventory.md"
 README_PATH = BENCH_ROOT / "README.md"
 
 AUTOBIO_ROOT = Path("/mnt/d/xwh/ailab记录/工作/26年04月/robot/AutoBio/autobio")
@@ -153,6 +153,73 @@ def save_image(image: Image.Image, out_path: Path) -> None:
     image.save(out_path)
 
 
+def corner_background_color(image: Image.Image, sample: int = 16) -> np.ndarray:
+    rgb = image.convert("RGB")
+    arr = np.asarray(rgb)
+    h, w = arr.shape[:2]
+    sample = max(1, min(sample, h // 4 or 1, w // 4 or 1))
+    patches = [
+        arr[:sample, :sample],
+        arr[:sample, w - sample :],
+        arr[h - sample :, :sample],
+        arr[h - sample :, w - sample :],
+    ]
+    pixels = np.concatenate([patch.reshape(-1, 3) for patch in patches], axis=0)
+    return np.median(pixels, axis=0)
+
+
+def resize_with_aspect_padding(
+    image: Image.Image,
+    out_size: tuple[int, int],
+    background: tuple[int, int, int],
+) -> Image.Image:
+    target_w, target_h = out_size
+    target_ratio = target_w / target_h
+    current_ratio = image.width / image.height
+    if current_ratio < target_ratio:
+        padded_w = max(target_w, int(round(image.height * target_ratio)))
+        padded_h = image.height
+    else:
+        padded_w = image.width
+        padded_h = max(target_h, int(round(image.width / target_ratio)))
+    canvas = Image.new("RGB", (padded_w, padded_h), background)
+    offset = ((padded_w - image.width) // 2, (padded_h - image.height) // 2)
+    canvas.paste(image, offset)
+    return canvas.resize(out_size, Image.LANCZOS)
+
+
+def crop_to_content(
+    image: Image.Image,
+    out_size: tuple[int, int],
+    diff_threshold: int = 16,
+    padding_ratio: float = 0.18,
+) -> Image.Image:
+    rgb = image.convert("RGB")
+    arr = np.asarray(rgb)
+    bg = corner_background_color(rgb)
+    diff = np.abs(arr.astype(np.int16) - bg.astype(np.int16)).max(axis=2)
+    mask = diff > diff_threshold
+    ys, xs = np.where(mask)
+    if len(xs) == 0:
+        return resize_with_aspect_padding(rgb, out_size, tuple(int(x) for x in bg))
+    x0, x1 = int(xs.min()), int(xs.max())
+    y0, y1 = int(ys.min()), int(ys.max())
+    width = x1 - x0 + 1
+    height = y1 - y0 + 1
+    image_w, image_h = rgb.size
+    coverage = (width * height) / (image_w * image_h)
+    if coverage >= 0.92:
+        return resize_with_aspect_padding(rgb, out_size, tuple(int(x) for x in bg))
+    pad_x = max(int(round(width * padding_ratio)), 12)
+    pad_y = max(int(round(height * padding_ratio)), 12)
+    left = max(0, x0 - pad_x)
+    top = max(0, y0 - pad_y)
+    right = min(image_w, x1 + pad_x + 1)
+    bottom = min(image_h, y1 + pad_y + 1)
+    cropped = rgb.crop((left, top, right, bottom))
+    return resize_with_aspect_padding(cropped, out_size, tuple(int(x) for x in bg))
+
+
 def render_mjcf_preview(xml_path: Path, out_path: Path, title: str, distance_scale: float = 2.8) -> None:
     model = mujoco.MjModel.from_xml_path(str(xml_path))
     data = mujoco.MjData(model)
@@ -170,7 +237,8 @@ def render_mjcf_preview(xml_path: Path, out_path: Path, title: str, distance_sca
         image = renderer.render()
     finally:
         renderer.close()
-    pil_image = Image.fromarray(image).convert("RGB")
+    pil_image = crop_to_content(Image.fromarray(image).convert("RGB"), (SCENE_WIDTH, SCENE_HEIGHT))
+    pil_image = ImageOps.autocontrast(pil_image, cutoff=1)
     save_image(add_label(pil_image, title), out_path)
 
 
@@ -229,30 +297,34 @@ def render_mesh_preview(source: Path, out_path: Path, title: str) -> None:
         scale = 1.0
     vertices = (vertices - center) / scale
 
-    fig = plt.figure(figsize=(4.0, 3.0), dpi=100)
+    fig = plt.figure(figsize=(4.0, 3.0), dpi=140)
     ax = fig.add_subplot(111, projection="3d")
     tri_vertices = vertices[faces]
     collection = Poly3DCollection(
         tri_vertices,
-        facecolor=(0.78, 0.83, 0.89, 1.0),
-        edgecolor=(0.55, 0.60, 0.66, 0.3),
-        linewidth=0.1,
+        facecolor=(0.34, 0.47, 0.62, 1.0),
+        edgecolor=(0.10, 0.14, 0.20, 0.45),
+        linewidth=0.18,
     )
     ax.add_collection3d(collection)
-    span = 0.75
+    span = 0.62
     ax.set_xlim(-span, span)
     ax.set_ylim(-span, span)
     ax.set_zlim(-span, span)
-    ax.view_init(elev=22, azim=38)
+    ax.view_init(elev=24, azim=42)
     ax.set_box_aspect((1, 1, 1))
     ax.axis("off")
-    fig.patch.set_facecolor("white")
-    ax.set_facecolor("white")
+    fig.patch.set_facecolor("#f5f7fa")
+    ax.set_facecolor("#f5f7fa")
+    fig.subplots_adjust(0, 0, 1, 1)
+    ax.set_position([0, 0, 1, 1])
     ensure_dir(out_path.parent)
     tmp_path = out_path.with_suffix(".raw.png")
-    fig.savefig(tmp_path, bbox_inches="tight", pad_inches=0.05, facecolor="white")
+    fig.savefig(tmp_path, bbox_inches="tight", pad_inches=0.02, facecolor="#f5f7fa")
     plt.close(fig)
-    raw = Image.open(tmp_path).convert("RGB").resize((SCENE_WIDTH, SCENE_HEIGHT), Image.LANCZOS)
+    raw = Image.open(tmp_path).convert("RGB")
+    raw = crop_to_content(raw, (SCENE_WIDTH, SCENE_HEIGHT), diff_threshold=10, padding_ratio=0.12)
+    raw = ImageOps.autocontrast(raw, cutoff=1)
     tmp_path.unlink(missing_ok=True)
     save_image(add_label(raw, title), out_path)
 
@@ -514,7 +586,7 @@ def build_preview_manifest() -> dict[str, dict[str, str]]:
 def write_catalog_markdown(manifest: dict[str, dict[str, str]]) -> None:
     entries = json.loads(CATALOG_JSON_PATH.read_text(encoding="utf-8"))
     lines = [
-        "# Merged Benchmark Asset Catalog",
+        "# Benchmark 核心资产清单",
         "",
         "| Preview | Asset Name | Match Group | Entry Type | Source Project | Local Relative Path | Render Status | Original URL |",
         "|---|---|---|---|---|---|---|---|",
@@ -628,7 +700,7 @@ def write_inventory_markdown(manifest: dict[str, dict[str, str]]) -> None:
     ]
 
     lines = [
-        "# AutoBio / LabUtopia 场景与资产清单",
+        "# AutoBio / LabUtopia 上游结构清单",
         "",
         "这份文档只做两件事：",
         "",
@@ -718,10 +790,13 @@ def write_inventory_markdown(manifest: dict[str, dict[str, str]]) -> None:
 
 def update_readme() -> None:
     text = README_PATH.read_text(encoding="utf-8")
-    if "- `repo_asset_scene_inventory.md`\n  - 两个仓库的完整分类清单" in text and "- `previews/`" not in text:
+    text = text.replace("repo_asset_scene_inventory.md", "upstream_repo_inventory.md")
+    text = text.replace("merged_asset_catalog.md", "benchmark_asset_catalog.md")
+    text = text.replace("merged_asset_catalog.json", "benchmark_asset_catalog.json")
+    if "- `previews/`" not in text:
         text = text.replace(
-            "- `repo_asset_scene_inventory.md`\n  - 两个仓库的完整分类清单\n",
-            "- `repo_asset_scene_inventory.md`\n  - 两个仓库的完整分类清单，带预览图\n- `previews/`\n  - 脚本生成的 scene / asset 预览图\n",
+            "- `upstream_repo_inventory.md`\n  - 两个仓库的完整分类清单，带预览图\n",
+            "- `upstream_repo_inventory.md`\n  - 两个仓库的完整分类清单，带预览图\n- `previews/`\n  - 脚本生成的 scene / asset 预览图\n",
         )
     README_PATH.write_text(text, encoding="utf-8")
 

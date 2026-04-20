@@ -8,14 +8,14 @@
 
 ## 1. 先看哪个文件
 
-- `repo_asset_scene_inventory.md`
-  - 两个仓库的完整分类清单，带预览图
+- `upstream_repo_inventory.md`
+  - 上游视角的结构清单：解释 `AutoBio` 和 `LabUtopia` 里有哪些 `scene / asset / composite asset / scene object reference`
 - `previews/`
   - 脚本生成的 scene / asset 预览图
-- `merged_asset_catalog.md`
-  - 当前 benchmark 直接使用的 29 条核心条目
-- `merged_asset_catalog.json`
-  - 上面那份清单的机器可读版本
+- `benchmark_asset_catalog.md`
+  - benchmark 视角的核心资产主表：只保留当前真正要用的 29 条条目
+- `benchmark_asset_catalog.json`
+  - 上面那份主表的机器可读版本，后续程序处理优先读它
 - `protocol_min_v1_with_assets.jsonl`
   - 匹配到资产后的 protocol 全量记录
 - `protocol_min_v1_asset_matches.jsonl`

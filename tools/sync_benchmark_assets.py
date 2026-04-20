@@ -795,7 +795,7 @@ ENTRY_TYPE_LABELS = {
 
 def catalog_for_markdown(entries: list[dict[str, Any]]) -> str:
     lines = [
-        "# Merged Benchmark Asset Catalog",
+        "# Benchmark 核心资产清单",
         "",
         "| Asset Name | Match Group | Aliases | Purpose | Local Relative Path | Source Project | Entry Type | Render Status | Original URL |",
         "|---|---|---|---|---|---|---|---|---|",
@@ -859,11 +859,11 @@ def sync_labutopia(force: bool) -> list[str]:
 
 def write_catalog(entries: list[dict[str, Any]]) -> None:
     OUTPUT_ROOT.mkdir(parents=True, exist_ok=True)
-    (OUTPUT_ROOT / "merged_asset_catalog.json").write_text(
+    (OUTPUT_ROOT / "benchmark_asset_catalog.json").write_text(
         json.dumps(entries, indent=2),
         encoding="utf-8",
     )
-    (OUTPUT_ROOT / "merged_asset_catalog.md").write_text(
+    (OUTPUT_ROOT / "benchmark_asset_catalog.md").write_text(
         catalog_for_markdown(entries),
         encoding="utf-8",
     )
