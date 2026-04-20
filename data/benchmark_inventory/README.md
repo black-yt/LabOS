@@ -193,6 +193,7 @@ flowchart LR
 ### 5.2 核心条目表
 
 这一节改为 HTML 两列布局：左侧固定放大预览图，右侧放条目字段，避免 GitHub Markdown 表格把图片继续压缩。
+当前共 `029` 项，编号从 `000` 到 `028`。
 
 <table>
   <tr>
@@ -200,7 +201,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-cell-dish-100.png" width="420" alt="100 mm Cell Dish">
     </td>
     <td valign="top">
-      <p><strong>100 mm Cell Dish</strong></p>
+      <p><strong><code>000</code> 100 mm Cell Dish</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>cell_dish</code></p>
@@ -222,7 +223,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-1-5ml-screw.png" width="420" alt="1.5 mL Screw-Cap Microcentrifuge Tube">
     </td>
     <td valign="top">
-      <p><strong>1.5 mL Screw-Cap Microcentrifuge Tube</strong></p>
+      <p><strong><code>001</code> 1.5 mL Screw-Cap Microcentrifuge Tube</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>microcentrifuge_tube_1_5ml</code></p>
@@ -244,7 +245,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-10ml.png" width="420" alt="10 mL Centrifuge Tube">
     </td>
     <td valign="top">
-      <p><strong>10 mL Centrifuge Tube</strong></p>
+      <p><strong><code>002</code> 10 mL Centrifuge Tube</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>centrifuge_tube_10ml</code></p>
@@ -266,7 +267,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-1500ul-open.png" width="420" alt="1.5 mL Open Microcentrifuge Tube">
     </td>
     <td valign="top">
-      <p><strong>1.5 mL Open Microcentrifuge Tube</strong></p>
+      <p><strong><code>003</code> 1.5 mL Open Microcentrifuge Tube</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>microcentrifuge_tube_1_5ml</code></p>
@@ -288,7 +289,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-15ml-screw.png" width="420" alt="15 mL Screw-Cap Centrifuge Tube">
     </td>
     <td valign="top">
-      <p><strong>15 mL Screw-Cap Centrifuge Tube</strong></p>
+      <p><strong><code>004</code> 15 mL Screw-Cap Centrifuge Tube</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>centrifuge_tube_15ml</code></p>
@@ -310,7 +311,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-50ml.png" width="420" alt="50 mL Centrifuge Tube">
     </td>
     <td valign="top">
-      <p><strong>50 mL Centrifuge Tube</strong></p>
+      <p><strong><code>005</code> 50 mL Centrifuge Tube</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>centrifuge_tube_50ml</code></p>
@@ -332,7 +333,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-50ml-screw.png" width="420" alt="50 mL Screw-Cap Centrifuge Tube">
     </td>
     <td valign="top">
-      <p><strong>50 mL Screw-Cap Centrifuge Tube</strong></p>
+      <p><strong><code>006</code> 50 mL Screw-Cap Centrifuge Tube</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>centrifuge_tube_50ml</code></p>
@@ -354,7 +355,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-cryovial-1-8ml.png" width="420" alt="1.8 mL Cryovial">
     </td>
     <td valign="top">
-      <p><strong>1.8 mL Cryovial</strong></p>
+      <p><strong><code>007</code> 1.8 mL Cryovial</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>cryovial</code></p>
@@ -376,7 +377,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-pcr-plate-96well.png" width="420" alt="96-Well PCR Plate">
     </td>
     <td valign="top">
-      <p><strong>96-Well PCR Plate</strong></p>
+      <p><strong><code>008</code> 96-Well PCR Plate</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>pcr_plate</code></p>
@@ -398,7 +399,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-tip-200ul.png" width="420" alt="200 uL Pipette Tip">
     </td>
     <td valign="top">
-      <p><strong>200 uL Pipette Tip</strong></p>
+      <p><strong><code>009</code> 200 uL Pipette Tip</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>pipette_tip</code></p>
@@ -420,7 +421,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-pipette.png" width="420" alt="Micropipette">
     </td>
     <td valign="top">
-      <p><strong>Micropipette</strong></p>
+      <p><strong><code>010</code> Micropipette</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>组合对象<br>
       <strong>匹配组：</strong><code>pipette</code></p>
@@ -442,7 +443,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-tip-box-24slot.png" width="420" alt="24-Slot Tip Box">
     </td>
     <td valign="top">
-      <p><strong>24-Slot Tip Box</strong></p>
+      <p><strong><code>011</code> 24-Slot Tip Box</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>tip_box</code></p>
@@ -464,7 +465,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-pipette-rack-tri.png" width="420" alt="Triangular Pipette Rack">
     </td>
     <td valign="top">
-      <p><strong>Triangular Pipette Rack</strong></p>
+      <p><strong><code>012</code> Triangular Pipette Rack</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>pipette_rack</code></p>
@@ -486,7 +487,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-10slot-rack.png" width="420" alt="10-Slot Centrifuge Tube Rack">
     </td>
     <td valign="top">
-      <p><strong>10-Slot Centrifuge Tube Rack</strong></p>
+      <p><strong><code>013</code> 10-Slot Centrifuge Tube Rack</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>tube_rack</code></p>
@@ -508,7 +509,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-plate-60well.png" width="420" alt="60-Well Plate Rack">
     </td>
     <td valign="top">
-      <p><strong>60-Well Plate Rack</strong></p>
+      <p><strong><code>014</code> 60-Well Plate Rack</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>独立对象<br>
       <strong>匹配组：</strong><code>tube_rack</code></p>
@@ -530,7 +531,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-5430.png" width="420" alt="Eppendorf 5430 Centrifuge">
     </td>
     <td valign="top">
-      <p><strong>Eppendorf 5430 Centrifuge</strong></p>
+      <p><strong><code>015</code> Eppendorf 5430 Centrifuge</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>组合对象<br>
       <strong>匹配组：</strong><code>centrifuge</code></p>
@@ -552,7 +553,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-5910-ri.png" width="420" alt="Eppendorf 5910 Ri Centrifuge">
     </td>
     <td valign="top">
-      <p><strong>Eppendorf 5910 Ri Centrifuge</strong></p>
+      <p><strong><code>016</code> Eppendorf 5910 Ri Centrifuge</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>组合对象<br>
       <strong>匹配组：</strong><code>centrifuge</code></p>
@@ -574,7 +575,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-centrifuge-tgear-mini.png" width="420" alt="Tiangen Tgear Mini Centrifuge">
     </td>
     <td valign="top">
-      <p><strong>Tiangen Tgear Mini Centrifuge</strong></p>
+      <p><strong><code>017</code> Tiangen Tgear Mini Centrifuge</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>组合对象<br>
       <strong>匹配组：</strong><code>centrifuge</code></p>
@@ -596,7 +597,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-thermal-cycler-c1000.png" width="420" alt="Bio-Rad C1000 Thermal Cycler">
     </td>
     <td valign="top">
-      <p><strong>Bio-Rad C1000 Thermal Cycler</strong></p>
+      <p><strong><code>018</code> Bio-Rad C1000 Thermal Cycler</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>组合对象<br>
       <strong>匹配组：</strong><code>thermal_cycler</code></p>
@@ -618,7 +619,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-thermal-mixer-eppendorf-c.png" width="420" alt="Eppendorf C Thermal Mixer">
     </td>
     <td valign="top">
-      <p><strong>Eppendorf C Thermal Mixer</strong></p>
+      <p><strong><code>019</code> Eppendorf C Thermal Mixer</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>组合对象<br>
       <strong>匹配组：</strong><code>thermal_mixer</code></p>
@@ -640,7 +641,7 @@ flowchart LR
       <img src="previews/core/autobio/autobio-vortex-mixer-genie-2.png" width="420" alt="Genie 2 Vortex Mixer">
     </td>
     <td valign="top">
-      <p><strong>Genie 2 Vortex Mixer</strong></p>
+      <p><strong><code>020</code> Genie 2 Vortex Mixer</strong></p>
       <p><strong>来源：</strong>AutoBio<br>
       <strong>层级：</strong>组合对象<br>
       <strong>匹配组：</strong><code>vortex_mixer</code></p>
@@ -662,7 +663,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-beaker-family.png" width="420" alt="Beaker Family">
     </td>
     <td valign="top">
-      <p><strong>Beaker Family</strong></p>
+      <p><strong><code>021</code> Beaker Family</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>beaker</code></p>
@@ -684,7 +685,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-conical-bottle-family.png" width="420" alt="Conical Bottle / Flask Family">
     </td>
     <td valign="top">
-      <p><strong>Conical Bottle / Flask Family</strong></p>
+      <p><strong><code>022</code> Conical Bottle / Flask Family</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>conical_bottle</code></p>
@@ -706,7 +707,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-graduated-cylinder-03.png" width="420" alt="Graduated Cylinder">
     </td>
     <td valign="top">
-      <p><strong>Graduated Cylinder</strong></p>
+      <p><strong><code>023</code> Graduated Cylinder</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>graduated_cylinder</code></p>
@@ -728,7 +729,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-glass-rod.png" width="420" alt="Glass Rod">
     </td>
     <td valign="top">
-      <p><strong>Glass Rod</strong></p>
+      <p><strong><code>024</code> Glass Rod</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>glass_rod</code></p>
@@ -750,7 +751,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-test-tube-rack.png" width="420" alt="Test Tube Rack">
     </td>
     <td valign="top">
-      <p><strong>Test Tube Rack</strong></p>
+      <p><strong><code>025</code> Test Tube Rack</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>tube_rack</code></p>
@@ -772,7 +773,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-drying-box-family.png" width="420" alt="Drying Box Family">
     </td>
     <td valign="top">
-      <p><strong>Drying Box Family</strong></p>
+      <p><strong><code>026</code> Drying Box Family</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>drying_box</code></p>
@@ -794,7 +795,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-heat-device.png" width="420" alt="Heat Device / Hot Plate">
     </td>
     <td valign="top">
-      <p><strong>Heat Device / Hot Plate</strong></p>
+      <p><strong><code>027</code> Heat Device / Hot Plate</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>heating_device</code></p>
@@ -816,7 +817,7 @@ flowchart LR
       <img src="previews/core/labutopia/labutopia-muffle-furnace.png" width="420" alt="Muffle Furnace">
     </td>
     <td valign="top">
-      <p><strong>Muffle Furnace</strong></p>
+      <p><strong><code>028</code> Muffle Furnace</strong></p>
       <p><strong>来源：</strong>LabUtopia<br>
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>muffle_furnace</code></p>

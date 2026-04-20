@@ -1161,7 +1161,8 @@ def core_inventory_html_blocks(
     entries: list[dict[str, Any]],
 ) -> str:
     blocks: list[str] = []
-    for entry in entries:
+    for index, entry in enumerate(entries):
+        number = f"{index:03d}"
         image_path = manifest["core_entries"].get(entry["entry_id"])
         image_html = (
             f'<img src="{html.escape(image_path, quote=True)}" width="420" alt="{html.escape(entry["entry_name"], quote=True)}">'
@@ -1178,7 +1179,7 @@ def core_inventory_html_blocks(
                 f"      {image_html}",
                 "    </td>",
                 '    <td valign="top">',
-                f'      <p><strong>{html.escape(entry["entry_name"])}</strong></p>',
+                f'      <p><strong><code>{number}</code> {html.escape(entry["entry_name"])}</strong></p>',
                 f'      <p><strong>来源：</strong>{html.escape(source_label(entry["source_project"]))}<br>',
                 f'      <strong>层级：</strong>{html.escape(REFERENCE_KIND_LABELS[entry["reference_kind"]])}<br>',
                 f'      <strong>匹配组：</strong><code>{html.escape(entry["match_group"])}</code></p>',
@@ -1299,6 +1300,7 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "### 5.2 核心条目表",
         "",
         "这一节改为 HTML 两列布局：左侧固定放大预览图，右侧放条目字段，避免 GitHub Markdown 表格把图片继续压缩。",
+        f"当前共 `{len(entries):03d}` 项，编号从 `000` 到 `{len(entries) - 1:03d}`。",
         "",
         core_blocks,
         "",
