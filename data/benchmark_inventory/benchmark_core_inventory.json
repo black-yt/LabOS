@@ -19,6 +19,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/cell_dish_100_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/cell_dish_100_vis.obj"
   },
   {
@@ -42,6 +43,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_1-5ml_screw_vis",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_1-5ml_screw_vis"
   },
   {
@@ -61,6 +63,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_10ml_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_10ml_vis.obj"
   },
   {
@@ -84,6 +87,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_1500ul_no_lid_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_1500ul_no_lid_vis.obj"
   },
   {
@@ -106,6 +110,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_15ml_screw_vis",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_15ml_screw_vis"
   },
   {
@@ -130,6 +135,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_50ml_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/centrifuge_50ml_vis.obj"
   },
   {
@@ -154,6 +160,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_50ml_screw_vis",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/centrifuge_50ml_screw_vis"
   },
   {
@@ -174,6 +181,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/cryovial_1-8ml_vis",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/cryovial_1-8ml_vis"
   },
   {
@@ -196,6 +204,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/pcr_plate_96well_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/container/pcr_plate_96well_vis.obj"
   },
   {
@@ -218,6 +227,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/tip_200ul_vis/visual.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://github.com/autobio-bench/AutoBio/tree/main/autobio/assets/container/tip_200ul_vis"
   },
   {
@@ -238,6 +248,7 @@
     "entry_type_label": "\u7ec4\u5408\u5bf9\u8c61\uff08package_entrypoint\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/object/pipette.gen.xml",
     "render_status": "ready_mjcf_package",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/object/pipette.gen.xml"
   },
   {
@@ -256,6 +267,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/tip_box_24slot_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/tip_box_24slot_vis.obj"
   },
   {
@@ -276,6 +288,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/pipette_rack_tri_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/pipette_rack_tri_vis.obj"
   },
   {
@@ -298,6 +311,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/centrifuge_10slot_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/centrifuge_10slot_vis.obj"
   },
   {
@@ -320,6 +334,7 @@
     "entry_type_label": "\u72ec\u7acb\u5bf9\u8c61\uff08standalone_mesh_root\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/centrifuge_plate_60well_vis.obj",
     "render_status": "ready_obj",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/assets/rack/centrifuge_plate_60well_vis.obj"
   },
   {
@@ -342,6 +357,7 @@
     "entry_type_label": "\u7ec4\u5408\u5bf9\u8c61\uff08package_entrypoint\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/centrifuge_eppendorf_5430.xml",
     "render_status": "ready_mjcf_package",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_eppendorf_5430.xml"
   },
   {
@@ -364,6 +380,7 @@
     "entry_type_label": "\u7ec4\u5408\u5bf9\u8c61\uff08package_entrypoint\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/centrifuge_eppendorf_5910_ri.xml",
     "render_status": "ready_mjcf_package",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_eppendorf_5910_ri.xml"
   },
   {
@@ -386,6 +403,7 @@
     "entry_type_label": "\u7ec4\u5408\u5bf9\u8c61\uff08package_entrypoint\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/centrifuge_tiangen_tgear_mini.xml",
     "render_status": "ready_mjcf_package",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/centrifuge_tiangen_tgear_mini.xml"
   },
   {
@@ -406,6 +424,7 @@
     "entry_type_label": "\u7ec4\u5408\u5bf9\u8c61\uff08package_entrypoint\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/thermal_cycler_biorad_c1000.xml",
     "render_status": "ready_mjcf_package",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/thermal_cycler_biorad_c1000.xml"
   },
   {
@@ -426,6 +445,7 @@
     "entry_type_label": "\u7ec4\u5408\u5bf9\u8c61\uff08package_entrypoint\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/thermal_mixer_eppendorf_c.xml",
     "render_status": "ready_mjcf_package",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/thermal_mixer_eppendorf_c.xml"
   },
   {
@@ -445,6 +465,7 @@
     "entry_type_label": "\u7ec4\u5408\u5bf9\u8c61\uff08package_entrypoint\uff09",
     "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/vortex_mixer_genie_2.xml",
     "render_status": "ready_mjcf_package",
+    "protocol_matchable": true,
     "original_url": "https://raw.githubusercontent.com/autobio-bench/AutoBio/main/autobio/model/instrument/vortex_mixer_genie_2.xml"
   },
   {
@@ -463,6 +484,7 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/beaker",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
   },
   {
@@ -483,6 +505,7 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/conical_bottle02",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
   },
   {
@@ -501,6 +524,7 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/graduated_cylinder_03",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
   },
   {
@@ -521,6 +545,7 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd#/World/glass_rod",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd"
   },
   {
@@ -543,6 +568,7 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/test_tube_rack",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
   },
   {
@@ -565,6 +591,7 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/DryingBox_01",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
   },
   {
@@ -589,6 +616,7 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd#/World/heat_device",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd"
   },
   {
@@ -607,6 +635,415 @@
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
     "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd#/World/MuffleFurnace",
     "render_status": "downloaded_usd_requires_conversion",
+    "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/hard_task/Scene1_hard.usd"
+  },
+  {
+    "entry_id": "autobio_scene_bottlecap",
+    "entry_name": "AutoBio Scene: bottlecap",
+    "match_group": "scene_bottlecap",
+    "aliases": [
+      "bottlecap",
+      "bottlecap"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/bottlecap.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/bottlecap.xml"
+  },
+  {
+    "entry_id": "autobio_scene_gallery",
+    "entry_name": "AutoBio Scene: gallery",
+    "match_group": "scene_gallery",
+    "aliases": [
+      "gallery",
+      "gallery"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/gallery.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/gallery.xml"
+  },
+  {
+    "entry_id": "autobio_scene_gallery2",
+    "entry_name": "AutoBio Scene: gallery2",
+    "match_group": "scene_gallery2",
+    "aliases": [
+      "gallery2",
+      "gallery2"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/gallery2.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/gallery2.xml"
+  },
+  {
+    "entry_id": "autobio_scene_insert",
+    "entry_name": "AutoBio Scene: insert",
+    "match_group": "scene_insert",
+    "aliases": [
+      "insert",
+      "insert"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/insert.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/insert.xml"
+  },
+  {
+    "entry_id": "autobio_scene_insert_centrifuge_5430",
+    "entry_name": "AutoBio Scene: insert centrifuge 5430",
+    "match_group": "scene_insert_centrifuge_5430",
+    "aliases": [
+      "insert_centrifuge_5430",
+      "insert centrifuge 5430"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/insert_centrifuge_5430.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/insert_centrifuge_5430.xml"
+  },
+  {
+    "entry_id": "autobio_scene_lab",
+    "entry_name": "AutoBio Scene: lab",
+    "match_group": "scene_lab",
+    "aliases": [
+      "lab",
+      "lab"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/lab.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/lab.xml"
+  },
+  {
+    "entry_id": "autobio_scene_lab_screw_all",
+    "entry_name": "AutoBio Scene: lab screw all",
+    "match_group": "scene_lab_screw_all",
+    "aliases": [
+      "lab_screw_all",
+      "lab screw all"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/lab_screw_all.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/lab_screw_all.xml"
+  },
+  {
+    "entry_id": "autobio_scene_lab_screw_tighten",
+    "entry_name": "AutoBio Scene: lab screw tighten",
+    "match_group": "scene_lab_screw_tighten",
+    "aliases": [
+      "lab_screw_tighten",
+      "lab screw tighten"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/lab_screw_tighten.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/lab_screw_tighten.xml"
+  },
+  {
+    "entry_id": "autobio_scene_mani_centrifuge_5430",
+    "entry_name": "AutoBio Scene: mani centrifuge 5430",
+    "match_group": "scene_mani_centrifuge_5430",
+    "aliases": [
+      "mani_centrifuge_5430",
+      "mani centrifuge 5430"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_centrifuge_5430.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/mani_centrifuge_5430.xml"
+  },
+  {
+    "entry_id": "autobio_scene_mani_centrifuge_5910",
+    "entry_name": "AutoBio Scene: mani centrifuge 5910",
+    "match_group": "scene_mani_centrifuge_5910",
+    "aliases": [
+      "mani_centrifuge_5910",
+      "mani centrifuge 5910"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_centrifuge_5910.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/mani_centrifuge_5910.xml"
+  },
+  {
+    "entry_id": "autobio_scene_mani_centrifuge_mini",
+    "entry_name": "AutoBio Scene: mani centrifuge mini",
+    "match_group": "scene_mani_centrifuge_mini",
+    "aliases": [
+      "mani_centrifuge_mini",
+      "mani centrifuge mini"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_centrifuge_mini.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/mani_centrifuge_mini.xml"
+  },
+  {
+    "entry_id": "autobio_scene_mani_pipette",
+    "entry_name": "AutoBio Scene: mani pipette",
+    "match_group": "scene_mani_pipette",
+    "aliases": [
+      "mani_pipette",
+      "mani pipette"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_pipette.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/mani_pipette.xml"
+  },
+  {
+    "entry_id": "autobio_scene_mani_thermal_cycler",
+    "entry_name": "AutoBio Scene: mani thermal cycler",
+    "match_group": "scene_mani_thermal_cycler",
+    "aliases": [
+      "mani_thermal_cycler",
+      "mani thermal cycler"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_thermal_cycler.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/mani_thermal_cycler.xml"
+  },
+  {
+    "entry_id": "autobio_scene_mani_thermal_mixer",
+    "entry_name": "AutoBio Scene: mani thermal mixer",
+    "match_group": "scene_mani_thermal_mixer",
+    "aliases": [
+      "mani_thermal_mixer",
+      "mani thermal mixer"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_thermal_mixer.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/mani_thermal_mixer.xml"
+  },
+  {
+    "entry_id": "autobio_scene_pickup",
+    "entry_name": "AutoBio Scene: pickup",
+    "match_group": "scene_pickup",
+    "aliases": [
+      "pickup",
+      "pickup"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/pickup.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/pickup.xml"
+  },
+  {
+    "entry_id": "autobio_scene_screw",
+    "entry_name": "AutoBio Scene: screw",
+    "match_group": "scene_screw",
+    "aliases": [
+      "screw",
+      "screw"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/screw.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/screw.xml"
+  },
+  {
+    "entry_id": "autobio_scene_screw_test",
+    "entry_name": "AutoBio Scene: screw test",
+    "match_group": "scene_screw_test",
+    "aliases": [
+      "screw_test",
+      "screw test"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/screw_test.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/screw_test.xml"
+  },
+  {
+    "entry_id": "autobio_scene_screw_v3",
+    "entry_name": "AutoBio Scene: screw v3",
+    "match_group": "scene_screw_v3",
+    "aliases": [
+      "screw_v3",
+      "screw v3"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/screw_v3.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/screw_v3.xml"
+  },
+  {
+    "entry_id": "autobio_scene_vortex_mixer",
+    "entry_name": "AutoBio Scene: vortex mixer",
+    "match_group": "scene_vortex_mixer",
+    "aliases": [
+      "vortex_mixer",
+      "vortex mixer"
+    ],
+    "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+    "source_project": "autobio",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/vortex_mixer.xml",
+    "render_status": "ready_mjcf_scene",
+    "protocol_matchable": false,
+    "original_url": "https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/scene/vortex_mixer.xml"
+  },
+  {
+    "entry_id": "labutopia_scene_lab_001",
+    "entry_name": "LabUtopia Scene: lab_001",
+    "match_group": "scene_lab_001",
+    "aliases": [
+      "lab_001",
+      "lab 001"
+    ],
+    "purpose": "Full LabUtopia scene image for Level 2 laboratory context.",
+    "source_project": "labutopia",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd",
+    "render_status": "downloaded_usd_scene",
+    "protocol_matchable": false,
+    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
+  },
+  {
+    "entry_id": "labutopia_scene_lab_003",
+    "entry_name": "LabUtopia Scene: lab_003",
+    "match_group": "scene_lab_003",
+    "aliases": [
+      "lab_003",
+      "lab 003"
+    ],
+    "purpose": "Full LabUtopia scene image for Level 2 laboratory context.",
+    "source_project": "labutopia",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd",
+    "render_status": "downloaded_usd_scene",
+    "protocol_matchable": false,
+    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd"
+  },
+  {
+    "entry_id": "labutopia_scene_scene1_hard",
+    "entry_name": "LabUtopia Scene: Scene1_hard",
+    "match_group": "scene_scene1_hard",
+    "aliases": [
+      "scene1_hard",
+      "scene1 hard"
+    ],
+    "purpose": "Full LabUtopia scene image for Level 2 laboratory context.",
+    "source_project": "labutopia",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd",
+    "render_status": "downloaded_usd_scene",
+    "protocol_matchable": false,
+    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/hard_task/Scene1_hard.usd"
+  },
+  {
+    "entry_id": "labutopia_scene_clock",
+    "entry_name": "LabUtopia Scene: clock",
+    "match_group": "scene_clock",
+    "aliases": [
+      "clock",
+      "clock"
+    ],
+    "purpose": "Full LabUtopia scene image for Level 2 laboratory context.",
+    "source_project": "labutopia",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/clock.usd",
+    "render_status": "downloaded_usd_scene",
+    "protocol_matchable": false,
+    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/clock.usd"
+  },
+  {
+    "entry_id": "labutopia_scene_navigation_lab_01",
+    "entry_name": "LabUtopia Scene: navigation_lab_01",
+    "match_group": "scene_navigation_lab_01",
+    "aliases": [
+      "navigation_lab_01",
+      "navigation lab 01"
+    ],
+    "purpose": "Full LabUtopia scene image for Level 2 laboratory context.",
+    "source_project": "labutopia",
+    "reference_kind": "scene",
+    "entry_type_label": "\u5b8c\u6574\u573a\u666f\uff08scene\uff09",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/navigation_lab/navigation_lab_01/lab.usd",
+    "render_status": "downloaded_usd_scene",
+    "protocol_matchable": false,
+    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/navigation_lab/navigation_lab_01/lab.usd"
   }
 ]

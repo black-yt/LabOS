@@ -871,6 +871,7 @@ REFERENCE_KIND_LABELS = {
     "standalone_mesh_root": "独立对象",
     "package_entrypoint": "组合对象",
     "scene_prim_reference": "场景内对象引用",
+    "scene": "完整场景",
 }
 
 SOURCE_LABELS = {
@@ -888,7 +889,9 @@ CATEGORY_LABELS = {
 RENDER_STATUS_LABELS = {
     "ready_obj": "可直接按 mesh 渲染",
     "ready_mjcf_package": "可直接按 MJCF 装配渲染",
+    "ready_mjcf_scene": "可直接按 MJCF 场景渲染",
     "downloaded_usd_requires_conversion": "当前使用 USD 场景缩略图展示",
+    "downloaded_usd_scene": "当前使用 USD 场景缩略图展示",
 }
 
 
@@ -971,11 +974,11 @@ def build_preview_manifest() -> dict[str, dict[str, str]]:
         out_path = PREVIEW_ROOT / "core" / entry["source_project"] / f"{slugify(entry['entry_id'])}.png"
         if entry["source_project"] == "labutopia":
             scene_path = relative_path_from_labutopia_local(entry["local_relative_path"]).split("#", 1)[0]
-            label = entry["local_relative_path"].split("#", 1)[1]
+            label = entry["local_relative_path"].split("#", 1)[1] if "#" in entry["local_relative_path"] else None
             save_labutopia_scene_preview(scene_path, out_path, entry["entry_name"], label)
         else:
             source = resolve_autobio_render_source(REPO_ROOT / entry["local_relative_path"])
-            kind = "mjcf" if entry["reference_kind"] == "package_entrypoint" else "mesh"
+            kind = "mjcf" if entry["reference_kind"] in {"package_entrypoint", "scene"} else "mesh"
             write_preview(source, out_path, entry["entry_name"], kind)
         manifest["core_entries"][entry["entry_id"]] = rel_from_bench(out_path)
 
@@ -1244,7 +1247,7 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "    B1 --> C",
         "    B2 --> C",
         "    B3 --> C",
-        "    C --> D[核心条目 29 项]",
+        f"    C --> D[核心条目 {len(entries)} 项]",
         "```",
         "",
         f"当前核心条目共 {len(entries)} 项，其中 `AutoBio` {auto_core_count} 项，`LabUtopia` {lab_core_count} 项。",
@@ -1285,16 +1288,16 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "",
         "## 5. 筛选后的 Benchmark 资产 / 场景",
         "",
-        "这一节对应 `benchmark_core_inventory.json`。它只保留当前 benchmark 直接需要复用的核心条目，而不是上游仓库的全部文件。",
+        "这一节对应 `benchmark_core_inventory.json`。这里采用最宽的 protocol 口径：凡是能直接服务 protocol 构造、protocol 理解，或者能作为 Level 2 视觉上下文的完整场景，都纳入第 5 章；只把明显属于 Level 3 执行器的 robot / hand / gripper 留在第 4 章。",
         "",
         "### 5.1 纳入标准",
         "",
         "只有同时满足下面这些条件的条目，才会进入这一章：",
         "",
-        "1. 能直接服务 benchmark 任务，而不是只提供环境背景。",
+        "1. 条目本身或场景主体必须直接服务 protocol 构造、protocol 理解或 Level 2 的实验上下文表达。",
         "2. 能稳定归入一个明确的语义类别，并绑定 `match_group` 与别名集合。",
         "3. 能整理成结构化数据单元，而不只是上游仓库里的孤立文件。",
-        "4. 粒度适合题目构造与 protocol 匹配，不会过细到单个环境碎片，也不会过粗到整张场景。",
+        "4. 粒度适合题目构造与 protocol 匹配；完整场景只要提供 protocol 相关仪器、容器、实验台面或实验室上下文，就纳入。",
         "5. 至少具备可追溯的来源路径、用途说明和可视化状态，便于后续扩展与人工核查。",
         "",
         "### 5.2 核心条目表",

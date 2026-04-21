@@ -28,12 +28,14 @@ AUTOBIO_COPY_PREFIXES = [
     "assets",
     "model/object",
     "model/instrument",
+    "model/scene",
 ]
 
 LABUTOPIA_DOWNLOAD_PREFIXES = [
     "assets/chemistry_lab/lab_001",
     "assets/chemistry_lab/lab_003",
     "assets/chemistry_lab/hard_task",
+    "assets/navigation_lab/navigation_lab_01",
     "assets/robots",
     "assets/properties.json",
 ]
@@ -367,6 +369,22 @@ GROUP_TO_PATTERNS = {
     for item in MATCH_GROUPS
 }
 
+
+LABUTOPIA_LEVEL12_SCENES = [
+    ("lab_001", "LabUtopia Scene: lab_001", "assets/chemistry_lab/lab_001/lab_001.usd"),
+    ("lab_003", "LabUtopia Scene: lab_003", "assets/chemistry_lab/lab_003/lab_003.usd"),
+    (
+        "scene1_hard",
+        "LabUtopia Scene: Scene1_hard",
+        "assets/chemistry_lab/hard_task/Scene1_hard.usd",
+    ),
+    ("clock", "LabUtopia Scene: clock", "assets/chemistry_lab/lab_003/clock.usd"),
+    (
+        "navigation_lab_01",
+        "LabUtopia Scene: navigation_lab_01",
+        "assets/navigation_lab/navigation_lab_01/lab.usd",
+    ),
+]
 
 CATALOG_ENTRIES = [
     {
@@ -784,13 +802,69 @@ for item in CATALOG_ENTRIES:
         item["reference_kind"] = "standalone_mesh_root"
     else:
         item["reference_kind"] = "package_entrypoint"
+    item["protocol_matchable"] = True
 
 
 ENTRY_TYPE_LABELS = {
     "standalone_mesh_root": "独立对象（standalone_mesh_root）",
     "package_entrypoint": "组合对象（package_entrypoint）",
     "scene_prim_reference": "场景内对象引用（scene_prim_reference）",
+    "scene": "完整场景（scene）",
 }
+
+
+def humanize_scene_name(name: str) -> str:
+    return name.replace("_", " ")
+
+
+def autobio_level12_scene_entries() -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for path in sorted((AUTOBIO_SOURCE_ROOT / "model" / "scene").glob("*.xml")):
+        scene_id = path.stem
+        entries.append(
+            {
+                "asset_id": f"autobio_scene_{scene_id}",
+                "asset_name": f"AutoBio Scene: {humanize_scene_name(scene_id)}",
+                "match_group": f"scene_{scene_id}",
+                "aliases": [scene_id, humanize_scene_name(scene_id)],
+                "purpose": "Full AutoBio scene image for Level 2 multi-instrument visual context.",
+                "local_relative_path": f"data/benchmark_inventory/files/autobio/autobio/model/scene/{path.name}",
+                "source_project": "autobio",
+                "render_status": "ready_mjcf_scene",
+                "reference_kind": "scene",
+                "protocol_matchable": False,
+                "original_url": blob_url(
+                    "autobio-bench/AutoBio",
+                    f"autobio/model/scene/{path.name}",
+                ),
+            }
+        )
+    return entries
+
+
+def labutopia_level12_scene_entries() -> list[dict[str, Any]]:
+    entries: list[dict[str, Any]] = []
+    for scene_id, scene_name, scene_path in LABUTOPIA_LEVEL12_SCENES:
+        entries.append(
+            {
+                "asset_id": f"labutopia_scene_{scene_id}",
+                "asset_name": scene_name,
+                "match_group": f"scene_{scene_id}",
+                "aliases": [scene_id, humanize_scene_name(scene_id)],
+                "purpose": "Full LabUtopia scene image for Level 2 laboratory context.",
+                "local_relative_path": f"data/benchmark_inventory/files/labutopia/{scene_path}",
+                "source_project": "labutopia",
+                "render_status": "downloaded_usd_scene",
+                "reference_kind": "scene",
+                "protocol_matchable": False,
+                "original_url": media_url(LABUTOPIA_REPO, scene_path),
+            }
+        )
+    return entries
+
+
+def build_catalog_entries() -> list[dict[str, Any]]:
+    return CATALOG_ENTRIES + autobio_level12_scene_entries() + labutopia_level12_scene_entries()
 
 
 def to_inventory_entry(item: dict[str, Any]) -> dict[str, Any]:
@@ -805,6 +879,7 @@ def to_inventory_entry(item: dict[str, Any]) -> dict[str, Any]:
         "entry_type_label": ENTRY_TYPE_LABELS[item["reference_kind"]],
         "local_relative_path": item["local_relative_path"],
         "render_status": item["render_status"],
+        "protocol_matchable": item.get("protocol_matchable", True),
         "original_url": item["original_url"],
     }
 
@@ -889,9 +964,10 @@ def match_protocols(
     protocol_path: Path,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     protocols = iter_protocols(protocol_path)
-    matchable_groups = sorted({item["match_group"] for item in entries})
+    protocol_entries = [item for item in entries if item.get("protocol_matchable", True)]
+    matchable_groups = sorted({item["match_group"] for item in protocol_entries})
     entries_by_group: dict[str, list[dict[str, Any]]] = {}
-    for item in entries:
+    for item in protocol_entries:
         entries_by_group.setdefault(item["match_group"], []).append(item)
 
     matched = []
@@ -933,6 +1009,7 @@ def match_protocols(
     stats = {
         "protocol_input": relative_to_repo(protocol_path),
         "inventory_size": len(entries),
+        "protocol_matchable_inventory_size": len(protocol_entries),
         "match_group_count": len(matchable_groups),
         "protocol_count": len(protocols),
         "matched_protocol_count": len(matched),
@@ -995,8 +1072,9 @@ def main() -> int:
         downloaded = sync_labutopia(force=args.force)
         print(f"Downloaded {len(downloaded)} LabUtopia files.")
 
-    write_core_inventory(CATALOG_ENTRIES)
-    matches, stats = match_protocols(CATALOG_ENTRIES, PROTO_INPUT)
+    catalog_entries = build_catalog_entries()
+    write_core_inventory(catalog_entries)
+    matches, stats = match_protocols(catalog_entries, PROTO_INPUT)
     write_matches(matches, stats)
     print(json.dumps(stats, indent=2))
     return 0
