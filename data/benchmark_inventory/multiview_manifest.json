@@ -1,0 +1,977 @@
+{
+  "output_root": "data/benchmark_inventory/multiview",
+  "image_size": {
+    "width": 840,
+    "height": 560
+  },
+  "view_order": [
+    "top",
+    "bottom",
+    "left",
+    "right",
+    "front",
+    "back",
+    "free"
+  ],
+  "views": [
+    {
+      "name": "top",
+      "label": "top / upper view",
+      "mesh_elev": 90,
+      "mesh_azim": -90,
+      "mjcf_elev": -89,
+      "mjcf_azim": 0
+    },
+    {
+      "name": "bottom",
+      "label": "bottom / lower view",
+      "mesh_elev": -90,
+      "mesh_azim": -90,
+      "mjcf_elev": 89,
+      "mjcf_azim": 0
+    },
+    {
+      "name": "left",
+      "label": "left side view",
+      "mesh_elev": 0,
+      "mesh_azim": 180,
+      "mjcf_elev": -5,
+      "mjcf_azim": -90
+    },
+    {
+      "name": "right",
+      "label": "right side view",
+      "mesh_elev": 0,
+      "mesh_azim": 0,
+      "mjcf_elev": -5,
+      "mjcf_azim": 90
+    },
+    {
+      "name": "front",
+      "label": "front view",
+      "mesh_elev": 0,
+      "mesh_azim": -90,
+      "mjcf_elev": -5,
+      "mjcf_azim": 0
+    },
+    {
+      "name": "back",
+      "label": "back view",
+      "mesh_elev": 0,
+      "mesh_azim": 90,
+      "mjcf_elev": -5,
+      "mjcf_azim": 180
+    },
+    {
+      "name": "free",
+      "label": "free oblique view",
+      "mesh_elev": 28,
+      "mesh_azim": 42,
+      "mjcf_elev": -35,
+      "mjcf_azim": 145
+    }
+  ],
+  "entries": [
+    {
+      "index": 0,
+      "entry_id": "autobio_cell_dish_100",
+      "entry_name": "100 mm Cell Dish",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/cell_dish_100_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_cell_dish_100/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_cell_dish_100/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_cell_dish_100/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_cell_dish_100/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_cell_dish_100/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_cell_dish_100/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_cell_dish_100/free.png"
+      }
+    },
+    {
+      "index": 1,
+      "entry_id": "autobio_centrifuge_1_5ml_screw",
+      "entry_name": "1.5 mL Screw-Cap Microcentrifuge Tube",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_1-5ml_screw_vis",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/free.png"
+      }
+    },
+    {
+      "index": 2,
+      "entry_id": "autobio_centrifuge_10ml",
+      "entry_name": "10 mL Centrifuge Tube",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_10ml_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/free.png"
+      }
+    },
+    {
+      "index": 3,
+      "entry_id": "autobio_centrifuge_1500ul_open",
+      "entry_name": "1.5 mL Open Microcentrifuge Tube",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_1500ul_no_lid_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_1500ul_open/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_1500ul_open/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_1500ul_open/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_1500ul_open/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_1500ul_open/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_1500ul_open/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_1500ul_open/free.png"
+      }
+    },
+    {
+      "index": 4,
+      "entry_id": "autobio_centrifuge_15ml_screw",
+      "entry_name": "15 mL Screw-Cap Centrifuge Tube",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_15ml_screw_vis",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/free.png"
+      }
+    },
+    {
+      "index": 5,
+      "entry_id": "autobio_centrifuge_50ml",
+      "entry_name": "50 mL Centrifuge Tube",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_50ml_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/free.png"
+      }
+    },
+    {
+      "index": 6,
+      "entry_id": "autobio_centrifuge_50ml_screw",
+      "entry_name": "50 mL Screw-Cap Centrifuge Tube",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/centrifuge_50ml_screw_vis",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml_screw/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml_screw/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml_screw/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml_screw/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml_screw/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml_screw/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml_screw/free.png"
+      }
+    },
+    {
+      "index": 7,
+      "entry_id": "autobio_cryovial_1_8ml",
+      "entry_name": "1.8 mL Cryovial",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/cryovial_1-8ml_vis",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_cryovial_1_8ml/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_cryovial_1_8ml/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_cryovial_1_8ml/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_cryovial_1_8ml/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_cryovial_1_8ml/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_cryovial_1_8ml/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_cryovial_1_8ml/free.png"
+      }
+    },
+    {
+      "index": 8,
+      "entry_id": "autobio_pcr_plate_96well",
+      "entry_name": "96-Well PCR Plate",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/pcr_plate_96well_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/free.png"
+      }
+    },
+    {
+      "index": 9,
+      "entry_id": "autobio_tip_200ul",
+      "entry_name": "200 uL Pipette Tip",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/container/tip_200ul_vis/visual.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_tip_200ul/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_tip_200ul/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_tip_200ul/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_tip_200ul/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_tip_200ul/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_tip_200ul/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_tip_200ul/free.png"
+      }
+    },
+    {
+      "index": 10,
+      "entry_id": "autobio_pipette",
+      "entry_name": "Micropipette",
+      "source_project": "autobio",
+      "reference_kind": "package_entrypoint",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/object/pipette.gen.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_pipette/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_pipette/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_pipette/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_pipette/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_pipette/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_pipette/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_pipette/free.png"
+      }
+    },
+    {
+      "index": 11,
+      "entry_id": "autobio_tip_box_24slot",
+      "entry_name": "24-Slot Tip Box",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/tip_box_24slot_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/free.png"
+      }
+    },
+    {
+      "index": 12,
+      "entry_id": "autobio_pipette_rack_tri",
+      "entry_name": "Triangular Pipette Rack",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/pipette_rack_tri_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/free.png"
+      }
+    },
+    {
+      "index": 13,
+      "entry_id": "autobio_centrifuge_10slot_rack",
+      "entry_name": "10-Slot Centrifuge Tube Rack",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/centrifuge_10slot_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_10slot_rack/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_10slot_rack/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_10slot_rack/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_10slot_rack/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_10slot_rack/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_10slot_rack/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_10slot_rack/free.png"
+      }
+    },
+    {
+      "index": 14,
+      "entry_id": "autobio_centrifuge_plate_60well",
+      "entry_name": "60-Well Plate Rack",
+      "source_project": "autobio",
+      "reference_kind": "standalone_mesh_root",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/assets/rack/centrifuge_plate_60well_vis.obj",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/free.png"
+      }
+    },
+    {
+      "index": 15,
+      "entry_id": "autobio_centrifuge_5430",
+      "entry_name": "Eppendorf 5430 Centrifuge",
+      "source_project": "autobio",
+      "reference_kind": "package_entrypoint",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/centrifuge_eppendorf_5430.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/free.png"
+      }
+    },
+    {
+      "index": 16,
+      "entry_id": "autobio_centrifuge_5910_ri",
+      "entry_name": "Eppendorf 5910 Ri Centrifuge",
+      "source_project": "autobio",
+      "reference_kind": "package_entrypoint",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/centrifuge_eppendorf_5910_ri.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/free.png"
+      }
+    },
+    {
+      "index": 17,
+      "entry_id": "autobio_centrifuge_tgear_mini",
+      "entry_name": "Tiangen Tgear Mini Centrifuge",
+      "source_project": "autobio",
+      "reference_kind": "package_entrypoint",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/centrifuge_tiangen_tgear_mini.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/free.png"
+      }
+    },
+    {
+      "index": 18,
+      "entry_id": "autobio_thermal_cycler_c1000",
+      "entry_name": "Bio-Rad C1000 Thermal Cycler",
+      "source_project": "autobio",
+      "reference_kind": "package_entrypoint",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/thermal_cycler_biorad_c1000.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/free.png"
+      }
+    },
+    {
+      "index": 19,
+      "entry_id": "autobio_thermal_mixer_eppendorf_c",
+      "entry_name": "Eppendorf C Thermal Mixer",
+      "source_project": "autobio",
+      "reference_kind": "package_entrypoint",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/thermal_mixer_eppendorf_c.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/free.png"
+      }
+    },
+    {
+      "index": 20,
+      "entry_id": "autobio_vortex_mixer_genie_2",
+      "entry_name": "Genie 2 Vortex Mixer",
+      "source_project": "autobio",
+      "reference_kind": "package_entrypoint",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/instrument/vortex_mixer_genie_2.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_vortex_mixer_genie_2/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_vortex_mixer_genie_2/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_vortex_mixer_genie_2/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_vortex_mixer_genie_2/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_vortex_mixer_genie_2/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_vortex_mixer_genie_2/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_vortex_mixer_genie_2/free.png"
+      }
+    },
+    {
+      "index": 21,
+      "entry_id": "labutopia_beaker_family",
+      "entry_name": "Beaker Family",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/beaker1",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_beaker_family/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_beaker_family/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_beaker_family/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_beaker_family/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_beaker_family/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_beaker_family/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_beaker_family/free.png"
+      }
+    },
+    {
+      "index": 22,
+      "entry_id": "labutopia_conical_bottle_family",
+      "entry_name": "Conical Bottle / Flask Family",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/conical_bottle02",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/free.png"
+      }
+    },
+    {
+      "index": 23,
+      "entry_id": "labutopia_graduated_cylinder_03",
+      "entry_name": "Graduated Cylinder",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/graduated_cylinder_03",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/free.png"
+      }
+    },
+    {
+      "index": 24,
+      "entry_id": "labutopia_glass_rod",
+      "entry_name": "Glass Rod",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd#/World/glass_rod",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_glass_rod/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_glass_rod/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_glass_rod/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_glass_rod/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_glass_rod/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_glass_rod/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_glass_rod/free.png"
+      }
+    },
+    {
+      "index": 25,
+      "entry_id": "labutopia_test_tube_rack",
+      "entry_name": "Test Tube Rack",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd#/World/test_tube_rack",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_test_tube_rack/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_test_tube_rack/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_test_tube_rack/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_test_tube_rack/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_test_tube_rack/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_test_tube_rack/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_test_tube_rack/free.png"
+      }
+    },
+    {
+      "index": 26,
+      "entry_id": "labutopia_drying_box_family",
+      "entry_name": "Drying Box Family",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/DryingBox_01",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_drying_box_family/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_drying_box_family/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_drying_box_family/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_drying_box_family/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_drying_box_family/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_drying_box_family/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_drying_box_family/free.png"
+      }
+    },
+    {
+      "index": 27,
+      "entry_id": "labutopia_heat_device",
+      "entry_name": "Heat Device / Hot Plate",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd#/World/heat_device",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_heat_device/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_heat_device/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_heat_device/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_heat_device/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_heat_device/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_heat_device/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_heat_device/free.png"
+      }
+    },
+    {
+      "index": 28,
+      "entry_id": "labutopia_muffle_furnace",
+      "entry_name": "Muffle Furnace",
+      "source_project": "labutopia",
+      "reference_kind": "scene_prim_reference",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/MuffleFurnace",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/free.png"
+      }
+    },
+    {
+      "index": 29,
+      "entry_id": "autobio_scene_bottlecap",
+      "entry_name": "AutoBio Scene: bottlecap",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/bottlecap.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_bottlecap/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_bottlecap/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_bottlecap/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_bottlecap/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_bottlecap/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_bottlecap/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_bottlecap/free.png"
+      }
+    },
+    {
+      "index": 30,
+      "entry_id": "autobio_scene_gallery",
+      "entry_name": "AutoBio Scene: gallery",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/gallery.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_gallery/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_gallery/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_gallery/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_gallery/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_gallery/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_gallery/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_gallery/free.png"
+      }
+    },
+    {
+      "index": 31,
+      "entry_id": "autobio_scene_gallery2",
+      "entry_name": "AutoBio Scene: gallery2",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/gallery2.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_gallery2/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_gallery2/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_gallery2/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_gallery2/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_gallery2/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_gallery2/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_gallery2/free.png"
+      }
+    },
+    {
+      "index": 32,
+      "entry_id": "autobio_scene_insert",
+      "entry_name": "AutoBio Scene: insert",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/insert.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_insert/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_insert/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_insert/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_insert/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_insert/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_insert/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_insert/free.png"
+      }
+    },
+    {
+      "index": 33,
+      "entry_id": "autobio_scene_insert_centrifuge_5430",
+      "entry_name": "AutoBio Scene: insert centrifuge 5430",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/insert_centrifuge_5430.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_insert_centrifuge_5430/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_insert_centrifuge_5430/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_insert_centrifuge_5430/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_insert_centrifuge_5430/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_insert_centrifuge_5430/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_insert_centrifuge_5430/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_insert_centrifuge_5430/free.png"
+      }
+    },
+    {
+      "index": 34,
+      "entry_id": "autobio_scene_lab",
+      "entry_name": "AutoBio Scene: lab",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/lab.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_lab/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_lab/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_lab/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_lab/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_lab/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_lab/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_lab/free.png"
+      }
+    },
+    {
+      "index": 35,
+      "entry_id": "autobio_scene_lab_screw_all",
+      "entry_name": "AutoBio Scene: lab screw all",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/lab_screw_all.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_all/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_all/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_all/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_all/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_all/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_all/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_all/free.png"
+      }
+    },
+    {
+      "index": 36,
+      "entry_id": "autobio_scene_lab_screw_tighten",
+      "entry_name": "AutoBio Scene: lab screw tighten",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/lab_screw_tighten.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_tighten/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_tighten/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_tighten/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_tighten/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_tighten/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_tighten/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_lab_screw_tighten/free.png"
+      }
+    },
+    {
+      "index": 37,
+      "entry_id": "autobio_scene_mani_centrifuge_5430",
+      "entry_name": "AutoBio Scene: mani centrifuge 5430",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_centrifuge_5430.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5430/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5430/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5430/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5430/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5430/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5430/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5430/free.png"
+      }
+    },
+    {
+      "index": 38,
+      "entry_id": "autobio_scene_mani_centrifuge_5910",
+      "entry_name": "AutoBio Scene: mani centrifuge 5910",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_centrifuge_5910.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5910/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5910/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5910/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5910/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5910/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5910/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_5910/free.png"
+      }
+    },
+    {
+      "index": 39,
+      "entry_id": "autobio_scene_mani_centrifuge_mini",
+      "entry_name": "AutoBio Scene: mani centrifuge mini",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_centrifuge_mini.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_mini/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_mini/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_mini/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_mini/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_mini/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_mini/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_mani_centrifuge_mini/free.png"
+      }
+    },
+    {
+      "index": 40,
+      "entry_id": "autobio_scene_mani_pipette",
+      "entry_name": "AutoBio Scene: mani pipette",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_pipette.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_mani_pipette/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_mani_pipette/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_mani_pipette/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_mani_pipette/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_mani_pipette/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_mani_pipette/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_mani_pipette/free.png"
+      }
+    },
+    {
+      "index": 41,
+      "entry_id": "autobio_scene_mani_thermal_cycler",
+      "entry_name": "AutoBio Scene: mani thermal cycler",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_thermal_cycler.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_cycler/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_cycler/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_cycler/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_cycler/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_cycler/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_cycler/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_cycler/free.png"
+      }
+    },
+    {
+      "index": 42,
+      "entry_id": "autobio_scene_mani_thermal_mixer",
+      "entry_name": "AutoBio Scene: mani thermal mixer",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/mani_thermal_mixer.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_mixer/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_mixer/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_mixer/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_mixer/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_mixer/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_mixer/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_mani_thermal_mixer/free.png"
+      }
+    },
+    {
+      "index": 43,
+      "entry_id": "autobio_scene_pickup",
+      "entry_name": "AutoBio Scene: pickup",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/pickup.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_pickup/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_pickup/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_pickup/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_pickup/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_pickup/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_pickup/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_pickup/free.png"
+      }
+    },
+    {
+      "index": 44,
+      "entry_id": "autobio_scene_screw",
+      "entry_name": "AutoBio Scene: screw",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/screw.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_screw/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_screw/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_screw/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_screw/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_screw/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_screw/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_screw/free.png"
+      }
+    },
+    {
+      "index": 45,
+      "entry_id": "autobio_scene_screw_test",
+      "entry_name": "AutoBio Scene: screw test",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/screw_test.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_screw_test/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_screw_test/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_screw_test/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_screw_test/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_screw_test/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_screw_test/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_screw_test/free.png"
+      }
+    },
+    {
+      "index": 46,
+      "entry_id": "autobio_scene_screw_v3",
+      "entry_name": "AutoBio Scene: screw v3",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/screw_v3.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_screw_v3/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_screw_v3/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_screw_v3/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_screw_v3/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_screw_v3/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_screw_v3/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_screw_v3/free.png"
+      }
+    },
+    {
+      "index": 47,
+      "entry_id": "autobio_scene_vortex_mixer",
+      "entry_name": "AutoBio Scene: vortex mixer",
+      "source_project": "autobio",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/autobio/autobio/model/scene/vortex_mixer.xml",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/autobio_scene_vortex_mixer/top.png",
+        "bottom": "data/benchmark_inventory/multiview/autobio_scene_vortex_mixer/bottom.png",
+        "left": "data/benchmark_inventory/multiview/autobio_scene_vortex_mixer/left.png",
+        "right": "data/benchmark_inventory/multiview/autobio_scene_vortex_mixer/right.png",
+        "front": "data/benchmark_inventory/multiview/autobio_scene_vortex_mixer/front.png",
+        "back": "data/benchmark_inventory/multiview/autobio_scene_vortex_mixer/back.png",
+        "free": "data/benchmark_inventory/multiview/autobio_scene_vortex_mixer/free.png"
+      }
+    },
+    {
+      "index": 48,
+      "entry_id": "labutopia_scene_lab_001",
+      "entry_name": "LabUtopia Scene: lab_001",
+      "source_project": "labutopia",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_scene_lab_001/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_scene_lab_001/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_scene_lab_001/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_scene_lab_001/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_scene_lab_001/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_scene_lab_001/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_scene_lab_001/free.png"
+      }
+    },
+    {
+      "index": 49,
+      "entry_id": "labutopia_scene_lab_003",
+      "entry_name": "LabUtopia Scene: lab_003",
+      "source_project": "labutopia",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_scene_lab_003/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_scene_lab_003/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_scene_lab_003/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_scene_lab_003/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_scene_lab_003/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_scene_lab_003/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_scene_lab_003/free.png"
+      }
+    },
+    {
+      "index": 50,
+      "entry_id": "labutopia_scene_scene1_hard",
+      "entry_name": "LabUtopia Scene: Scene1_hard",
+      "source_project": "labutopia",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_scene_scene1_hard/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_scene_scene1_hard/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_scene_scene1_hard/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_scene_scene1_hard/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_scene_scene1_hard/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_scene_scene1_hard/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_scene_scene1_hard/free.png"
+      }
+    },
+    {
+      "index": 51,
+      "entry_id": "labutopia_scene_clock",
+      "entry_name": "LabUtopia Scene: clock",
+      "source_project": "labutopia",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/clock.usd",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_scene_clock/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_scene_clock/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_scene_clock/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_scene_clock/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_scene_clock/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_scene_clock/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_scene_clock/free.png"
+      }
+    },
+    {
+      "index": 52,
+      "entry_id": "labutopia_scene_navigation_lab_01",
+      "entry_name": "LabUtopia Scene: navigation_lab_01",
+      "source_project": "labutopia",
+      "reference_kind": "scene",
+      "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/navigation_lab/navigation_lab_01/lab.usd",
+      "views": {
+        "top": "data/benchmark_inventory/multiview/labutopia_scene_navigation_lab_01/top.png",
+        "bottom": "data/benchmark_inventory/multiview/labutopia_scene_navigation_lab_01/bottom.png",
+        "left": "data/benchmark_inventory/multiview/labutopia_scene_navigation_lab_01/left.png",
+        "right": "data/benchmark_inventory/multiview/labutopia_scene_navigation_lab_01/right.png",
+        "front": "data/benchmark_inventory/multiview/labutopia_scene_navigation_lab_01/front.png",
+        "back": "data/benchmark_inventory/multiview/labutopia_scene_navigation_lab_01/back.png",
+        "free": "data/benchmark_inventory/multiview/labutopia_scene_navigation_lab_01/free.png"
+      }
+    }
+  ]
+}
