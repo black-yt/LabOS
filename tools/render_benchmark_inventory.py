@@ -24,8 +24,15 @@ import matplotlib.pyplot as plt
 import mujoco
 import numpy as np
 import trimesh
-from PIL import Image, ImageDraw, ImageFont, ImageOps, ImageFilter
+from PIL import Image, ImageChops, ImageDraw, ImageEnhance, ImageFilter, ImageFont, ImageOps
 from mpl_toolkits.mplot3d.art3d import Poly3DCollection
+
+try:
+    from pxr import Gf, Usd, UsdGeom
+except Exception:
+    Gf = None
+    Usd = None
+    UsdGeom = None
 
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -48,6 +55,13 @@ IMAGE_WIDTH = 320
 IMAGE_HEIGHT = 240
 SCENE_WIDTH = 360
 SCENE_HEIGHT = 240
+
+
+@dataclass
+class ResolvedMesh:
+    mesh: trimesh.Trimesh
+    source_name: str
+    fallback_color: tuple[int, int, int] | None = None
 
 
 def slugify(text: str) -> str:
@@ -290,6 +304,10 @@ AUTOBIO_PREVIEW_FALLBACKS = {
     ),
 }
 
+AUTOBIO_MJCF_MESH_RENDER_SOURCES = {
+    "model/object/pipette.gen.xml": AUTOBIO_ROOT / "assets" / "tool" / "pipette",
+}
+
 AUTOBIO_PROXY_PREVIEWS = {
     "model/robot/dualrm.xml": "dualrm",
     "model/robot/piper.xml": "piper",
@@ -315,6 +333,15 @@ def fallback_proxy_kind(source_path: Path) -> str | None:
     except ValueError:
         return None
     return AUTOBIO_PROXY_PREVIEWS.get(relative)
+
+
+def preferred_mesh_render_source(source_path: Path) -> Path | None:
+    resolved = resolve_autobio_render_source(source_path)
+    try:
+        relative = resolved.relative_to(AUTOBIO_ROOT).as_posix()
+    except ValueError:
+        return None
+    return AUTOBIO_MJCF_MESH_RENDER_SOURCES.get(relative)
 
 
 def vertical_gradient(
@@ -549,6 +576,192 @@ def crop_to_content(
     return resize_with_aspect_padding(cropped, out_size, tuple(int(x) for x in bg))
 
 
+def composite_on_light_background(
+    image: Image.Image,
+    diff_threshold: int = 16,
+    dark_background_threshold: int = 40,
+) -> Image.Image:
+    rgb = image.convert("RGB")
+    arr = np.asarray(rgb)
+    bg = corner_background_color(rgb)
+    if float(bg.mean()) > dark_background_threshold:
+        return rgb
+    diff = np.abs(arr.astype(np.int16) - bg.astype(np.int16)).max(axis=2)
+    mask = diff > diff_threshold
+    if mask.mean() < 0.002:
+        return rgb
+    alpha = Image.fromarray((mask.astype(np.uint8) * 255), mode="L").filter(ImageFilter.GaussianBlur(radius=1.4))
+    background = vertical_gradient(
+        (rgb.width, rgb.height),
+        (250, 251, 253),
+        (232, 238, 244),
+    ).convert("RGBA")
+    shadow_alpha = ImageEnhance.Brightness(alpha.filter(ImageFilter.GaussianBlur(radius=10))).enhance(0.42)
+    shadow = Image.new("RGBA", rgb.size, (52, 64, 79, 0))
+    shadow.putalpha(shadow_alpha)
+    shadow = ImageChops.offset(shadow, 7, 9)
+    composed = Image.alpha_composite(background, shadow)
+    foreground = rgb.convert("RGBA")
+    foreground.putalpha(alpha)
+    composed = Image.alpha_composite(composed, foreground)
+    return composed.convert("RGB")
+
+
+def enhance_preview_image(image: Image.Image, brighten: float = 1.04, contrast: float = 1.08) -> Image.Image:
+    enhanced = ImageOps.autocontrast(image.convert("RGB"), cutoff=1)
+    enhanced = ImageEnhance.Brightness(enhanced).enhance(brighten)
+    enhanced = ImageEnhance.Contrast(enhanced).enhance(contrast)
+    return enhanced
+
+
+def soft_enhance_preview_image(image: Image.Image, brighten: float = 1.05, contrast: float = 1.04) -> Image.Image:
+    enhanced = ImageEnhance.Brightness(image.convert("RGB")).enhance(brighten)
+    enhanced = ImageEnhance.Contrast(enhanced).enhance(contrast)
+    return enhanced
+
+
+def inferred_preview_color(source_name: str, title: str) -> tuple[int, int, int]:
+    text = f"{source_name} {title}".lower()
+    if any(token in text for token in ["knob", "button", "connector", "handle", "cap", "lid"]):
+        return (92, 151, 224)
+    if "tip" in text:
+        return (120, 168, 232)
+    if any(token in text for token in ["cell dish", "petri", "beaker", "conical", "glass", "cylinder"]):
+        return (232, 242, 249)
+    if any(token in text for token in ["tube", "vial", "cryovial"]):
+        return (226, 238, 247)
+    if "pipette" in text:
+        return (240, 242, 246)
+    if "plate" in text:
+        return (228, 233, 239)
+    if any(token in text for token in ["rack", "box", "platform", "plat"]):
+        return (103, 148, 214)
+    if any(token in text for token in ["centrifuge", "thermal", "mixer", "vortex", "furnace", "drying", "heat device"]):
+        return (233, 237, 242)
+    if any(token in text for token in ["cabinet", "table"]):
+        return (210, 214, 220)
+    return (121, 146, 191)
+
+
+def mesh_face_colors(mesh: trimesh.Trimesh, source_name: str, title: str, fallback_color: tuple[int, int, int] | None = None) -> np.ndarray:
+    force_inferred = not source_name.startswith("/World/") and any(
+        token in title.lower()
+        for token in [
+            "pipette",
+            "plate",
+            "tube",
+            "dish",
+            "tip",
+            "rack",
+            "box",
+            "cryovial",
+        ]
+    )
+    if force_inferred:
+        color = np.array(fallback_color or inferred_preview_color(source_name, title), dtype=np.uint8)
+        rgba = np.concatenate([color, np.array([255], dtype=np.uint8)])
+        return np.tile(rgba, (len(mesh.faces), 1))
+
+    try:
+        visual = mesh.visual.to_color()
+        face_colors = np.asarray(visual.face_colors)
+    except Exception:
+        face_colors = np.empty((0, 4), dtype=np.uint8)
+    if len(face_colors) == len(mesh.faces):
+        rgb = face_colors[:, :3].astype(np.float32)
+        spread = float(np.ptp(rgb, axis=0).max()) if len(rgb) else 0.0
+        mean = rgb.mean(axis=0) if len(rgb) else np.zeros(3, dtype=np.float32)
+        if not (spread < 2.5 and np.allclose(mean, np.array([102.0, 102.0, 102.0]), atol=4.0)):
+            return face_colors
+    color = np.array(fallback_color or inferred_preview_color(source_name, title), dtype=np.uint8)
+    rgba = np.concatenate([color, np.array([255], dtype=np.uint8)])
+    return np.tile(rgba, (len(mesh.faces), 1))
+
+
+def shaded_face_colors(vertices: np.ndarray, faces: np.ndarray, face_colors: np.ndarray) -> np.ndarray:
+    tri_vertices = vertices[faces]
+    normals = np.cross(tri_vertices[:, 1] - tri_vertices[:, 0], tri_vertices[:, 2] - tri_vertices[:, 0])
+    lengths = np.linalg.norm(normals, axis=1, keepdims=True)
+    normals = normals / np.maximum(lengths, 1e-8)
+    key_light = np.array([0.65, -0.45, 0.72], dtype=np.float32)
+    fill_light = np.array([-0.25, 0.30, 0.58], dtype=np.float32)
+    key_light /= np.linalg.norm(key_light)
+    fill_light /= np.linalg.norm(fill_light)
+    key = np.clip(normals @ key_light, 0.0, 1.0)
+    fill = np.clip(normals @ fill_light, 0.0, 1.0)
+    intensity = 0.78 + 0.15 * key + 0.07 * fill
+    rim = np.clip(1.0 - np.abs(normals[:, 2]), 0.0, 1.0) * 0.10
+    base = face_colors[:, :3].astype(np.float32) / 255.0
+    shaded = np.clip(base * intensity[:, None] + rim[:, None], 0.0, 1.0)
+    alpha = face_colors[:, 3:4].astype(np.float32) / 255.0
+    return np.concatenate([shaded, alpha], axis=1)
+
+
+def render_resolved_meshes(meshes: list[ResolvedMesh], out_path: Path, title: str) -> None:
+    if not meshes:
+        save_image(reference_card(title, "metadata card", "No renderable mesh found"), out_path)
+        return
+
+    vertex_blocks: list[np.ndarray] = []
+    face_blocks: list[np.ndarray] = []
+    color_blocks: list[np.ndarray] = []
+    vertex_offset = 0
+    for entry in meshes:
+        mesh = entry.mesh.copy()
+        if len(mesh.vertices) == 0 or len(mesh.faces) == 0:
+            continue
+        vertex_blocks.append(mesh.vertices.copy())
+        face_blocks.append(mesh.faces.copy() + vertex_offset)
+        color_blocks.append(mesh_face_colors(mesh, entry.source_name, title, entry.fallback_color))
+        vertex_offset += len(mesh.vertices)
+
+    if not vertex_blocks:
+        save_image(reference_card(title, "metadata card", "No renderable mesh found"), out_path)
+        return
+
+    vertices = np.concatenate(vertex_blocks, axis=0)
+    faces = np.concatenate(face_blocks, axis=0)
+    face_colors = np.concatenate(color_blocks, axis=0)
+    mins = vertices.min(axis=0)
+    maxs = vertices.max(axis=0)
+    center = (mins + maxs) / 2.0
+    scale = float(np.max(maxs - mins))
+    if scale <= 0:
+        scale = 1.0
+    vertices = (vertices - center) / scale
+
+    fig = plt.figure(figsize=(4.0, 3.0), dpi=140)
+    ax = fig.add_subplot(111, projection="3d")
+    tri_vertices = vertices[faces]
+    collection = Poly3DCollection(
+        tri_vertices,
+        facecolors=shaded_face_colors(vertices, faces, face_colors),
+        edgecolor=(0.13, 0.18, 0.25, 0.08),
+        linewidth=0.10,
+    )
+    ax.add_collection3d(collection)
+    span = 0.64
+    ax.set_xlim(-span, span)
+    ax.set_ylim(-span, span)
+    ax.set_zlim(-span, span)
+    ax.view_init(elev=23, azim=42)
+    ax.set_box_aspect((1, 1, 1))
+    ax.axis("off")
+    fig.patch.set_facecolor("#f5f7fa")
+    ax.set_facecolor("#f5f7fa")
+    fig.subplots_adjust(0, 0, 1, 1)
+    ax.set_position([0, 0, 1, 1])
+    ensure_dir(out_path.parent)
+    tmp_path = out_path.with_suffix(".raw.png")
+    fig.savefig(tmp_path, bbox_inches="tight", pad_inches=0.02, facecolor="#f5f7fa")
+    plt.close(fig)
+    raw = Image.open(tmp_path).convert("RGB")
+    raw = crop_to_content(raw, (SCENE_WIDTH, SCENE_HEIGHT), diff_threshold=10, padding_ratio=0.12)
+    raw = soft_enhance_preview_image(raw, brighten=1.08, contrast=1.05)
+    tmp_path.unlink(missing_ok=True)
+    save_image(add_label(raw, title), out_path)
+
+
 def render_mjcf_preview(xml_path: Path, out_path: Path, title: str, distance_scale: float = 2.8) -> None:
     render_source = resolve_autobio_render_source(xml_path)
     if is_autobio_render_source(render_source):
@@ -572,12 +785,14 @@ def render_mjcf_preview(xml_path: Path, out_path: Path, title: str, distance_sca
         image = renderer.render()
     finally:
         renderer.close()
-    pil_image = crop_to_content(Image.fromarray(image).convert("RGB"), (SCENE_WIDTH, SCENE_HEIGHT))
-    pil_image = ImageOps.autocontrast(pil_image, cutoff=1)
+    pil_image = Image.fromarray(image).convert("RGB")
+    pil_image = composite_on_light_background(pil_image)
+    pil_image = crop_to_content(pil_image, (SCENE_WIDTH, SCENE_HEIGHT))
+    pil_image = soft_enhance_preview_image(pil_image, brighten=1.06, contrast=1.04)
     save_image(add_label(pil_image, title), out_path)
 
 
-def load_mesh_list(source: Path) -> list[trimesh.Trimesh]:
+def load_mesh_entries(source: Path) -> list[ResolvedMesh]:
     candidates: list[Path] = []
     if source.is_file():
         candidates = [source]
@@ -593,6 +808,7 @@ def load_mesh_list(source: Path) -> list[trimesh.Trimesh]:
             if "visual" in path.stem.lower()
             and "collision" not in path.stem.lower()
             and "inertia" not in path.stem.lower()
+            and "pusher" not in path.stem.lower()
         ]
         if preferred:
             candidates = preferred
@@ -605,68 +821,28 @@ def load_mesh_list(source: Path) -> list[trimesh.Trimesh]:
             ]
         if not candidates:
             candidates = all_meshes
-    meshes: list[trimesh.Trimesh] = []
+    meshes: list[ResolvedMesh] = []
     for candidate in candidates:
         try:
             loaded = trimesh.load(candidate, force="mesh", process=False)
         except Exception:
             continue
         if isinstance(loaded, trimesh.Trimesh) and len(loaded.vertices) and len(loaded.faces):
-            meshes.append(loaded)
+            meshes.append(ResolvedMesh(loaded, candidate.name))
     return meshes
 
 
 def render_mesh_preview(source: Path, out_path: Path, title: str) -> None:
-    meshes = load_mesh_list(source)
-    if not meshes:
-        save_image(reference_card(title, "metadata card", "No renderable mesh found"), out_path)
-        return
-    mesh = trimesh.util.concatenate(meshes)
-    vertices = mesh.vertices.copy()
-    faces = mesh.faces
-    mins = vertices.min(axis=0)
-    maxs = vertices.max(axis=0)
-    center = (mins + maxs) / 2.0
-    scale = float(np.max(maxs - mins))
-    if scale <= 0:
-        scale = 1.0
-    vertices = (vertices - center) / scale
-
-    fig = plt.figure(figsize=(4.0, 3.0), dpi=140)
-    ax = fig.add_subplot(111, projection="3d")
-    tri_vertices = vertices[faces]
-    collection = Poly3DCollection(
-        tri_vertices,
-        facecolor=(0.34, 0.47, 0.62, 1.0),
-        edgecolor=(0.10, 0.14, 0.20, 0.45),
-        linewidth=0.18,
-    )
-    ax.add_collection3d(collection)
-    span = 0.62
-    ax.set_xlim(-span, span)
-    ax.set_ylim(-span, span)
-    ax.set_zlim(-span, span)
-    ax.view_init(elev=24, azim=42)
-    ax.set_box_aspect((1, 1, 1))
-    ax.axis("off")
-    fig.patch.set_facecolor("#f5f7fa")
-    ax.set_facecolor("#f5f7fa")
-    fig.subplots_adjust(0, 0, 1, 1)
-    ax.set_position([0, 0, 1, 1])
-    ensure_dir(out_path.parent)
-    tmp_path = out_path.with_suffix(".raw.png")
-    fig.savefig(tmp_path, bbox_inches="tight", pad_inches=0.02, facecolor="#f5f7fa")
-    plt.close(fig)
-    raw = Image.open(tmp_path).convert("RGB")
-    raw = crop_to_content(raw, (SCENE_WIDTH, SCENE_HEIGHT), diff_threshold=10, padding_ratio=0.12)
-    raw = ImageOps.autocontrast(raw, cutoff=1)
-    tmp_path.unlink(missing_ok=True)
-    save_image(add_label(raw, title), out_path)
+    render_resolved_meshes(load_mesh_entries(source), out_path, title)
 
 
 def write_preview(source_path: Path, out_path: Path, title: str, preview_kind: str) -> None:
     try:
         if preview_kind == "mjcf":
+            mesh_override = preferred_mesh_render_source(source_path)
+            if mesh_override is not None:
+                render_mesh_preview(mesh_override, out_path, title)
+                return
             render_mjcf_preview(source_path, out_path, title)
         else:
             render_mesh_preview(source_path, out_path, title)
@@ -709,8 +885,117 @@ def load_labutopia_thumb(scene_path: str) -> Image.Image:
         return placeholder_image(Path(scene_path).name, "No scene thumbnail available")
 
 
+def enhance_labutopia_thumbnail(image: Image.Image) -> Image.Image:
+    enhanced = enhance_preview_image(image, brighten=1.10, contrast=1.06)
+    bg = corner_background_color(enhanced)
+    if float(bg.mean()) < 55:
+        enhanced = composite_on_light_background(enhanced, diff_threshold=12, dark_background_threshold=55)
+        enhanced = enhance_preview_image(enhanced, brighten=1.08, contrast=1.10)
+    return enhanced
+
+
+def triangulate_face_indices(face_counts: list[int], face_indices: list[int]) -> np.ndarray:
+    triangles: list[list[int]] = []
+    offset = 0
+    for count in face_counts:
+        polygon = face_indices[offset : offset + count]
+        if count >= 3:
+            for idx in range(1, count - 1):
+                triangles.append([polygon[0], polygon[idx], polygon[idx + 1]])
+        offset += count
+    if not triangles:
+        return np.empty((0, 3), dtype=np.int32)
+    return np.asarray(triangles, dtype=np.int32)
+
+
+def usd_display_color(prim: Any) -> tuple[int, int, int] | None:
+    if UsdGeom is None:
+        return None
+    primvar = UsdGeom.Gprim(prim).GetDisplayColorPrimvar()
+    if not primvar or not primvar.HasValue():
+        return None
+    try:
+        value = primvar.Get()
+    except Exception:
+        return None
+    if not value:
+        return None
+    colors = np.asarray([[float(color[0]), float(color[1]), float(color[2])] for color in value], dtype=np.float32)
+    mean = np.clip(colors.mean(axis=0), 0.0, 1.0)
+    if float(mean.mean()) < 0.45:
+        return None
+    return tuple(int(round(channel * 255)) for channel in mean)
+
+
+def load_labutopia_prim_meshes(stage_path: Path, prim_path: str, title: str) -> list[ResolvedMesh]:
+    if Usd is None or UsdGeom is None or Gf is None:
+        return []
+    stage = Usd.Stage.Open(str(stage_path))
+    if stage is None:
+        return []
+    prim = stage.GetPrimAtPath(prim_path)
+    if not prim.IsValid():
+        return []
+
+    xform_cache = UsdGeom.XformCache()
+    meshes: list[ResolvedMesh] = []
+    for child in Usd.PrimRange(prim):
+        if child.GetTypeName() != "Mesh":
+            continue
+        mesh = UsdGeom.Mesh(child)
+        try:
+            points = mesh.GetPointsAttr().Get() or []
+            face_counts = mesh.GetFaceVertexCountsAttr().Get() or []
+            face_indices = mesh.GetFaceVertexIndicesAttr().Get() or []
+        except Exception:
+            continue
+        if not points or not face_counts or not face_indices:
+            continue
+        faces = triangulate_face_indices(list(face_counts), list(face_indices))
+        if len(faces) == 0:
+            continue
+        transform = xform_cache.GetLocalToWorldTransform(child)
+        world_points = np.asarray(
+            [transform.Transform(Gf.Vec3d(float(point[0]), float(point[1]), float(point[2]))) for point in points],
+            dtype=np.float64,
+        )
+        fallback_color = usd_display_color(child) or inferred_preview_color(str(child.GetPath()), title)
+        mesh_obj = trimesh.Trimesh(vertices=world_points, faces=faces, process=False)
+        meshes.append(ResolvedMesh(mesh_obj, str(child.GetPath()), fallback_color))
+    return meshes
+
+
+def save_labutopia_object_preview(
+    scene_path: str,
+    object_paths: list[str],
+    out_path: Path,
+    title: str,
+) -> None:
+    scene_file = LABUTOPIA_LOCAL_ROOT / scene_path
+    for object_path in object_paths:
+        meshes = load_labutopia_prim_meshes(scene_file, object_path, title)
+        if meshes:
+            render_resolved_meshes(meshes, out_path, title)
+            return
+    subtitle = object_paths[0] if len(object_paths) == 1 else f"{object_paths[0]} ..."
+    save_labutopia_scene_preview(scene_path, out_path, title, subtitle)
+
+
+def save_labutopia_reference_preview(local_relative_path: str, out_path: Path, title: str) -> None:
+    scene_local_path, prim_path = local_relative_path.split("#", 1)
+    scene_file = REPO_ROOT / scene_local_path
+    prim_path = prim_path if prim_path.startswith("/") else f"/{prim_path.lstrip('/')}"
+    meshes = load_labutopia_prim_meshes(scene_file, prim_path, title)
+    if meshes:
+        render_resolved_meshes(meshes, out_path, title)
+        return
+    scene_path = relative_path_from_labutopia_local(scene_local_path)
+    save_labutopia_scene_preview(scene_path, out_path, title, prim_path)
+
+
 def save_labutopia_scene_preview(scene_path: str, out_path: Path, title: str, subtitle: str | None = None) -> None:
     image = load_labutopia_thumb(scene_path).resize((SCENE_WIDTH, SCENE_HEIGHT), Image.LANCZOS)
+    image = enhance_labutopia_thumbnail(image)
     save_image(add_label(image, title, subtitle), out_path)
 
 
@@ -861,7 +1146,7 @@ LAB_SCENE_OBJECTS = [
     ("glass rod", ["/World/glass_rod"], "assets/chemistry_lab/lab_003/lab_003.usd"),
     ("graduated cylinder", ["/World/graduated_cylinder_03"], "assets/chemistry_lab/lab_001/lab_001.usd"),
     ("heat device", ["/World/heat_device"], "assets/chemistry_lab/lab_003/lab_003.usd"),
-    ("muffle furnace", ["/World/MuffleFurnace"], "assets/chemistry_lab/hard_task/Scene1_hard.usd"),
+    ("muffle furnace", ["/World/MuffleFurnace"], "assets/chemistry_lab/lab_001/lab_001.usd"),
     ("rack / platform", ["/World/target_plat"], "assets/chemistry_lab/hard_task/Scene1_hard.usd"),
     ("table surface", ["/World/table/surface", "/World/table/surface/mesh"], "assets/chemistry_lab/lab_003/lab_003.usd"),
 ]
@@ -966,13 +1251,14 @@ def build_preview_manifest() -> dict[str, dict[str, str]]:
 
     for family, object_paths, scene_path in LAB_SCENE_OBJECTS:
         out_path = PREVIEW_ROOT / "labutopia" / "scene_objects" / f"{slugify(family)}.png"
-        subtitle = object_paths[0] if len(object_paths) == 1 else f"{object_paths[0]} ..."
-        save_labutopia_scene_preview(scene_path, out_path, family, subtitle)
+        save_labutopia_object_preview(scene_path, object_paths, out_path, family)
         manifest["labutopia_scene_objects"][family] = rel_from_bench(out_path)
 
     for entry in load_core_entries():
         out_path = PREVIEW_ROOT / "core" / entry["source_project"] / f"{slugify(entry['entry_id'])}.png"
-        if entry["source_project"] == "labutopia":
+        if entry["source_project"] == "labutopia" and entry["reference_kind"] == "scene_prim_reference":
+            save_labutopia_reference_preview(entry["local_relative_path"], out_path, entry["entry_name"])
+        elif entry["source_project"] == "labutopia":
             scene_path = relative_path_from_labutopia_local(entry["local_relative_path"]).split("#", 1)[0]
             label = entry["local_relative_path"].split("#", 1)[1] if "#" in entry["local_relative_path"] else None
             save_labutopia_scene_preview(scene_path, out_path, entry["entry_name"], label)

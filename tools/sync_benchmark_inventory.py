@@ -687,7 +687,7 @@ CATALOG_ENTRIES = [
         "match_group": "beaker",
         "aliases": GROUP_TO_ALIASES["beaker"],
         "purpose": "General glass container for mixing, pouring, heating, and transfer.",
-        "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/beaker",
+        "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/beaker1",
         "source_project": "labutopia",
         "render_status": "downloaded_usd_requires_conversion",
         "original_url": media_url(
@@ -743,12 +743,12 @@ CATALOG_ENTRIES = [
         "match_group": "tube_rack",
         "aliases": GROUP_TO_ALIASES["tube_rack"],
         "purpose": "Rack for holding tubes upright during preparation and storage.",
-        "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/test_tube_rack",
+        "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd#/World/test_tube_rack",
         "source_project": "labutopia",
         "render_status": "downloaded_usd_requires_conversion",
         "original_url": media_url(
             LABUTOPIA_REPO,
-            "assets/chemistry_lab/lab_001/lab_001.usd",
+            "assets/chemistry_lab/lab_003/lab_003.usd",
         ),
     },
     {
@@ -785,12 +785,12 @@ CATALOG_ENTRIES = [
         "match_group": "muffle_furnace",
         "aliases": GROUP_TO_ALIASES["muffle_furnace"],
         "purpose": "High-temperature heating device for enclosed furnace operations.",
-        "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd#/World/MuffleFurnace",
+        "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/MuffleFurnace",
         "source_project": "labutopia",
         "render_status": "downloaded_usd_requires_conversion",
         "original_url": media_url(
             LABUTOPIA_REPO,
-            "assets/chemistry_lab/hard_task/Scene1_hard.usd",
+            "assets/chemistry_lab/lab_001/lab_001.usd",
         ),
     },
 ]

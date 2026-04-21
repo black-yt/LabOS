@@ -482,7 +482,7 @@
     "source_project": "labutopia",
     "reference_kind": "scene_prim_reference",
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
-    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/beaker",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/beaker1",
     "render_status": "downloaded_usd_requires_conversion",
     "protocol_matchable": true,
     "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
@@ -566,10 +566,10 @@
     "source_project": "labutopia",
     "reference_kind": "scene_prim_reference",
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
-    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/test_tube_rack",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd#/World/test_tube_rack",
     "render_status": "downloaded_usd_requires_conversion",
     "protocol_matchable": true,
-    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
+    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd"
   },
   {
     "entry_id": "labutopia_drying_box_family",
@@ -633,10 +633,10 @@
     "source_project": "labutopia",
     "reference_kind": "scene_prim_reference",
     "entry_type_label": "\u573a\u666f\u5185\u5bf9\u8c61\u5f15\u7528\uff08scene_prim_reference\uff09",
-    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd#/World/MuffleFurnace",
+    "local_relative_path": "data/benchmark_inventory/files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd#/World/MuffleFurnace",
     "render_status": "downloaded_usd_requires_conversion",
     "protocol_matchable": true,
-    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/hard_task/Scene1_hard.usd"
+    "original_url": "https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd"
   },
   {
     "entry_id": "autobio_scene_bottlecap",

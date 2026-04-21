@@ -71,7 +71,7 @@ flowchart LR
 | <img src="previews/labutopia/scene_objects/glass-rod.png" width="200" alt="glass rod"> | LabUtopia | glass rod | <code>/World/glass_rod</code> | [lab_003.usd](files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd) |
 | <img src="previews/labutopia/scene_objects/graduated-cylinder.png" width="200" alt="graduated cylinder"> | LabUtopia | graduated cylinder | <code>/World/graduated_cylinder_03</code> | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd) |
 | <img src="previews/labutopia/scene_objects/heat-device.png" width="200" alt="heat device"> | LabUtopia | heat device | <code>/World/heat_device</code> | [lab_003.usd](files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd) |
-| <img src="previews/labutopia/scene_objects/muffle-furnace.png" width="200" alt="muffle furnace"> | LabUtopia | muffle furnace | <code>/World/MuffleFurnace</code> | [Scene1_hard.usd](files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd) |
+| <img src="previews/labutopia/scene_objects/muffle-furnace.png" width="200" alt="muffle furnace"> | LabUtopia | muffle furnace | <code>/World/MuffleFurnace</code> | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd) |
 | <img src="previews/labutopia/scene_objects/rack-platform.png" width="200" alt="rack / platform"> | LabUtopia | rack / platform | <code>/World/target_plat</code> | [Scene1_hard.usd](files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd) |
 | <img src="previews/labutopia/scene_objects/table-surface.png" width="200" alt="table surface"> | LabUtopia | table surface | <code>/World/table/surface</code><br><code>/World/table/surface/mesh</code> | [lab_003.usd](files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd) |
 
@@ -668,7 +668,7 @@ flowchart LR
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>beaker</code></p>
       <p><strong>用途：</strong>General glass container for mixing, pouring, heating, and transfer.</p>
-      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/beaker</code></p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/beaker1</code></p>
       <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
@@ -756,9 +756,9 @@ flowchart LR
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>tube_rack</code></p>
       <p><strong>用途：</strong>Rack for holding tubes upright during preparation and storage.</p>
-      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/test_tube_rack</code></p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd">lab_003.usd</a><br><code>#/World/test_tube_rack</code></p>
       <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
-      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
         <p>tube rack<br>tube racks<br>centrifuge tube rack<br>centrifuge tube racks<br>microcentrifuge tube rack<br>microcentrifuge tube racks<br>test tube rack<br>test tube racks</p>
@@ -822,9 +822,9 @@ flowchart LR
       <strong>层级：</strong>场景内对象引用<br>
       <strong>匹配组：</strong><code>muffle_furnace</code></p>
       <p><strong>用途：</strong>High-temperature heating device for enclosed furnace operations.</p>
-      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd">Scene1_hard.usd</a><br><code>#/World/MuffleFurnace</code></p>
+      <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/MuffleFurnace</code></p>
       <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
-      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/hard_task/Scene1_hard.usd">源文件</a></p>
+      <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
         <p>muffle furnace<br>muffle furnaces<br>laboratory furnace<br>laboratory furnaces</p>
