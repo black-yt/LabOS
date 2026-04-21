@@ -169,10 +169,54 @@
 - Level 2 的公开页面展示里，不再直接铺开有限动作空间的 `def ...` 定义，也不需要展示带参数的整段参考程序；更适合只保留动作顺序，用小圆角矩形卡片承载动作名，再用排列顺序或箭头表达流程。
 - `data/benchmark_inventory/` 里的 AutoBio 预览不能假设所有 `model/robot/*.xml`、`model/hand/*.xml`、`model/scene/*.xml` 都已经复制到当前仓库；链接生成时要先检查本地文件是否真的存在，不存在就退回上游 GitHub 源文件链接。
 - `dualrm`、`piper`、`shadowhand_left`、`shadowhand_right`、`shadowhand_right_mjx` 这 5 个条目，在当前本地只读快照里缺少对应 mesh；`robot/assets/AutoBio/robot/` 下没有 `dualarm`、`piper`、`shadow_hand` 目录，直接按 XML 渲染会失败。
-- 对这 5 个条目，`data/benchmark_inventory/previews/` 当前采用“本地代理预览图”而不是文字框图：目标是保证 README 中至少看到对象风格图，而不是乱码信息卡。
-- 预览 fallback 卡片里的文案要保持 ASCII / 英文，避免 GitHub 上因为字体或编码问题出现中文乱码。
+- 对这 5 个条目，不要再生成手画代理图、文字框图或回退卡片；这类图片不是上游几何或仿真渲染结果，会污染实验室条目清单的证据链。
+- 当前口径是：能从 `OBJ` / `STL` / `MJCF` / `USD` 原生渲染的才进入 `preview_manifest.json` 并显示图片；不能原生渲染的条目仍可留在清单表格里，但图片列保持为空。
+- 预览图不应叠加标题、中文说明、框图、占位图或后期标注；README 右侧字段已经足够承载文字信息。
 
-## 10. 浏览器验证经验
+## 10. 实验室条目清单原生渲染经验
+
+- `data/benchmark_inventory/previews/` 的目标是提供“可追溯的原生可视化”，不是做美术后期图。
+- 对这类预览，禁止用下面这些方式掩盖渲染问题：
+  - 抠图换背景
+  - 后期亮度 / 对比度增强
+  - 自动裁剪后再放大
+  - 手画代理图
+  - 文字占位卡片
+  - 在图内叠加标题或说明
+- 正确做法是优先调渲染参数：
+  - 提高 renderer 输出分辨率
+  - 调整相机距离、俯角和方位角
+  - 调整光照、抗锯齿和 shadow 参数
+  - 在渲染器内部加入浅色 floor / 背景，而不是后期合成
+  - 对 USD / mesh 路径，直接用几何、材质或语义 fallback color 进行 3D 渲染
+- 当前 README 第 5 章按 `420px` 展示图；源 PNG 应按 2x 生成，也就是 `840x560`，避免浏览器把低清图放大导致发糊。
+- MuJoCo 的 Python `mujoco.Renderer` 参数顺序是 `Renderer(model, height, width)`，不是 `width, height`。如果要生成 `840x560` 图片，应调用 `mujoco.Renderer(model, 560, 840)`。
+- MuJoCo 预览稳定参数经验：
+  - 先把 `model.vis.global_.offwidth/offheight` 提升到目标分辨率以上。
+  - 可设置 `model.vis.headlight.ambient/diffuse/specular` 改善亮度。
+  - 可设置 `model.vis.quality.offsamples` 和 `model.vis.quality.shadowsize` 改善清晰度。
+  - 用 `mjv_initGeom(..., mjGEOM_PLANE, ...)` 在 renderer scene 内加入浅色 floor，可以原生解决黑背景问题。
+  - 对单对象、仪器、完整场景应使用不同 `camera.distance` 系数；完整场景通常需要更远，单对象可以更近。
+- `AutoBio` 的 MJCF 预览不要只读当前仓库内复制文件路径；渲染时应映射回外部只读 `AutoBio/autobio` 根目录，因为 XML 内部的 mesh、plugin、include 往往依赖原仓库相对路径。
+- `model/object/pipette.gen.xml` 这类 MJCF 如果直接渲染效果很差，可以优先用其对应 mesh 目录原生渲染，但仍不能改成手画 proxy。
+- `LabUtopia` 的 USD 经验：
+  - 打开 USD stage 时优先用 `Usd.Stage.Open(path, Usd.Stage.LoadNone)`，避免远程 Omniverse payload 被自动加载，导致 warning 刷屏或生成卡住。
+  - 同一个 USD stage 要做进程内缓存，不要为每个 prim 重复打开同一个 stage。
+  - 场景内对象引用应从对应 prim 下遍历 `Mesh`，读取 points、face counts、face indices，并通过 `UsdGeom.XformCache()` 转成 world coordinates。
+  - USD 中可能存在 transform 后得到 `NaN` 的坏 mesh；渲染前必须过滤非有限坐标，否则 Matplotlib 3D renderer 可能整张输出纯背景。
+  - 完整 LabUtopia 场景不宜直接渲染全 stage；更稳定的方式是按已盘点的实验对象族读取原生几何，再按网格排布成“场景相关对象集合”预览，避免巨大世界坐标跨度把小对象压到不可见。
+  - 如果某个 USD 场景没有可解析几何，才可以退回上游自带缩略图；不要对缩略图再做亮度增强或抠图。
+- `preview_manifest.json` 只应记录成功生成的原生预览。生成函数应返回成功 / 失败，失败时不要写入 manifest，也不要在 README 中引用不存在或伪造的图片。
+- 删除不符合原生口径的历史图是合理的；例如 `dualrm`、`piper`、`shadowhand_left`、`shadowhand_right`、`shadowhand_right_mjx` 缺少可渲染 mesh 时，应删除旧代理 PNG，并让 README 表格图片列为空。
+- 全量生成后至少检查：
+  - README 中所有 `<img src="...">` 都能解析到仓库内文件。
+  - 源 PNG 尺寸是否为预期高分辨率，例如核心图 `840x560`。
+  - 重点编号图人工查看，例如 `015`、`031`、`045`。
+  - 没有纯色空白图。
+  - `git diff --check` 通过。
+  - `tools/render_benchmark_inventory.py` 能通过 `ast.parse`，避免 `py_compile` 生成 `__pycache__`。
+
+## 11. 浏览器验证经验
 
 - 本地预览可直接使用：
   - `python3 -m http.server 8000`
@@ -199,7 +243,7 @@
   - `ldd /tmp/pw-browsers/.../chrome-headless-shell | grep 'not found'`
 - 安装完成后，再用 Playwright 截图验证页面是否真的能打开，而不是只停留在静态文件检查。
 
-## 11. 评测逻辑经验
+## 12. 评测逻辑经验
 
 - Level 2 不能再写成“顺序相似度 + 参数准确率”这种只讲名字、不讲算法的描述；需要明确说明其来源和计算方式。
 - 对照 `SGI-Bench` 的 `step_2_score.py`，真正的 Level 2 评分逻辑有三层：
@@ -234,7 +278,7 @@
   - 让 `check()` 覆盖多阶段子目标
   - 让 `time_limit` 足以容纳更长的执行链
 
-## 12. 公共文档写作约束
+## 13. 公共文档写作约束
 
 - 面向公开仓库的说明应尽量稳定、读者导向。
 - 非必要不要在公开文档里写机器绝对路径。
@@ -265,7 +309,7 @@
   - `PIP_CACHE_DIR=/当前仓库/data/benchmark_inventory/runtime/pip_cache`
 - 如果只是为了重写 `data/benchmark_inventory/README.md` 而导入 `tools/render_benchmark_inventory.py`，也一样要带上上面这三组缓存环境变量；因为这个脚本顶层会导入 `matplotlib`，不设的话会把缓存写去仓库外。
 
-## 13. README 链接约束
+## 14. README 链接约束
 
 - `data/benchmark_inventory/README.md` 里的“本地文件 / 路径”列不要再直接展示长路径字符串。
 - 更合适的格式是：
@@ -298,6 +342,7 @@
   - `git diff --check`
   - README 中图片引用是否都能在仓库内解析到本地文件
   - `benchmark_core_inventory.json`、`preview_manifest.json`、README 第 5 章数量是否一致
+  - 对预览图改动，额外检查 manifest 中只包含真实存在的原生渲染图片，并抽查是否存在纯色空白图
 - 介绍 benchmark 时，优先写清：
   - 任务定义
   - 输入输出形式
@@ -305,7 +350,7 @@
   - 各资料源各自承担的角色
 - 少写过程流水账，多写结构性结论。
 
-## 14. 后续代理建议
+## 15. 后续代理建议
 
 - 如果继续扩展 GitHub Pages，优先保持静态化和轻依赖。
 - 如果继续补题目，先保持每个 part 有代表性样例，再逐步扩到完整数据组织。
