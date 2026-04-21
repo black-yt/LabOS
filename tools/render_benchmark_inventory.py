@@ -50,11 +50,17 @@ LABUTOPIA_REPO = "Rui-li023/LabUtopia"
 AUTOBIO_BLOB_ROOT = "https://github.com/autobio-bench/AutoBio/blob/main"
 LABUTOPIA_BLOB_ROOT = f"https://github.com/{LABUTOPIA_REPO}/blob/main"
 _AUTOBIO_PLUGIN_LOADED = False
+_USD_STAGE_CACHE: dict[Path, Any] = {}
 
 IMAGE_WIDTH = 320
 IMAGE_HEIGHT = 240
 SCENE_WIDTH = 360
 SCENE_HEIGHT = 240
+CORE_DISPLAY_WIDTH = 420
+PREVIEW_SUPERSAMPLE = 2
+HIGH_RES_WIDTH = CORE_DISPLAY_WIDTH * PREVIEW_SUPERSAMPLE
+HIGH_RES_HEIGHT = int(round(CORE_DISPLAY_WIDTH * SCENE_HEIGHT / SCENE_WIDTH)) * PREVIEW_SUPERSAMPLE
+HIGH_RES_SIZE = (HIGH_RES_WIDTH, HIGH_RES_HEIGHT)
 
 
 @dataclass
@@ -699,8 +705,7 @@ def shaded_face_colors(vertices: np.ndarray, faces: np.ndarray, face_colors: np.
 
 def render_resolved_meshes(meshes: list[ResolvedMesh], out_path: Path, title: str) -> None:
     if not meshes:
-        save_image(reference_card(title, "metadata card", "No renderable mesh found"), out_path)
-        return
+        raise ValueError("No renderable mesh found")
 
     vertex_blocks: list[np.ndarray] = []
     face_blocks: list[np.ndarray] = []
@@ -710,14 +715,15 @@ def render_resolved_meshes(meshes: list[ResolvedMesh], out_path: Path, title: st
         mesh = entry.mesh.copy()
         if len(mesh.vertices) == 0 or len(mesh.faces) == 0:
             continue
+        if not np.isfinite(mesh.vertices).all():
+            continue
         vertex_blocks.append(mesh.vertices.copy())
         face_blocks.append(mesh.faces.copy() + vertex_offset)
         color_blocks.append(mesh_face_colors(mesh, entry.source_name, title, entry.fallback_color))
         vertex_offset += len(mesh.vertices)
 
     if not vertex_blocks:
-        save_image(reference_card(title, "metadata card", "No renderable mesh found"), out_path)
-        return
+        raise ValueError("No renderable finite mesh found")
 
     vertices = np.concatenate(vertex_blocks, axis=0)
     faces = np.concatenate(face_blocks, axis=0)
@@ -730,21 +736,22 @@ def render_resolved_meshes(meshes: list[ResolvedMesh], out_path: Path, title: st
         scale = 1.0
     vertices = (vertices - center) / scale
 
-    fig = plt.figure(figsize=(4.0, 3.0), dpi=140)
+    dpi = 140
+    fig = plt.figure(figsize=(HIGH_RES_WIDTH / dpi, HIGH_RES_HEIGHT / dpi), dpi=dpi)
     ax = fig.add_subplot(111, projection="3d")
     tri_vertices = vertices[faces]
     collection = Poly3DCollection(
         tri_vertices,
         facecolors=shaded_face_colors(vertices, faces, face_colors),
-        edgecolor=(0.13, 0.18, 0.25, 0.08),
-        linewidth=0.10,
+        edgecolor=(0.13, 0.18, 0.25, 0.14),
+        linewidth=0.14,
     )
     ax.add_collection3d(collection)
-    span = 0.64
+    span = 0.72
     ax.set_xlim(-span, span)
     ax.set_ylim(-span, span)
     ax.set_zlim(-span, span)
-    ax.view_init(elev=23, azim=42)
+    ax.view_init(elev=28, azim=42)
     ax.set_box_aspect((1, 1, 1))
     ax.axis("off")
     fig.patch.set_facecolor("#f5f7fa")
@@ -752,17 +759,51 @@ def render_resolved_meshes(meshes: list[ResolvedMesh], out_path: Path, title: st
     fig.subplots_adjust(0, 0, 1, 1)
     ax.set_position([0, 0, 1, 1])
     ensure_dir(out_path.parent)
-    tmp_path = out_path.with_suffix(".raw.png")
-    fig.savefig(tmp_path, bbox_inches="tight", pad_inches=0.02, facecolor="#f5f7fa")
+    fig.savefig(out_path, facecolor="#f5f7fa", edgecolor="none")
     plt.close(fig)
-    raw = Image.open(tmp_path).convert("RGB")
-    raw = crop_to_content(raw, (SCENE_WIDTH, SCENE_HEIGHT), diff_threshold=10, padding_ratio=0.12)
-    raw = soft_enhance_preview_image(raw, brighten=1.08, contrast=1.05)
-    tmp_path.unlink(missing_ok=True)
-    save_image(add_label(raw, title), out_path)
 
 
-def render_mjcf_preview(xml_path: Path, out_path: Path, title: str, distance_scale: float = 2.8) -> None:
+def preview_distance_scale(xml_path: Path) -> float:
+    normalized = xml_path.as_posix()
+    if "/model/object/" in normalized:
+        return 1.35
+    if "/model/instrument/" in normalized:
+        return 1.55
+    if "/model/scene/" in normalized:
+        return 1.70
+    return 1.70
+
+
+def configure_mujoco_preview_model(model: mujoco.MjModel) -> None:
+    model.vis.global_.offwidth = max(model.vis.global_.offwidth, HIGH_RES_WIDTH)
+    model.vis.global_.offheight = max(model.vis.global_.offheight, HIGH_RES_HEIGHT)
+    model.vis.headlight.ambient[:] = [0.60, 0.60, 0.60]
+    model.vis.headlight.diffuse[:] = [0.75, 0.75, 0.75]
+    model.vis.headlight.specular[:] = [0.20, 0.20, 0.20]
+    try:
+        model.vis.quality.offsamples = max(model.vis.quality.offsamples, 8)
+        model.vis.quality.shadowsize = max(model.vis.quality.shadowsize, 4096)
+    except Exception:
+        pass
+
+
+def add_native_preview_floor(scene: mujoco.MjvScene, model: mujoco.MjModel, extent: float) -> None:
+    if scene.ngeom >= scene.maxgeom:
+        return
+    center = model.stat.center
+    z = float(center[2] - extent * 0.50)
+    mujoco.mjv_initGeom(
+        scene.geoms[scene.ngeom],
+        mujoco.mjtGeom.mjGEOM_PLANE,
+        np.array([extent * 8.0, extent * 8.0, 0.1], dtype=np.float64),
+        np.array([float(center[0]), float(center[1]), z], dtype=np.float64),
+        np.eye(3, dtype=np.float64).ravel(),
+        np.array([0.93, 0.94, 0.96, 1.0], dtype=np.float32),
+    )
+    scene.ngeom += 1
+
+
+def render_mjcf_preview(xml_path: Path, out_path: Path, title: str) -> None:
     render_source = resolve_autobio_render_source(xml_path)
     if is_autobio_render_source(render_source):
         load_autobio_plugin()
@@ -770,26 +811,25 @@ def render_mjcf_preview(xml_path: Path, out_path: Path, title: str, distance_sca
             model = mujoco.MjModel.from_xml_path(str(render_source))
     else:
         model = mujoco.MjModel.from_xml_path(str(render_source))
+    configure_mujoco_preview_model(model)
     data = mujoco.MjData(model)
     mujoco.mj_forward(model, data)
     camera = mujoco.MjvCamera()
     camera.type = mujoco.mjtCamera.mjCAMERA_FREE
     camera.lookat[:] = model.stat.center
     extent = max(float(model.stat.extent), 0.2)
-    camera.distance = extent * distance_scale
+    camera.distance = extent * preview_distance_scale(render_source)
     camera.azimuth = 145
-    camera.elevation = -22
-    renderer = mujoco.Renderer(model, SCENE_WIDTH, SCENE_HEIGHT)
+    camera.elevation = -35
+    renderer = mujoco.Renderer(model, HIGH_RES_HEIGHT, HIGH_RES_WIDTH)
     try:
         renderer.update_scene(data, camera=camera)
+        renderer.scene.flags[mujoco.mjtRndFlag.mjRND_REFLECTION] = False
+        add_native_preview_floor(renderer.scene, model, extent)
         image = renderer.render()
     finally:
         renderer.close()
-    pil_image = Image.fromarray(image).convert("RGB")
-    pil_image = composite_on_light_background(pil_image)
-    pil_image = crop_to_content(pil_image, (SCENE_WIDTH, SCENE_HEIGHT))
-    pil_image = soft_enhance_preview_image(pil_image, brighten=1.06, contrast=1.04)
-    save_image(add_label(pil_image, title), out_path)
+    save_image(Image.fromarray(image).convert("RGB"), out_path)
 
 
 def load_mesh_entries(source: Path) -> list[ResolvedMesh]:
@@ -836,16 +876,17 @@ def render_mesh_preview(source: Path, out_path: Path, title: str) -> None:
     render_resolved_meshes(load_mesh_entries(source), out_path, title)
 
 
-def write_preview(source_path: Path, out_path: Path, title: str, preview_kind: str) -> None:
+def write_preview(source_path: Path, out_path: Path, title: str, preview_kind: str) -> bool:
     try:
         if preview_kind == "mjcf":
             mesh_override = preferred_mesh_render_source(source_path)
             if mesh_override is not None:
                 render_mesh_preview(mesh_override, out_path, title)
-                return
+                return True
             render_mjcf_preview(source_path, out_path, title)
         else:
             render_mesh_preview(source_path, out_path, title)
+        return True
     except Exception as exc:
         fallback = fallback_render_source(source_path)
         if fallback is not None:
@@ -855,15 +896,13 @@ def write_preview(source_path: Path, out_path: Path, title: str, preview_kind: s
                     render_mjcf_preview(fallback_source, out_path, title)
                 else:
                     render_mesh_preview(fallback_source, out_path, title)
-                return
+                return True
             except Exception:
-                save_image(reference_card(title, "metadata card", fallback_reason), out_path)
-                return
+                return False
         proxy_kind = fallback_proxy_kind(source_path)
         if proxy_kind is not None:
-            save_image(render_proxy_preview(proxy_kind, title), out_path)
-            return
-        save_image(reference_card(title, "metadata card", humanize_render_error(exc)), out_path)
+            return False
+        return False
 
 
 def local_labutopia_thumb(scene_path: str) -> Path | None:
@@ -927,10 +966,19 @@ def usd_display_color(prim: Any) -> tuple[int, int, int] | None:
     return tuple(int(round(channel * 255)) for channel in mean)
 
 
+def open_usd_stage(stage_path: Path) -> Any | None:
+    if Usd is None:
+        return None
+    stage_path = stage_path.resolve()
+    if stage_path not in _USD_STAGE_CACHE:
+        _USD_STAGE_CACHE[stage_path] = Usd.Stage.Open(str(stage_path), Usd.Stage.LoadNone)
+    return _USD_STAGE_CACHE[stage_path]
+
+
 def load_labutopia_prim_meshes(stage_path: Path, prim_path: str, title: str) -> list[ResolvedMesh]:
     if Usd is None or UsdGeom is None or Gf is None:
         return []
-    stage = Usd.Stage.Open(str(stage_path))
+    stage = open_usd_stage(stage_path)
     if stage is None:
         return []
     prim = stage.GetPrimAtPath(prim_path)
@@ -959,10 +1007,96 @@ def load_labutopia_prim_meshes(stage_path: Path, prim_path: str, title: str) -> 
             [transform.Transform(Gf.Vec3d(float(point[0]), float(point[1]), float(point[2]))) for point in points],
             dtype=np.float64,
         )
+        if not np.isfinite(world_points).all():
+            continue
         fallback_color = usd_display_color(child) or inferred_preview_color(str(child.GetPath()), title)
         mesh_obj = trimesh.Trimesh(vertices=world_points, faces=faces, process=False)
         meshes.append(ResolvedMesh(mesh_obj, str(child.GetPath()), fallback_color))
     return meshes
+
+
+def load_labutopia_stage_meshes(stage_path: Path, title: str) -> list[ResolvedMesh]:
+    if Usd is None or UsdGeom is None or Gf is None:
+        return []
+    stage = open_usd_stage(stage_path)
+    if stage is None:
+        return []
+
+    xform_cache = UsdGeom.XformCache()
+    meshes: list[ResolvedMesh] = []
+    for child in stage.Traverse():
+        if child.GetTypeName() != "Mesh":
+            continue
+        mesh = UsdGeom.Mesh(child)
+        try:
+            points = mesh.GetPointsAttr().Get() or []
+            face_counts = mesh.GetFaceVertexCountsAttr().Get() or []
+            face_indices = mesh.GetFaceVertexIndicesAttr().Get() or []
+        except Exception:
+            continue
+        if not points or not face_counts or not face_indices:
+            continue
+        faces = triangulate_face_indices(list(face_counts), list(face_indices))
+        if len(faces) == 0:
+            continue
+        transform = xform_cache.GetLocalToWorldTransform(child)
+        world_points = np.asarray(
+            [transform.Transform(Gf.Vec3d(float(point[0]), float(point[1]), float(point[2]))) for point in points],
+            dtype=np.float64,
+        )
+        if not np.isfinite(world_points).all():
+            continue
+        fallback_color = usd_display_color(child) or inferred_preview_color(str(child.GetPath()), title)
+        mesh_obj = trimesh.Trimesh(vertices=world_points, faces=faces, process=False)
+        meshes.append(ResolvedMesh(mesh_obj, str(child.GetPath()), fallback_color))
+    return meshes
+
+
+def arrange_preview_groups(groups: list[list[ResolvedMesh]]) -> list[ResolvedMesh]:
+    if not groups:
+        return []
+    columns = min(3, len(groups))
+    arranged: list[ResolvedMesh] = []
+    for idx, group in enumerate(groups):
+        vertices = [entry.mesh.vertices for entry in group if len(entry.mesh.vertices)]
+        if not vertices:
+            continue
+        all_vertices = np.concatenate(vertices, axis=0)
+        mins = all_vertices.min(axis=0)
+        maxs = all_vertices.max(axis=0)
+        center = (mins + maxs) / 2.0
+        scale = float(np.max(maxs - mins))
+        if scale <= 0:
+            scale = 1.0
+        row = idx // columns
+        column = idx % columns
+        offset = np.array(
+            [
+                (column - (columns - 1) / 2.0) * 1.45,
+                -row * 1.25,
+                0.0,
+            ],
+            dtype=np.float64,
+        )
+        for entry in group:
+            mesh = entry.mesh.copy()
+            mesh.vertices = ((mesh.vertices - center) / scale) * 0.92 + offset
+            arranged.append(ResolvedMesh(mesh, entry.source_name, entry.fallback_color))
+    return arranged
+
+
+def load_labutopia_curated_scene_meshes(scene_path: str, title: str) -> list[ResolvedMesh]:
+    scene_file = LABUTOPIA_LOCAL_ROOT / scene_path
+    groups: list[list[ResolvedMesh]] = []
+    for _family, object_paths, object_scene_path in LAB_SCENE_OBJECTS:
+        if object_scene_path != scene_path:
+            continue
+        group: list[ResolvedMesh] = []
+        for object_path in object_paths:
+            group.extend(load_labutopia_prim_meshes(scene_file, object_path, title))
+        if group:
+            groups.append(group)
+    return arrange_preview_groups(groups)
 
 
 def save_labutopia_object_preview(
@@ -994,9 +1128,11 @@ def save_labutopia_reference_preview(local_relative_path: str, out_path: Path, t
 
 
 def save_labutopia_scene_preview(scene_path: str, out_path: Path, title: str, subtitle: str | None = None) -> None:
-    image = load_labutopia_thumb(scene_path).resize((SCENE_WIDTH, SCENE_HEIGHT), Image.LANCZOS)
-    image = enhance_labutopia_thumbnail(image)
-    save_image(add_label(image, title, subtitle), out_path)
+    meshes = load_labutopia_curated_scene_meshes(scene_path, title)
+    if meshes:
+        render_resolved_meshes(meshes, out_path, title)
+        return
+    save_image(load_labutopia_thumb(scene_path), out_path)
 
 
 @dataclass
@@ -1175,8 +1311,8 @@ RENDER_STATUS_LABELS = {
     "ready_obj": "可直接按 mesh 渲染",
     "ready_mjcf_package": "可直接按 MJCF 装配渲染",
     "ready_mjcf_scene": "可直接按 MJCF 场景渲染",
-    "downloaded_usd_requires_conversion": "当前使用 USD 场景缩略图展示",
-    "downloaded_usd_scene": "当前使用 USD 场景缩略图展示",
+    "downloaded_usd_requires_conversion": "可从 USD 场景提取几何渲染",
+    "downloaded_usd_scene": "可直接按 USD 场景几何渲染",
 }
 
 
@@ -1219,18 +1355,18 @@ def build_preview_manifest() -> dict[str, dict[str, str]]:
 
     for row in autobio_scene_rows():
         out_path = PREVIEW_ROOT / "autobio" / "scenes" / f"{row['slug']}.png"
-        write_preview(Path(row["source"]), out_path, row["name"], "mjcf")
-        manifest["autobio_scenes"][row["path"]] = rel_from_bench(out_path)
+        if write_preview(Path(row["source"]), out_path, row["name"], "mjcf"):
+            manifest["autobio_scenes"][row["path"]] = rel_from_bench(out_path)
 
     for row in autobio_composite_rows():
         out_path = PREVIEW_ROOT / "autobio" / "composite" / f"{row['slug']}.png"
-        write_preview(Path(row["source"]), out_path, row["name"], "mjcf")
-        manifest["autobio_composite"][row["key"]] = rel_from_bench(out_path)
+        if write_preview(Path(row["source"]), out_path, row["name"], "mjcf"):
+            manifest["autobio_composite"][row["key"]] = rel_from_bench(out_path)
 
     for row in autobio_standalone_rows():
         out_path = PREVIEW_ROOT / "autobio" / "standalone" / f"{row['slug']}.png"
-        write_preview(Path(row["source"]), out_path, row["name"], "mesh")
-        manifest["autobio_standalone"][row["display_path"]] = rel_from_bench(out_path)
+        if write_preview(Path(row["source"]), out_path, row["name"], "mesh"):
+            manifest["autobio_standalone"][row["display_path"]] = rel_from_bench(out_path)
 
     for scene_type, scene_name, scene_path in LAB_SCENES:
         out_path = PREVIEW_ROOT / "labutopia" / "scenes" / f"{slugify(scene_name)}.png"
@@ -1265,7 +1401,8 @@ def build_preview_manifest() -> dict[str, dict[str, str]]:
         else:
             source = resolve_autobio_render_source(REPO_ROOT / entry["local_relative_path"])
             kind = "mjcf" if entry["reference_kind"] in {"package_entrypoint", "scene"} else "mesh"
-            write_preview(source, out_path, entry["entry_name"], kind)
+            if not write_preview(source, out_path, entry["entry_name"], kind):
+                continue
         manifest["core_entries"][entry["entry_id"]] = rel_from_bench(out_path)
 
     MANIFEST_PATH.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
@@ -1544,7 +1681,7 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "",
         make_table(["标识", "中文解释", "是否独立文件", "典型路径"], type_rows),
         "",
-        "补充说明：`LabUtopia` 的很多对象当前仍然是“场景里的对象引用”，所以预览图使用的是场景缩略图叠加对象标签，而不是把对象单独拆出来后的独立渲染。",
+        "补充说明：`LabUtopia` 的很多对象当前仍然是“场景里的对象引用”，预览时会从对应 USD stage 中读取几何并直接渲染；只有上游引用无法解析时才回退到上游自带缩略图。",
         "",
         "## 3. 上游结构",
         "",
@@ -1588,7 +1725,7 @@ def write_readme(manifest: dict[str, dict[str, str]]) -> None:
         "",
         "### 5.2 核心条目表",
         "",
-        "这一节改为 HTML 两列布局：左侧固定放大预览图，右侧放条目字段，避免 GitHub Markdown 表格把图片继续压缩。",
+        "这一节改为 HTML 两列布局：左侧按 420px 展示预览图，源图按 2x 分辨率原生渲染，避免浏览器放大低分辨率 PNG。",
         f"当前共 `{len(entries):03d}` 项，编号从 `000` 到 `{len(entries) - 1:03d}`。",
         "",
         core_blocks,

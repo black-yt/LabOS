@@ -47,7 +47,7 @@ flowchart LR
 | `package_entrypoint` | 组合对象入口，会继续引用多个部件、材质或子文件。 | 是 | [centrifuge_eppendorf_5430.xml](files/autobio/autobio/model/instrument/centrifuge_eppendorf_5430.xml) |
 | `scene_prim_reference` | 场景内对象引用，依附在某个 USD 场景里，本身不是独立文件。 | 否 | [lab_001.usd](files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd)<br><code>#/World/conical_bottle02</code> |
 
-补充说明：`LabUtopia` 的很多对象当前仍然是“场景里的对象引用”，所以预览图使用的是场景缩略图叠加对象标签，而不是把对象单独拆出来后的独立渲染。
+补充说明：`LabUtopia` 的很多对象当前仍然是“场景里的对象引用”，预览时会从对应 USD stage 中读取几何并直接渲染；只有上游引用无法解析时才回退到上游自带缩略图。
 
 ## 3. 上游结构
 
@@ -135,14 +135,14 @@ flowchart LR
 | <img src="previews/autobio/composite/instrument-vortex-mixer-genie-2.png" width="200" alt="vortex_mixer_genie_2"> | AutoBio | 仪器 | vortex_mixer_genie_2 | [vortex_mixer_genie_2.xml](files/autobio/autobio/model/instrument/vortex_mixer_genie_2.xml) |
 | <img src="previews/autobio/composite/robot-2f85.png" width="200" alt="2f85"> | AutoBio | 机器人 | 2f85 | [2f85.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/2f85.xml) |
 | <img src="previews/autobio/composite/robot-aloha-left.png" width="200" alt="aloha_left"> | AutoBio | 机器人 | aloha_left | [aloha_left.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/aloha_left.xml) |
-| <img src="previews/autobio/composite/robot-dualrm.png" width="200" alt="dualrm"> | AutoBio | 机器人 | dualrm | [dualrm.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/dualrm.xml) |
-| <img src="previews/autobio/composite/robot-piper.png" width="200" alt="piper"> | AutoBio | 机器人 | piper | [piper.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/piper.xml) |
+|  | AutoBio | 机器人 | dualrm | [dualrm.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/dualrm.xml) |
+|  | AutoBio | 机器人 | piper | [piper.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/piper.xml) |
 | <img src="previews/autobio/composite/robot-ur5e-dexhand021-right.png" width="200" alt="ur5e_dexhand021_right"> | AutoBio | 机器人 | ur5e_dexhand021_right | [ur5e_dexhand021_right.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/ur5e_dexhand021_right.xml) |
 | <img src="previews/autobio/composite/robot-ur5e-gripper.png" width="200" alt="ur5e_gripper"> | AutoBio | 机器人 | ur5e_gripper | [ur5e_gripper.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/robot/ur5e_gripper.xml) |
 | <img src="previews/autobio/composite/hand-dexhand021-right.png" width="200" alt="dexhand021_right"> | AutoBio | 手部末端 | dexhand021_right | [dexhand021_right.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/hand/dexhand021_right.xml) |
-| <img src="previews/autobio/composite/hand-shadowhand-left.png" width="200" alt="shadowhand_left"> | AutoBio | 手部末端 | shadowhand_left | [shadowhand_left.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/hand/shadowhand_left.xml) |
-| <img src="previews/autobio/composite/hand-shadowhand-right.png" width="200" alt="shadowhand_right"> | AutoBio | 手部末端 | shadowhand_right | [shadowhand_right.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/hand/shadowhand_right.xml) |
-| <img src="previews/autobio/composite/hand-shadowhand-right-mjx.png" width="200" alt="shadowhand_right_mjx"> | AutoBio | 手部末端 | shadowhand_right_mjx | [shadowhand_right_mjx.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/hand/shadowhand_right_mjx.xml) |
+|  | AutoBio | 手部末端 | shadowhand_left | [shadowhand_left.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/hand/shadowhand_left.xml) |
+|  | AutoBio | 手部末端 | shadowhand_right | [shadowhand_right.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/hand/shadowhand_right.xml) |
+|  | AutoBio | 手部末端 | shadowhand_right_mjx | [shadowhand_right_mjx.xml](https://github.com/autobio-bench/AutoBio/blob/main/autobio/model/hand/shadowhand_right_mjx.xml) |
 
 ### 4.4 完整场景与场景相关文件
 
@@ -192,7 +192,7 @@ flowchart LR
 
 ### 5.2 核心条目表
 
-这一节改为 HTML 两列布局：左侧固定放大预览图，右侧放条目字段，避免 GitHub Markdown 表格把图片继续压缩。
+这一节改为 HTML 两列布局：左侧按 420px 展示预览图，源图按 2x 分辨率原生渲染，避免浏览器放大低分辨率 PNG。
 当前共 `053` 项，编号从 `000` 到 `052`。
 
 <table>
@@ -669,7 +669,7 @@ flowchart LR
       <strong>匹配组：</strong><code>beaker</code></p>
       <p><strong>用途：</strong>General glass container for mixing, pouring, heating, and transfer.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/beaker1</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -691,7 +691,7 @@ flowchart LR
       <strong>匹配组：</strong><code>conical_bottle</code></p>
       <p><strong>用途：</strong>Flask-style glassware for liquid storage, mixing, and pouring.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/conical_bottle02</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -713,7 +713,7 @@ flowchart LR
       <strong>匹配组：</strong><code>graduated_cylinder</code></p>
       <p><strong>用途：</strong>Volumetric cylinder for measuring and dispensing liquids.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/graduated_cylinder_03</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -735,7 +735,7 @@ flowchart LR
       <strong>匹配组：</strong><code>glass_rod</code></p>
       <p><strong>用途：</strong>Rod for manual stirring and mixing.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd">lab_003.usd</a><br><code>#/World/glass_rod</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -757,7 +757,7 @@ flowchart LR
       <strong>匹配组：</strong><code>tube_rack</code></p>
       <p><strong>用途：</strong>Rack for holding tubes upright during preparation and storage.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd">lab_003.usd</a><br><code>#/World/test_tube_rack</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -779,7 +779,7 @@ flowchart LR
       <strong>匹配组：</strong><code>drying_box</code></p>
       <p><strong>用途：</strong>Device used for drying or enclosed heating workflows.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/DryingBox_01</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -801,7 +801,7 @@ flowchart LR
       <strong>匹配组：</strong><code>heating_device</code></p>
       <p><strong>用途：</strong>Heating surface or device used to activate thermal tasks.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd">lab_003.usd</a><br><code>#/World/heat_device</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -823,7 +823,7 @@ flowchart LR
       <strong>匹配组：</strong><code>muffle_furnace</code></p>
       <p><strong>用途：</strong>High-temperature heating device for enclosed furnace operations.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a><br><code>#/World/MuffleFurnace</code></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可从 USD 场景提取几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -1263,7 +1263,7 @@ flowchart LR
       <strong>匹配组：</strong><code>scene_lab_001</code></p>
       <p><strong>用途：</strong>Full LabUtopia scene image for Level 2 laboratory context.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_001/lab_001.usd">lab_001.usd</a></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可直接按 USD 场景几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_001/lab_001.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -1285,7 +1285,7 @@ flowchart LR
       <strong>匹配组：</strong><code>scene_lab_003</code></p>
       <p><strong>用途：</strong>Full LabUtopia scene image for Level 2 laboratory context.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/lab_003.usd">lab_003.usd</a></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可直接按 USD 场景几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/lab_003.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -1307,7 +1307,7 @@ flowchart LR
       <strong>匹配组：</strong><code>scene_scene1_hard</code></p>
       <p><strong>用途：</strong>Full LabUtopia scene image for Level 2 laboratory context.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/hard_task/Scene1_hard.usd">Scene1_hard.usd</a></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可直接按 USD 场景几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/hard_task/Scene1_hard.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -1329,7 +1329,7 @@ flowchart LR
       <strong>匹配组：</strong><code>scene_clock</code></p>
       <p><strong>用途：</strong>Full LabUtopia scene image for Level 2 laboratory context.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/chemistry_lab/lab_003/clock.usd">clock.usd</a></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可直接按 USD 场景几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/chemistry_lab/lab_003/clock.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>
@@ -1351,7 +1351,7 @@ flowchart LR
       <strong>匹配组：</strong><code>scene_navigation_lab_01</code></p>
       <p><strong>用途：</strong>Full LabUtopia scene image for Level 2 laboratory context.</p>
       <p><strong>本地文件：</strong><a href="files/labutopia/assets/navigation_lab/navigation_lab_01/lab.usd">lab.usd</a></p>
-      <p><strong>可视化状态：</strong>当前使用 USD 场景缩略图展示<br>
+      <p><strong>可视化状态：</strong>可直接按 USD 场景几何渲染<br>
       <strong>原始链接：</strong><a href="https://media.githubusercontent.com/media/Rui-li023/LabUtopia/main/assets/navigation_lab/navigation_lab_01/lab.usd">源文件</a></p>
       <details>
         <summary><strong>别名</strong></summary>

@@ -47,14 +47,9 @@
     "autobio/model/instrument/vortex_mixer_genie_2.xml": "previews/autobio/composite/instrument-vortex-mixer-genie-2.png",
     "autobio/model/robot/2f85.xml": "previews/autobio/composite/robot-2f85.png",
     "autobio/model/robot/aloha_left.xml": "previews/autobio/composite/robot-aloha-left.png",
-    "autobio/model/robot/dualrm.xml": "previews/autobio/composite/robot-dualrm.png",
-    "autobio/model/robot/piper.xml": "previews/autobio/composite/robot-piper.png",
     "autobio/model/robot/ur5e_dexhand021_right.xml": "previews/autobio/composite/robot-ur5e-dexhand021-right.png",
     "autobio/model/robot/ur5e_gripper.xml": "previews/autobio/composite/robot-ur5e-gripper.png",
-    "autobio/model/hand/dexhand021_right.xml": "previews/autobio/composite/hand-dexhand021-right.png",
-    "autobio/model/hand/shadowhand_left.xml": "previews/autobio/composite/hand-shadowhand-left.png",
-    "autobio/model/hand/shadowhand_right.xml": "previews/autobio/composite/hand-shadowhand-right.png",
-    "autobio/model/hand/shadowhand_right_mjx.xml": "previews/autobio/composite/hand-shadowhand-right-mjx.png"
+    "autobio/model/hand/dexhand021_right.xml": "previews/autobio/composite/hand-dexhand021-right.png"
   },
   "autobio_standalone": {
     "autobio/assets/container/cell_dish_100_vis.obj": "previews/autobio/standalone/cell-dish-100-vis.png",
