@@ -18,6 +18,7 @@
 - `data/assets_actions/autobio_labutopia_assets_actions.md` 记录了 AutoBio 与 LabUtopia 的资产、动作、场景、controller 组合与对 benchmark 的映射，是后续设计具身 benchmark 时的主索引文档。
 - `data/benchmark_inventory/` 是统一的实验室条目目录，不再只按 asset 口径组织；这里要同时覆盖独立对象、组合对象、场景内对象引用、完整场景与少量场景相关文件。
 - `data/benchmark_inventory/README.md` 是这个目录唯一需要长期维护的说明文档；旧的拆分文档如 `benchmark_asset_catalog.md`、`upstream_repo_inventory.md` 都已经废弃，不要再恢复双份说明。
+- `data/benchmark_inventory/benchmark_core_inventory.json` 是公开仓库里真正代表“当前 benchmark 核心条目口径”的机器可读文件；如果 README 第 5 章和它不一致，应以修这份 JSON 与生成脚本为先。
 - `README.md` 当前应保持固定的编号结构：
   - `1. 数据构造管线`
   - `2. Level 1`
@@ -272,17 +273,31 @@
   - 场景内 prim 引用：显示文件链接 + 下一行 `#/World/...` 代码片段
   - 本地未复制、但上游存在的文件：直接链接到上游 GitHub `blob/main/...`
 - 不要在这份 README 里留下裸 URL，也不要把长的本地相对路径整段裸露在表格里。
+- `data/benchmark_inventory/README.md` 的第 5 章目前采用“protocol 全量口径”：
+  - 凡是能直接服务 protocol 构造、protocol 理解，或者能作为 Level 2 视觉上下文的实验对象 / 完整场景，都纳入第 5 章
+  - 只把明显属于 Level 3 执行器的 `robot / hand / gripper` 留在第 4 章
+  - 当前公开基线是 `53` 个核心条目，其中 `29` 个 `protocol_matchable` 条目、`24` 个完整场景；如果后续口径继续变化，要同步更新 README 数量、preview manifest 和 core inventory
 - 当前仓库在 shell 下向 `data/benchmark_inventory/` 新建目录或批量写文件时，沙箱可能报 `Read-only file system`；这类生成型任务应直接使用正规提权执行，不要改写到外部临时目录规避。
 - `AutoBio` 预览渲染的稳定做法已经确认：
   - 需要在 `autobio` 环境里先加载 `libmjlab.so.3.3.0`
   - 加载 XML 前把当前工作目录切到外部 `AutoBio/autobio` 根目录，否则相对 mesh / plugin 引用容易失败
   - 对 `model/object/` 下同时存在 `.xml` 与 `.gen.xml` 的 family，静态预览优先使用 `.gen.xml`
   - 某些复制到当前仓库内的 `data/benchmark_inventory/files/autobio/...` 路径在渲染时应映射回外部只读 `AutoBio` 根目录，再交给 MuJoCo 加载
+- `tools/sync_benchmark_inventory.py` 的当前约定：
+  - `CATALOG_ENTRIES` 负责可直接做 protocol 文本匹配的语义条目
+  - `autobio_level12_scene_entries()` 与 `labutopia_level12_scene_entries()` 负责把完整场景补进核心清单，用于 Level 2 视觉上下文
+  - 完整场景默认 `protocol_matchable = false`，避免它们进入 protocol 文本匹配统计
+  - 如果文件已经同步到本地，只是改了条目口径、README 说明或匹配逻辑，优先运行 `python tools/sync_benchmark_inventory.py --skip-sync`，避免重复拷贝和下载
+- `LabUtopia` 的 `navigation_lab_01` 目前已经复制到当前仓库；`README.md` 与核心清单里应优先链接本地 `files/labutopia/assets/navigation_lab/navigation_lab_01/lab.usd`，不要再退回上游外链。
 - `benchmark_inventory` 目录下本地会生成三类 protocol 匹配结果：
   - `protocol_min_v1_with_inventory.jsonl`
   - `protocol_min_v1_inventory_matches.jsonl`
   - `protocol_min_v1_inventory_matches.stats.json`
   这些文件默认 `gitignore`，用于本地构造和验证，不是公开仓库的核心展示文件。
+- 如果用户明确要求 `push`，提交前对 `benchmark_inventory` 相关改动至少做这几项检查：
+  - `git diff --check`
+  - README 中图片引用是否都能在仓库内解析到本地文件
+  - `benchmark_core_inventory.json`、`preview_manifest.json`、README 第 5 章数量是否一致
 - 介绍 benchmark 时，优先写清：
   - 任务定义
   - 输入输出形式
@@ -290,7 +305,7 @@
   - 各资料源各自承担的角色
 - 少写过程流水账，多写结构性结论。
 
-## 13. 后续代理建议
+## 14. 后续代理建议
 
 - 如果继续扩展 GitHub Pages，优先保持静态化和轻依赖。
 - 如果继续补题目，先保持每个 part 有代表性样例，再逐步扩到完整数据组织。
