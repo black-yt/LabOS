@@ -350,7 +350,42 @@
   - 各资料源各自承担的角色
 - 少写过程流水账，多写结构性结论。
 
-## 15. 后续代理建议
+## 15. Level 1 题目构造 pipeline
+
+- `pipeline/level-1/build_level1_questions.py` 是当前 Level 1 题目构造脚本。
+- 脚本输入来自本仓库内的公开数据：
+  - `data/benchmark_inventory/multiview_manifest.json`
+  - `data/benchmark_inventory/benchmark_core_inventory.json`
+  - `data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl`
+  - `data/benchmark_inventory/level-1-demo.md`
+- 默认模型是 `qwen/qwen3.6-plus`，输出语言口径是英文；脚本会校验题干、选项、reasoning steps 和 protocol alignment 中不能出现 CJK 字符。
+- 启动命令写在 `pipeline/level-1/README.md`。常用方式是：
+  - `conda activate agent`
+  - `export OPENROUTER_API_KEY="..."`
+  - `PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --count 20`
+- 如果不想把 API key 放进 shell 环境，可以用：
+  - `PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --api-key-stdin --count 20`
+- 公开仓库内不要记录真实 API key；README 和 AGENTS 只能写环境变量占位符或 stdin 方式。
+- 生成结果默认落在 `pipeline/level-1/generated/`：
+  - `level1_questions_20.json`
+  - `level1_questions_20.jsonl`
+  - `level1_questions_20.metadata.json`
+- 该 pipeline 会给每道题选择 3 张多视角图片，定位一个匹配 protocol 和相关 procedure steps，然后构造字段：
+  - `image_paths`
+  - `question`
+  - `options`
+  - `reasoning_steps`
+  - `answer`
+  - `source_protocol_id` / `source_protocol_step_indices`
+- 生成后至少检查：
+  - JSON / JSONL 能解析
+  - 每题正好 3 张图片，路径都存在
+  - 每题选项键集合符合预期，例如默认 `A` 到 `J`
+  - `answer` 是单个选项字母
+  - `rg -n -P "[\x{3400}-\x{4dbf}\x{4e00}-\x{9fff}\x{3000}-\x{303f}\x{ff00}-\x{ffef}]" pipeline/level-1/generated/level1_questions_20.json` 没有命中
+  - `git diff --check -- pipeline/level-1 AGENTS.md` 通过
+
+## 16. 后续代理建议
 
 - 如果继续扩展 GitHub Pages，优先保持静态化和轻依赖。
 - 如果继续补题目，先保持每个 part 有代表性样例，再逐步扩到完整数据组织。
