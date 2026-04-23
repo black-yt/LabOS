@@ -1,19 +1,998 @@
 [
   {
     "question_id": "level1_q0001",
+    "entry_id": "autobio_pipette",
+    "entry_name": "Micropipette",
+    "asset_family": "pipette",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_pipette/front.png",
+      "data/benchmark_inventory/multiview/autobio_pipette/back.png",
+      "data/benchmark_inventory/multiview/autobio_pipette/left.png"
+    ],
+    "views": [
+      {
+        "view": "front",
+        "path": "data/benchmark_inventory/multiview/autobio_pipette/front.png"
+      },
+      {
+        "view": "back",
+        "path": "data/benchmark_inventory/multiview/autobio_pipette/back.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_pipette/left.png"
+      }
+    ],
+    "question": "You are preparing the local pharmacological manipulation setup described in the protocol. The infusion system requires loading a precise volume of receptor agonist solution before tubing attachment and tip juxtaposition. The item shown in the three views is the equipment that may be used next. Based on the asset function, the current preparation state, and the protocol requirements for precise liquid handling, choose the most appropriate next operation.",
+    "options": {
+      "A": "pull_glass_capillary(steps=4, tip_diameter_um=0.8)",
+      "B": "aspirate_and_dispense(volume_ul=10, destination=\"infusion_reservoir\")",
+      "C": "apply_hot_glue(distance_cm=1, location=\"above_tips\")",
+      "D": "align_pipette_tips(angle_deg=37, manipulator=\"horizontal\")",
+      "E": "check_under_microscope(magnification_x=10, target=\"tip_diameter\")",
+      "F": "secure_in_storage_jar(container=\"electrode_jar\")",
+      "G": "attach_tubing(length_mm=5, tool=\"forceps\")",
+      "H": "aspirate_and_dispense(volume_ul=500, destination=\"infusion_reservoir\")",
+      "I": "record_neural_activity(duration_min=30, mode=\"juxtacellular\")",
+      "J": "verify_tip_resistance(range_mohm=\"5-10\", tool=\"multimeter\")"
+    },
+    "reasoning_steps": [
+      "Visual inspection of the three views identifies a manual air-displacement liquid handler, characterized by its plunger mechanism, volume adjustment dial, and disposable tip ejector, which is specifically designed for precise aspiration and dispensing of small liquid volumes.",
+      "The protocol workflow for local pharmacological manipulation requires introducing a receptor agonist into the infusion system prior to tubing attachment and microscopic alignment of the glass tips.",
+      "Options involving glass pulling, hot-gluing, microscopic verification, manipulator alignment, or resistance testing correspond to distinct assembly or recording stages that utilize specialized pullers, microscopes, or manipulators rather than this manual liquid-handling tool.",
+      "Transferring a standard microliter volume of the chemical solution directly matches both the asset's core aspiration/dispensing function and the protocol's requirement for accurate chemical loading, whereas the high-volume alternative exceeds the operational range of this device."
+    ],
+    "answer": "B",
+    "source_protocol_id": "star:PMC7859293",
+    "source_protocol_title": "A protocol for simultaneous in vivo juxtacellular electrophysiology and local pharmacological manipulation in mouse cortex",
+    "source_protocol_step_indices": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "source_protocol_nearby_step_indices": [
+      9,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC7859293",
+      "title": "A protocol for simultaneous in vivo juxtacellular electrophysiology and local pharmacological manipulation in mouse cortex",
+      "step_indices": [
+        10,
+        12
+      ],
+      "explanation": "The protocol specifies local application of a chemical such as a receptor agonist for pharmacological manipulation. Before attaching tubing to the infusion capillary and juxtaposing the tips under the microscope (Steps 10-12), the chemical solution must be accurately loaded into the infusion reservoir. The pictured manual liquid handler is explicitly designed for this precise aspiration and dispensing task, making it the correct tool for the next preparatory step, while the distractors describe glass pulling, gluing, alignment, or recording operations that rely on entirely different equipment."
+    }
+  },
+  {
+    "question_id": "level1_q0002",
+    "entry_id": "autobio_thermal_cycler_c1000",
+    "entry_name": "Bio-Rad C1000 Thermal Cycler",
+    "asset_family": "thermal_cycler",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/right.png",
+      "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/free.png",
+      "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/left.png"
+    ],
+    "views": [
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/right.png"
+      },
+      {
+        "view": "free",
+        "path": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/free.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/left.png"
+      }
+    ],
+    "question": "You are processing an ancient DNA sample during the double-strand library construction phase. The ligation reaction mixture has been thoroughly mixed and briefly spun down. The instrument shown in the three views is available for the next incubation step. Based on the sample state and the specific protocol requirements for this stage, select the correct operation to execute on this device.",
+    "options": {
+      "A": "incubate_in_thermal_cycler(temperature_c=20, duration_min=15, heated_lid=False)",
+      "B": "incubate_in_thermal_cycler(temperature_c=65, duration_min=30, heated_lid=True)",
+      "C": "purify_with_beads(bead_type=\"AMPure_XP\", volume_ul=465)",
+      "D": "incubate_in_thermal_cycler(temperature_c=37, duration_min=20, heated_lid=True)",
+      "E": "pipette_mix(volume_ul=\"all\", cycles=10)",
+      "F": "store_sample(temperature_c=-20, duration_months=2)",
+      "G": "centrifuge_sample(speed_xg=14000, duration_min=1)",
+      "H": "incubate_in_thermal_cycler(temperature_c=62, duration_h=16, heated_lid_temp_c=65)",
+      "I": "run_pcr_program(initial_denaturation_c=98, cycles=15, annealing_c=65)",
+      "J": "seal_pcr_plate(seal_type=\"clear_adhesive_film\")"
+    },
+    "reasoning_steps": [
+      "The three views depict a benchtop thermal cycler, identifiable by its hinged heated lid, block wells for reaction tubes, and digital control interface, which is designed for precise temperature-controlled incubations.",
+      "The current experimental context is the adapter ligation stage of double-strand DNA library construction, where the reaction mixture has just been mixed and spun down.",
+      "According to the protocol, the immediate next step requires incubating this mixture at 20°C for 15 minutes specifically with the heated lid turned off to prevent condensation or overheating during this low-temperature step.",
+      "Other options propose incorrect temperatures (e.g., 37°C or 65°C), different incubation durations, or unrelated operations like bead purification, centrifugation, or full PCR cycling, which do not match the specified protocol stage or asset configuration.",
+      "Therefore, executing the 20°C incubation for 15 minutes with the lid off correctly aligns with both the visual asset capabilities and the explicit protocol instructions."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC11070629",
+    "source_protocol_title": "Protocol for a comprehensive pipeline to study ancient human genomes",
+    "source_protocol_step_indices": [
+      25,
+      28,
+      36,
+      40,
+      73,
+      82,
+      98,
+      99
+    ],
+    "source_protocol_nearby_step_indices": [
+      24,
+      26,
+      27,
+      29,
+      35,
+      37,
+      39,
+      41
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC11070629",
+      "title": "Protocol for a comprehensive pipeline to study ancient human genomes",
+      "step_indices": [
+        28
+      ],
+      "explanation": "The correct answer directly implements Step 28 of the protocol, which specifies incubating the ligation reaction at 20°C for 15 minutes in a thermal cycler with the heated lid off. The visual asset is the thermal cycler required to execute this precise temperature control, and the distractors represent adjacent library prep steps or incorrect thermal parameters that would compromise the ligation efficiency."
+    }
+  },
+  {
+    "question_id": "level1_q0003",
+    "entry_id": "labutopia_heat_device",
+    "entry_name": "Heat Device / Hot Plate",
+    "asset_family": "heating_device",
+    "source_project": "labutopia",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/labutopia_heat_device/left.png",
+      "data/benchmark_inventory/multiview/labutopia_heat_device/right.png",
+      "data/benchmark_inventory/multiview/labutopia_heat_device/back.png"
+    ],
+    "views": [
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/labutopia_heat_device/left.png"
+      },
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/labutopia_heat_device/right.png"
+      },
+      {
+        "view": "back",
+        "path": "data/benchmark_inventory/multiview/labutopia_heat_device/back.png"
+      }
+    ],
+    "question": "You are fabricating transparent neural electrodes using a photolithography workflow. The PET substrate has been spin-coated with photoresist and partially exposed to UV light through a photomask. The item shown in the three views is the equipment required for the next thermal processing stage. Based on the asset's function and the specific protocol requirements for this post-exposure bake, select the correct operation to perform next.",
+    "options": {
+      "A": "spin_coat_substrate(speed_rpm=2000, duration_s=50)",
+      "B": "expose_to_uv_light(intensity_mw_cm2=14.3, duration_s=8)",
+      "C": "heat_sample_on_plate(temperature_c=120, duration_min=2.5)",
+      "D": "immerse_in_developer(solution=\"AZ_300_MIF\", duration_min=2.5)",
+      "E": "heat_sample_on_plate(temperature_c=110, duration_min=10)",
+      "F": "wash_with_di_water(duration_s=20)",
+      "G": "immerse_in_acetone(duration_min=15)",
+      "H": "heat_sample_on_plate(temperature_c=100, duration_min=2)",
+      "I": "dry_with_nitrogen_gas(duration_s=20)",
+      "J": "wash_with_isopropanol(duration_s=30)"
+    },
+    "reasoning_steps": [
+      "The three-view images depict a flat-surface heating device designed for controlled thermal processing of laboratory samples.",
+      "The current experimental state involves a photoresist-coated PET substrate that has just undergone partial UV exposure, which protocol dictates must be followed by a post-exposure bake.",
+      "The specific workflow step requires reheating the sample at exactly 120°C for 2 minutes and 30 seconds to properly harden the exposed resist regions.",
+      "Alternative options correspond to earlier fabrication stages like spin-coating or UV exposure, chemical development steps, or heating operations with incorrect temperature and duration parameters specified for later cross-linking phases.",
+      "Therefore, the only operation that aligns with both the visual asset's heating capability and the precise protocol parameters for this stage is the 120°C bake for 2.5 minutes."
+    ],
+    "answer": "C",
+    "source_protocol_id": "star:PMC10918330",
+    "source_protocol_title": "Integration of in vivo electrophysiology and optogenetics in rodents with PEDOT:PSS neural electrode array",
+    "source_protocol_step_indices": [
+      3,
+      6,
+      8,
+      13,
+      17,
+      21,
+      24,
+      26
+    ],
+    "source_protocol_nearby_step_indices": [
+      2,
+      4,
+      5,
+      7,
+      9,
+      12,
+      14,
+      16
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC10918330",
+      "title": "Integration of in vivo electrophysiology and optogenetics in rodents with PEDOT:PSS neural electrode array",
+      "step_indices": [
+        6
+      ],
+      "explanation": "The correct answer directly implements Step 6 of the protocol, which specifies reheating the partially UV-exposed sample on a hot plate at 120°C for 2 min and 30 s. The visual asset is recognized as the required heating surface, and the function parameters precisely match the mandated temperature and duration."
+    }
+  },
+  {
+    "question_id": "level1_q0004",
+    "entry_id": "labutopia_conical_bottle_family",
+    "entry_name": "Conical Bottle / Flask Family",
+    "asset_family": "conical_bottle",
+    "source_project": "labutopia",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/front.png",
+      "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/bottom.png",
+      "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/top.png"
+    ],
+    "views": [
+      {
+        "view": "front",
+        "path": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/front.png"
+      },
+      {
+        "view": "bottom",
+        "path": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/bottom.png"
+      },
+      {
+        "view": "top",
+        "path": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/top.png"
+      }
+    ],
+    "question": "You are preparing a cohort of four-week-old mice for sub-lethal irradiation to generate a humanized mouse model. The mice have been weighed and the irradiation dose calculated. The item shown in the three views is the container designated for temporarily housing each mouse during the procedure. Based on the container's physical design, the current experimental stage, and the required safety parameters, select the most appropriate next operation.",
+    "options": {
+      "A": "load_subject_into_vessel_and_secure_cap(vent_status=\"loose\")",
+      "B": "calculate_irradiation_time(dose_cGy_per_g=9.0, body_weight_g=20)",
+      "C": "transfer_cell_suspension(destination=\"15mL_conical_tube\", volume_mL=1.0)",
+      "D": "inject_enzymatic_solution(volume_mL=1.0, syringe_gauge=25)",
+      "E": "warm_culture_medium(temperature_c=37, bath_type=\"bead\")",
+      "F": "flush_bone_marrow_syringe(volume_mL=10, needle_gauge=25)",
+      "G": "create_single_cell_suspension(tool=\"frosted_slides\", method=\"mechanical_grinding\")",
+      "H": "load_tissue_into_processing_tube(volume_mL=5, solution_type=\"enzymatic\")",
+      "I": "adjust_housing_light_cycle(light_h=12, dark_h=12)",
+      "J": "resuspend_hspcs_in_buffer(volume_ul=200, antibody_conc_ug_per_ml=1.0)"
+    },
+    "reasoning_steps": [
+      "The three views depict a conical glass container with a wide base and narrow neck, consistent with an Erlenmeyer-style vessel used for temporary containment or mixing.",
+      "The protocol specifies that prior to irradiation, each mouse must be placed into an individual container and the vented cap closed loosely to allow airflow while containing the subject.",
+      "Options involving cell suspension transfer, enzymatic injection, or mechanical grinding correspond to later tissue processing stages and do not match the current pre-irradiation housing step.",
+      "Calculating irradiation time or warming media are preparatory or parallel tasks that do not utilize the pictured container for its immediate containment purpose.",
+      "Therefore, loading the subject into the container and securing the cap with a loose vent setting directly aligns with the visual asset and Step 2 of the protocol."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC11260840",
+    "source_protocol_title": "Protocol to construct humanized mice with adult CD34 + hematopoietic stem and progenitor cells",
+    "source_protocol_step_indices": [
+      2,
+      4,
+      5,
+      6,
+      80,
+      84
+    ],
+    "source_protocol_nearby_step_indices": [
+      1,
+      3,
+      7,
+      8,
+      79,
+      81,
+      83,
+      85
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC11260840",
+      "title": "Protocol to construct humanized mice with adult CD34 + hematopoietic stem and progenitor cells",
+      "step_indices": [
+        2
+      ],
+      "explanation": "Step 2 explicitly instructs placing each mouse into an individual Erlenmeyer flask and closing the vented cap loosely. The correct option directly implements this action using the pictured conical vessel, while distractors represent adjacent workflow steps or later tissue processing stages that do not match the current containment requirement."
+    }
+  },
+  {
+    "question_id": "level1_q0005",
+    "entry_id": "autobio_centrifuge_15ml_screw",
+    "entry_name": "15 mL Screw-Cap Centrifuge Tube",
+    "asset_family": "centrifuge_tube_15ml",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/left.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/right.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/back.png"
+    ],
+    "views": [
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/left.png"
+      },
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/right.png"
+      },
+      {
+        "view": "back",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/back.png"
+      }
+    ],
+    "question": "You are processing a cell suspension during the isolation of primary liver endothelial cells. The sample has been combined and resuspended in a sterile buffer to reach a final volume of 14 mL. The item shown in the three views is the container currently holding this suspension. Based on the container's structural design and the protocol's next requirement for clarifying the sample, select the most appropriate operation to perform next.",
+    "options": {
+      "A": "centrifuge_sample(speed_xg=850, duration_min=5, temperature_c=22)",
+      "B": "centrifuge_sample(speed_xg=850, duration_min=5, temperature_c=4)",
+      "C": "place_in_magnetic_rack(duration_min=2)",
+      "D": "layer_density_gradient(upper_vol_ml=3, lower_vol_ml=3, density_percent=77)",
+      "E": "resuspend_pellet(buffer='complete_medium', volume_ml=5)",
+      "F": "pipette_supernatant(destination='waste', volume_ml=14)",
+      "G": "centrifuge_sample(speed_xg=14000, duration_min=10, temperature_c=4)",
+      "H": "add_buffer(buffer='sterile_PBS', volume_ml=25)",
+      "I": "transfer_to_universal_container(volume_ml=24)",
+      "J": "incubate_in_shaker(speed_rpm=200, duration_min=30, temperature_c=37)"
+    },
+    "reasoning_steps": [
+      "The three views depict a medium-volume conical vessel with a threaded cap and graduated markings, designed to securely hold liquid samples and withstand rotational forces during clarification.",
+      "The protocol context indicates that after combining cell pellets and adjusting the suspension volume to 14 mL with sterile PBS, the immediate next action is to separate the cells from the buffer via centrifugation.",
+      "Step 22 explicitly specifies centrifuging at 850 × g for 5 minutes at room temperature (21°C–23°C), which aligns with the vessel's capacity and the current sample preparation stage.",
+      "Distractors involving magnetic separation, density gradient layering, or alternative centrifugation parameters correspond to earlier, later, or unrelated workflow stages and do not match the immediate protocol requirement.",
+      "Therefore, operating the centrifuge at 850 × g for 5 minutes at 22°C correctly utilizes the pictured vessel and follows the specified protocol parameters."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC11577181",
+    "source_protocol_title": "Protocol to study monocyte transmigration across primary human liver endothelial cells under physiological shear flow conditions in vitro",
+    "source_protocol_step_indices": [
+      13,
+      22,
+      31,
+      32,
+      38,
+      44,
+      52,
+      62
+    ],
+    "source_protocol_nearby_step_indices": [
+      12,
+      14,
+      21,
+      23,
+      30,
+      33,
+      37,
+      39
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC11577181",
+      "title": "Protocol to study monocyte transmigration across primary human liver endothelial cells under physiological shear flow conditions in vitro",
+      "step_indices": [
+        22
+      ],
+      "explanation": "Step 22 directs the user to combine the pellet into the pictured vessel, adjust the volume to 14 mL with PBS, and centrifuge at 850 × g for 5 min at 21°C–23°C. The correct option precisely matches these parameters and utilizes the vessel's intended function for medium-volume centrifugation."
+    }
+  },
+  {
+    "question_id": "level1_q0006",
+    "entry_id": "autobio_tip_200ul",
+    "entry_name": "200 uL Pipette Tip",
+    "asset_family": "pipette_tip",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_tip_200ul/front.png",
+      "data/benchmark_inventory/multiview/autobio_tip_200ul/back.png",
+      "data/benchmark_inventory/multiview/autobio_tip_200ul/bottom.png"
+    ],
+    "views": [
+      {
+        "view": "front",
+        "path": "data/benchmark_inventory/multiview/autobio_tip_200ul/front.png"
+      },
+      {
+        "view": "back",
+        "path": "data/benchmark_inventory/multiview/autobio_tip_200ul/back.png"
+      },
+      {
+        "view": "bottom",
+        "path": "data/benchmark_inventory/multiview/autobio_tip_200ul/bottom.png"
+      }
+    ],
+    "question": "You have just mouth-aspirated a single Drosophila into a 1 mL tip connected to soft rubber tubing. The next stage requires transferring the insect into the item shown in the three views to position it for proboscis extension testing. Based on the pictured asset's volume capacity and the protocol's specific handling instructions, select the correct next operation.",
+    "options": {
+      "A": "expel_fly_into_tip(tip_volume_ul=200, shake_downward=True, head_orientation=\"forward\")",
+      "B": "mix_solution_with_tip(tip_volume_ul=10, duration_s=5)",
+      "C": "attach_tubing_to_tip(tip_volume_ul=1000, narrow_end_out=True)",
+      "D": "trim_tip_with_razor(cut_type=\"horizontal\", position=\"above_head\")",
+      "E": "offer_water_drop(tip_volume_ul=10, saturation_test=True)",
+      "F": "mix_particle_food(tube_volume_ul=200, duration_s=3)",
+      "G": "seal_microfuge_tube(seal_type=\"adhesive_film\", volume_ul=200)",
+      "H": "prepare_sucrose_dilution(stock_mM=500, water_ul=950)",
+      "I": "aspirate_fly_into_tubing(tip_volume_ul=1000, suction_force=\"gentle\")",
+      "J": "weigh_silica_microspheres(mass_mg=3, container=\"0.6_ml_tube\")"
+    },
+    "reasoning_steps": [
+      "The three views depict a standard 200 μL disposable liquid-handling tip, identifiable by its tapered shaft and specific collar geometry.",
+      "The protocol context establishes that the fly has already been aspirated into a 1 mL tip, and the immediate next step requires transferring it into a 200 μL tip for precise behavioral positioning.",
+      "Step 9 explicitly instructs to expel the fly into the 200 μL tip while shaking it downward to orient the head toward the open end, matching the volume and handling parameters in the correct option.",
+      "Distractors involving 10 μL tips, 1 mL tubing attachments, or cutting operations correspond to earlier or later workflow stages, while sucrose preparation and silica weighing are unrelated initial setup steps.",
+      "Therefore, the operation that aligns with both the visual asset capacity and the protocol's directional transfer instructions is the correct choice."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC9647644",
+    "source_protocol_title": "Drosophila proboscis extension response and GCaMP imaging for assaying food appeal based on grittiness",
+    "source_protocol_step_indices": [
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12
+    ],
+    "source_protocol_nearby_step_indices": [
+      1,
+      2,
+      3,
+      4,
+      13,
+      14,
+      15
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC9647644",
+      "title": "Drosophila proboscis extension response and GCaMP imaging for assaying food appeal based on grittiness",
+      "step_indices": [
+        9
+      ],
+      "explanation": "The correct answer directly implements Step 9 of the protocol, which specifies transferring the aspirated fly into a 200 μL pipette tip. The visual asset matches this exact consumable, and the function parameters reflect the required downward shaking and forward head orientation described in the text."
+    }
+  },
+  {
+    "question_id": "level1_q0007",
+    "entry_id": "autobio_pipette_rack_tri",
+    "entry_name": "Triangular Pipette Rack",
+    "asset_family": "pipette_rack",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/back.png",
+      "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/front.png",
+      "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/free.png"
+    ],
+    "views": [
+      {
+        "view": "back",
+        "path": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/back.png"
+      },
+      {
+        "view": "front",
+        "path": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/front.png"
+      },
+      {
+        "view": "free",
+        "path": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/free.png"
+      }
+    ],
+    "question": "During the mechanical dissociation of ganglia, the protocol instructs to change the glass transfer tool once the tissue passes through its opening without friction. The item shown in the three views is currently on the bench. Based on its passive storage function and the current workflow state, what is the most appropriate next action to handle the used tool before proceeding with the next dissociation pass?",
+    "options": {
+      "A": "store_used_instrument(instrument_type=\"glass_pasteur\", orientation=\"upright\", rack=\"triangular\")",
+      "B": "centrifuge_cell_suspension(speed_g=2000, duration_min=2)",
+      "C": "mechanical_dissociation(tip_size=\"large\", aspiration_cycles=10, avoid_bubbles=True)",
+      "D": "pull_patch_pipette(capillary_od_mm=1.2, puller_steps=5)",
+      "E": "incubate_tissue(enzyme=\"collagenase\", temp_c=37, duration_min=10, co2_pct=8)",
+      "F": "fill_micromanipulator(fluid=\"ddH2O\", volume_ml=1, avoid_bubbles=True)",
+      "G": "seed_neurons(dish_diameter_cm=10, volume_ml=10, medium=\"pre_plating\")",
+      "H": "add_trypsin_edta(concentration_pct=0.05, volume_ml=1, temp_c=37)",
+      "I": "renew_chlorinated_electrode(headstage=\"patch_clamp\", check_color=\"black_to_silver\")",
+      "J": "visualize_pipette_tip(microforge=\"standard\", target_resistance_mohm=4.5)"
+    },
+    "reasoning_steps": [
+      "The three views depict a passive triangular organizer designed to hold slender glass tools vertically between uses.",
+      "The protocol workflow (Steps 24-25) requires switching to a smaller-tipped instrument once the tissue passes through the current one without friction, necessitating safe interim storage.",
+      "The pictured item functions specifically as an upright holder, preventing contamination, breakage, or rolling of the used glass tool during the sequential dissociation process.",
+      "Distractors involve active processing steps like centrifugation, enzymatic incubation, micropipette pulling, or micromanipulator maintenance, which belong to different workflow stages or require entirely different equipment.",
+      "Therefore, placing the used glass instrument upright in the triangular organizer is the only action that aligns with both the visual asset function and the immediate protocol requirement."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC11101974",
+    "source_protocol_title": "Protocol to correlate electron microscopy with electrophysiology in single-cell autaptic microcultures",
+    "source_protocol_step_indices": [
+      24,
+      25,
+      26,
+      48,
+      49,
+      51,
+      52,
+      53
+    ],
+    "source_protocol_nearby_step_indices": [
+      20,
+      21,
+      22,
+      23,
+      27,
+      28,
+      29,
+      50
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC11101974",
+      "title": "Protocol to correlate electron microscopy with electrophysiology in single-cell autaptic microcultures",
+      "step_indices": [
+        24,
+        25
+      ],
+      "explanation": "Steps 24 and 25 describe the sequential mechanical dissociation of ganglia using glass Pasteur pipettes, explicitly instructing to change the tool when tissue passes through without friction. The triangular rack shown in the images provides the designated passive storage location to safely hold the used glass tool upright between passes, matching the protocol's workflow and the asset's intended function."
+    }
+  },
+  {
+    "question_id": "level1_q0008",
+    "entry_id": "labutopia_graduated_cylinder_03",
+    "entry_name": "Graduated Cylinder",
+    "asset_family": "graduated_cylinder",
+    "source_project": "labutopia",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/right.png",
+      "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/top.png",
+      "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/bottom.png"
+    ],
+    "views": [
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/right.png"
+      },
+      {
+        "view": "top",
+        "path": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/top.png"
+      },
+      {
+        "view": "bottom",
+        "path": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/bottom.png"
+      }
+    ],
+    "question": "You are processing a raw wastewater sample for pathogen nucleic acid surveillance. The sample has been homogenized and the vacuum filtration manifold is prepared with a sterile membrane. The item shown in the three views is positioned on the bench next to the sample bottle and the filtration cup. Based on the visual features of this volumetric measuring tool and the current workflow stage, which operation should be performed next to proceed with primary concentration?",
+    "options": {
+      "A": "homogenize_sample(method=\"shaking\", duration_min=5)",
+      "B": "measure_and_transfer_wastewater(volume_ml=250, destination=\"pall_cup\")",
+      "C": "place_membrane_filter(filter_type=\"MCE\", orientation=\"grid_side_up\")",
+      "D": "activate_vacuum_manifold(pressure_inhg=20, duration_min=15)",
+      "E": "remove_magnetic_cup_and_handle_membrane(forceps_type=\"sample_specific\")",
+      "F": "refrigerate_filter_concentrate(temperature_c=4, container=\"5ml_tube\")",
+      "G": "decontaminate_benchtop(agent=\"70_percent_ethanol\", contact_time_min=5)",
+      "H": "pipette_wastewater_concentrate(volume_ul=400, destination=\"1.7ml_tube\")",
+      "I": "autoclave_used_equipment(cycle=\"liquid\", temperature_c=121, duration_min=30)",
+      "J": "add_lysis_buffer(volume_ml=5, destination=\"filtration_cup\")"
+    },
+    "reasoning_steps": [
+      "The three views display a tall, transparent cylindrical vessel with precise volumetric graduations etched along its side, identifying it as a passive liquid measuring and dispensing tool.",
+      "The protocol workflow indicates that after sample homogenization and membrane setup, the next step in primary concentration requires measuring a defined volume of wastewater before transferring it into the filtration cup.",
+      "Operations involving vacuum activation, membrane placement, or downstream microliter pipetting do not align with the current stage or the macro-scale volumetric capacity of the pictured asset.",
+      "Therefore, the correct next action is to use this vessel to measure the wastewater volume and dispense it into the Pall cup, directly matching the instruction in Step 25."
+    ],
+    "answer": "B",
+    "source_protocol_id": "bioprot:PMC11865829",
+    "source_protocol_title": "Novel Workflows for Separate Isolation of Pathogen RNA or DNA from Wastewater: Detection by Innovative and Conventional qPCR",
+    "source_protocol_step_indices": [
+      25,
+      29
+    ],
+    "source_protocol_nearby_step_indices": [
+      22,
+      23,
+      24,
+      26,
+      27,
+      28,
+      30,
+      31
+    ],
+    "protocol_alignment": {
+      "protocol_id": "bioprot:PMC11865829",
+      "title": "Novel Workflows for Separate Isolation of Pathogen RNA or DNA from Wastewater: Detection by Innovative and Conventional qPCR",
+      "step_indices": [
+        25
+      ],
+      "explanation": "Step 25 explicitly instructs the user to employ a sterile graduated cylinder to measure incremental volumes of wastewater and pour them into the Pall cup for filtration. The correct option B directly implements this measuring and dispensing action, while the distractors correspond to earlier setup steps, later extraction steps, or post-use decontamination that do not match the current workflow stage or the asset's measuring function."
+    }
+  },
+  {
+    "question_id": "level1_q0009",
+    "entry_id": "autobio_thermal_mixer_eppendorf_c",
+    "entry_name": "Eppendorf C Thermal Mixer",
+    "asset_family": "thermal_mixer",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/free.png",
+      "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/front.png",
+      "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/left.png"
+    ],
+    "views": [
+      {
+        "view": "free",
+        "path": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/free.png"
+      },
+      {
+        "view": "front",
+        "path": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/front.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/left.png"
+      }
+    ],
+    "question": "You are performing the intermolecular ligation stage of a CIMERA-seq workflow. The reaction tubes containing immunoprecipitated beads and the freshly added PNK reaction mixture have been briefly tap-spun to collect the contents. The equipment shown in the three views is the device that should be used next. Based on the asset's function, the current sample state, and the specific temperature, duration, and agitation requirements of the protocol, select the most appropriate next operation.",
+    "options": {
+      "A": "incubate_in_thermal_mixer(temperature_c=37, duration_min=20, speed_rpm=1100, cycle_on_s=15, cycle_rest_s=90)",
+      "B": "place_tube_on_magnetic_rack(duration_min=3)",
+      "C": "incubate_on_rotator(speed_rpm=20, duration_min=3, temperature_c=4)",
+      "D": "incubate_on_ice(duration_min=30)",
+      "E": "centrifuge_sample(speed_xg=16000, duration_min=1, temperature_c=20)",
+      "F": "vortex_sample(speed=\"high\", duration_min=5)",
+      "G": "incubate_in_thermal_mixer(temperature_c=25, duration_h=16, speed_rpm=1100, cycle_on_s=15, cycle_rest_s=90)",
+      "H": "add_reagent(volume_ul=2, reagent=\"25mM_ATP\", mix_method=\"flick\")",
+      "I": "incubate_in_thermal_mixer(temperature_c=4, duration_h=16, speed_rpm=1100, cycle_on_s=15, cycle_rest_s=90)",
+      "J": "add_reagent(volume_ul=2.5, reagent=\"T4_RNA_ligase_1\", mix_method=\"flick\")"
+    },
+    "reasoning_steps": [
+      "The three views depict a benchtop thermal mixer, identifiable by its heated block, digital control interface, and orbital shaking mechanism designed for microtube incubation.",
+      "The current workflow stage involves intermolecular ligation where beads have just been resuspended in reaction mixture and tap-spun, requiring precise thermal and agitation control.",
+      "The protocol explicitly specifies incubating this mixture at 37°C for 20 minutes with shaking at 1100 rpm using a 15-second on and 90-second rest cycle.",
+      "Alternative operations like magnetic separation, ice incubation, vortexing, or reagent addition correspond to adjacent or later steps in the CIMERA-seq workflow and do not match the required thermal and agitation parameters for this specific ligation phase.",
+      "Therefore, configuring the thermal mixer to 37°C, 20 min, and the specified intermittent shaking cycle is the only operation that correctly aligns with both the asset's capabilities and the protocol requirements."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC11697689",
+    "source_protocol_title": "Molecular protocol for genome-wide and cell-type-selective profiling of in vivo small noncoding RNA:target RNA interactions by CIMERA-seq",
+    "source_protocol_step_indices": [
+      26,
+      38,
+      40,
+      44,
+      46,
+      52,
+      56,
+      60
+    ],
+    "source_protocol_nearby_step_indices": [
+      25,
+      27,
+      37,
+      39,
+      41,
+      43,
+      45,
+      47
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC11697689",
+      "title": "Molecular protocol for genome-wide and cell-type-selective profiling of in vivo small noncoding RNA:target RNA interactions by CIMERA-seq",
+      "step_indices": [
+        38
+      ],
+      "explanation": "The correct answer directly implements Step 38 of the CIMERA-seq protocol, which mandates incubating the intermolecular ligation reaction at 37°C for 20 minutes with shaking at 1100 rpm (15 s on, 90 s rest) in a ThermoMixer. The pictured asset provides the exact temperature control and programmable orbital shaking required for this step, while the distractors represent either different workflow stages, incorrect mixing methods, or mismatched thermal parameters."
+    }
+  },
+  {
+    "question_id": "level1_q0010",
+    "entry_id": "labutopia_muffle_furnace",
+    "entry_name": "Muffle Furnace",
+    "asset_family": "muffle_furnace",
+    "source_project": "labutopia",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/labutopia_muffle_furnace/top.png",
+      "data/benchmark_inventory/multiview/labutopia_muffle_furnace/right.png",
+      "data/benchmark_inventory/multiview/labutopia_muffle_furnace/left.png"
+    ],
+    "views": [
+      {
+        "view": "top",
+        "path": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/top.png"
+      },
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/right.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/left.png"
+      }
+    ],
+    "question": "You are fabricating shifted tG silica nanoparticles. The collected and washed powder has been dried in a vacuum oven at 35°C for 12 hours. The item shown in the three views is the equipment required for the next template removal step. Based on the asset's function and the protocol's specific temperature, duration, and heating rate requirements, select the most appropriate next operation.",
+    "options": {
+      "A": "preheat_solution_in_water_bath(temperature_c=35, duration_h=18)",
+      "B": "centrifuge_sample(speed_g=17940, duration_min=10, temperature_c=25)",
+      "C": "dry_powder_in_vacuum_oven(temperature_c=35, duration_h=12)",
+      "D": "calcinate_powder(temperature_c=550, duration_h=6, heating_rate_c_per_min=1)",
+      "E": "stir_precursor_mixture(speed_rpm=400, duration_min=10)",
+      "F": "calcinate_powder(temperature_c=600, duration_h=4, heating_rate_c_per_min=5)",
+      "G": "wash_pellet_with_ethanol(volume_ml=20, cycles=2)",
+      "H": "incubate_in_water_bath(temperature_c=35, duration_h=18)",
+      "I": "prepare_ctab_solution(concentration_mM=50, volume_ml=20)",
+      "J": "mix_organic_micelles(speed_rpm=400, duration_min=10)"
+    },
+    "reasoning_steps": [
+      "The three views depict a high-temperature enclosed heating device with a digital controller and insulated chamber, characteristic of a muffle furnace used for calcination or ashing.",
+      "The protocol indicates that after drying the washed powder in a vacuum oven, the next step is organic template removal via high-temperature calcination.",
+      "The specific parameters required are 550°C for 6 hours with a controlled heating rate of 1 °C/min to prevent structural collapse of the delicate mesoporous silica.",
+      "Options involving water baths, centrifugation, or vacuum drying correspond to earlier preparation and washing stages, while the option with incorrect temperature and ramp rate would damage the target gyroidal structure.",
+      "Therefore, the operation matching both the visual asset and the precise protocol parameters is calcinate_powder(temperature_c=550, duration_h=6, heating_rate_c_per_min=1)."
+    ],
+    "answer": "D",
+    "source_protocol_id": "star:PMC11616519",
+    "source_protocol_title": "Protocol for the symmetry manipulation of gyroidal mesostructures through the binary self-assembly of block copolymer and cationic surfactant",
+    "source_protocol_step_indices": [
+      46
+    ],
+    "source_protocol_nearby_step_indices": [
+      40,
+      41,
+      42,
+      43,
+      44,
+      45,
+      47,
+      48
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC11616519",
+      "title": "Protocol for the symmetry manipulation of gyroidal mesostructures through the binary self-assembly of block copolymer and cationic surfactant",
+      "step_indices": [
+        46
+      ],
+      "explanation": "The correct answer directly implements Step 46, which specifies calcinating the dried powder in a muffle furnace at 550°C for 6 hours with a 1 °C/min heating rate. The visual asset confirms the equipment choice, and the parameters exactly match the protocol to ensure proper template removal without damaging the mesostructure."
+    }
+  },
+  {
+    "question_id": "level1_q0011",
+    "entry_id": "labutopia_glass_rod",
+    "entry_name": "Glass Rod",
+    "asset_family": "glass_rod",
+    "source_project": "labutopia",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/labutopia_glass_rod/top.png",
+      "data/benchmark_inventory/multiview/labutopia_glass_rod/bottom.png",
+      "data/benchmark_inventory/multiview/labutopia_glass_rod/left.png"
+    ],
+    "views": [
+      {
+        "view": "top",
+        "path": "data/benchmark_inventory/multiview/labutopia_glass_rod/top.png"
+      },
+      {
+        "view": "bottom",
+        "path": "data/benchmark_inventory/multiview/labutopia_glass_rod/bottom.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/labutopia_glass_rod/left.png"
+      }
+    ],
+    "question": "You are preparing poly-D-lysine (PDL) solution for coating microfluidic PDMS chips prior to cell seeding. The reagent vial contains the freshly diluted mixture, which requires gentle homogenization to prevent bubble formation before loading into the chip reservoirs. The item shown in the three views is the equipment that may be used next. Based on the asset function, the current solution state, and the protocol requirements for gentle handling, choose the most appropriate next operation.",
+    "options": {
+      "A": "stir_mixture(tool=\"glass_rod\", duration_min=2, speed=\"gentle\")",
+      "B": "pipette_solution(volume_ul=100, destination=\"chip_inlet\", speed=\"fast\")",
+      "C": "incubate_chips(temperature_c=37, duration_h=2, humidity=\"high\")",
+      "D": "autoclave_chips(temperature_c=121, pressure_psi=15, duration_min=20)",
+      "E": "plasma_clean_surface(power_w=30, duration_min=5)",
+      "F": "aspirate_waste(volume_ul=50, tool=\"glass_aspirator\", speed=\"slow\")",
+      "G": "uv_sterilize_chips(duration_h=1, intensity_mw_cm2=10)",
+      "H": "vortex_tube(speed=\"maximum\", duration_min=5)",
+      "I": "centrifuge_sample(speed_xg=3000, duration_min=10, temperature_c=4)",
+      "J": "cure_polymer(temperature_c=80, duration_h=1)"
+    },
+    "reasoning_steps": [
+      "The three views depict a smooth, cylindrical glass rod, which is a standard laboratory tool designed for manual stirring and mixing of liquid reagents.",
+      "The protocol workflow involves preparing poly-D-lysine (PDL) solution for microfluidic chip coating, requiring careful homogenization to avoid introducing air bubbles that could disrupt hydraulic pressure and cell adhesion.",
+      "Options involving high-speed vortexing, centrifugation, or fast pipetting are inappropriate because they risk bubble formation or are intended for different sample states such as cell pelleting or waste removal.",
+      "Thermal incubation, autoclaving, plasma cleaning, and UV exposure are valid downstream or preparatory steps in the protocol but do not match the immediate need for liquid homogenization using the pictured manual tool.",
+      "Therefore, gently stirring the mixture with the glass rod for a short duration aligns with both the asset's affordance and the protocol's requirement for careful solution preparation prior to the pipetting and rinsing steps."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC12589923",
+    "source_protocol_title": "Image cytometry-based quantification protocol of human pulmonary arterial endothelial cells in lab-fabricated multichannel microfluidic devices",
+    "source_protocol_step_indices": [
+      43,
+      44,
+      54,
+      56
+    ],
+    "source_protocol_nearby_step_indices": [
+      41,
+      42,
+      45,
+      46,
+      52,
+      53,
+      55,
+      57
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC12589923",
+      "title": "Image cytometry-based quantification protocol of human pulmonary arterial endothelial cells in lab-fabricated multichannel microfluidic devices",
+      "step_indices": [
+        52,
+        55
+      ],
+      "explanation": "The correct answer aligns with the protocol's liquid handling workflow (Steps 52 and 55), which emphasizes gentle, bubble-free solution distribution into microfluidic reservoirs. Manual stirring with the pictured glass rod ensures homogeneous PDL preparation before the pipetting and rinsing steps described in the protocol."
+    }
+  },
+  {
+    "question_id": "level1_q0012",
+    "entry_id": "autobio_cell_dish_100",
+    "entry_name": "100 mm Cell Dish",
+    "asset_family": "cell_dish",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_cell_dish_100/top.png",
+      "data/benchmark_inventory/multiview/autobio_cell_dish_100/left.png",
+      "data/benchmark_inventory/multiview/autobio_cell_dish_100/back.png"
+    ],
+    "views": [
+      {
+        "view": "top",
+        "path": "data/benchmark_inventory/multiview/autobio_cell_dish_100/top.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_cell_dish_100/left.png"
+      },
+      {
+        "view": "back",
+        "path": "data/benchmark_inventory/multiview/autobio_cell_dish_100/back.png"
+      }
+    ],
+    "question": "You are preparing to passage adherent U-87 MG cells that have reached confluency in the item shown in the three views. The cells require enzymatic detachment before subculturing. Based on the vessel's dimensions and the standard protocol for this cell line, what is the correct next operation to initiate digestion?",
+    "options": {
+      "A": "add_detachment_reagent(reagent=\"0.25% Trypsin-EDTA\", volume_ml=3.0)",
+      "B": "add_detachment_reagent(reagent=\"0.25% Trypsin-EDTA\", volume_ml=1.0)",
+      "C": "neutralize_enzyme(medium=\"U-87 MG culture medium\", volume_ml=3.0)",
+      "D": "transfer_suspension_to_tube(tube_volume_ml=15)",
+      "E": "incubate_vessel_static(duration_min=60, temperature_c=37, co2_percent=5)",
+      "F": "replace_medium(new_medium=\"Medium 3\", volume_ml=5.0)",
+      "G": "fix_sample(fixative=\"4% PFA\", duration_min=20)",
+      "H": "rinse_vessel(buffer=\"PBS\", repeats=3, duration_min=10)",
+      "I": "transfer_assembloids_to_dish(dish_type=\"glass_bottom\")",
+      "J": "add_co_culture_medium(volume_ml=1.0)"
+    },
+    "reasoning_steps": [
+      "The three views depict a standard 100 mm (10 cm) circular cell culture dish, identifiable by its wide, flat base and shallow depth, which is commonly used for adherent cell expansion.",
+      "The protocol explicitly states that for detaching U-87 MG cells in a 10 cm dish, exactly 3 mL of 0.25% Trypsin-EDTA solution must be added to initiate enzymatic digestion.",
+      "Distractors proposing 1 mL volumes correspond to smaller multi-well plates, while neutralization, centrifugation, or medium replacement represent subsequent or unrelated workflow stages.",
+      "Therefore, adding 3 mL of 0.25% Trypsin-EDTA directly aligns with both the visual identification of the 100 mm dish and the explicit protocol parameters for cell detachment."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC10339243",
+    "source_protocol_title": "Protocol for generating in vitro glioma models using human-induced pluripotent- or embryonic-stem-cell-derived cerebral organoids",
+    "source_protocol_step_indices": [
+      32,
+      33,
+      50,
+      51,
+      84,
+      85,
+      87,
+      111
+    ],
+    "source_protocol_nearby_step_indices": [
+      34,
+      49,
+      52,
+      83,
+      86,
+      88,
+      110,
+      112
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC10339243",
+      "title": "Protocol for generating in vitro glioma models using human-induced pluripotent- or embryonic-stem-cell-derived cerebral organoids",
+      "step_indices": [
+        85
+      ],
+      "explanation": "Step 85 explicitly instructs to add 3 mL of 0.25% Trypsin-EDTA solution to each 10 cm dish for U-87 MG cell detachment. The pictured 100 mm dish matches the 10 cm specification, making the 3 mL volume and reagent concentration the correct parameters for this stage."
+    }
+  },
+  {
+    "question_id": "level1_q0013",
+    "entry_id": "autobio_centrifuge_5430",
+    "entry_name": "Eppendorf 5430 Centrifuge",
+    "asset_family": "centrifuge",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_centrifuge_5430/right.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_5430/left.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_5430/top.png"
+    ],
+    "views": [
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/right.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/left.png"
+      },
+      {
+        "view": "top",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/top.png"
+      }
+    ],
+    "question": "You are assembling a DNA nanomachine mixture for bacterial rRNA detection. The oligonucleotide solutions have been completely thawed and gently mixed by tapping in a 1.5 mL tube. The item shown in the three views is the equipment required for the next immediate step to collect the liquid at the bottom of the tube before aliquoting. Based on the asset function and the protocol instructions, choose the most appropriate next operation.",
+    "options": {
+      "A": "spin_down_tube(speed_rpm=10000, duration_sec=15)",
+      "B": "vortex_sample(speed=\"maximum\", duration_sec=10)",
+      "C": "incubate_in_thermal_cycler(temperature_c=95, duration_min=2)",
+      "D": "add_nuclease_free_water(volume_ul=50, destination=\"tube\")",
+      "E": "measure_absorbance(wavelength_nm=260, sample_type=\"total_rna\")",
+      "F": "aliquot_to_plate(volume_ul=50, destination=\"96_well_black_plate\")",
+      "G": "store_at_temperature(temperature_c=-20, duration_h=24)",
+      "H": "mix_by_tapping(intensity=\"gentle\", duration_sec=5)",
+      "I": "visualize_on_gel(dye=\"ethidium_bromide\", voltage_v=100)",
+      "J": "heat_dry_sample(temperature_c=65, duration_min=10)"
+    },
+    "reasoning_steps": [
+      "The three images depict a powered benchtop spinning device designed to rapidly rotate small tubes and collect liquid at the bottom.",
+      "The protocol explicitly instructs to gently mix by tapping and then spin down the solution using this type of equipment before preparing aliquots, while specifically warning against intensive vortexing.",
+      "Options involving thermal cycling, spectrophotometry, gel visualization, or plate aliquoting correspond to later or unrelated workflow stages that do not match the immediate sample state.",
+      "Therefore, operating the pictured device at a standard spin-down setting is the only step that aligns with both the visual asset and the immediate protocol requirement."
+    ],
+    "answer": "A",
+    "source_protocol_id": "bioprot:PMC12086345",
+    "source_protocol_title": "Differentiation of Bacillus cereus Species Based on Detected Unamplified Bacterial 16S rRNA by DNA Nanomachine",
+    "source_protocol_step_indices": [
+      14,
+      15,
+      16,
+      24,
+      25,
+      28,
+      36,
+      37
+    ],
+    "source_protocol_nearby_step_indices": [
+      13,
+      17,
+      23,
+      26,
+      27,
+      29,
+      35,
+      38
+    ],
+    "protocol_alignment": {
+      "protocol_id": "bioprot:PMC12086345",
+      "title": "Differentiation of Bacillus cereus Species Based on Detected Unamplified Bacterial 16S rRNA by DNA Nanomachine",
+      "step_indices": [
+        14
+      ],
+      "explanation": "Step 14 specifies spinning down the oligonucleotide mixture using a microcentrifuge after gentle tapping. The pictured asset is a benchtop centrifuge capable of this exact operation, making the spin-down function the correct next step."
+    }
+  },
+  {
+    "question_id": "level1_q0014",
     "entry_id": "autobio_centrifuge_10ml",
     "entry_name": "10 mL Centrifuge Tube",
     "asset_family": "centrifuge_tube_10ml",
     "source_project": "autobio",
     "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/right.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/left.png",
       "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/bottom.png",
       "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/free.png"
     ],
     "views": [
       {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/right.png"
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/left.png"
       },
       {
         "view": "bottom",
@@ -24,24 +1003,24 @@
         "path": "data/benchmark_inventory/multiview/autobio_centrifuge_10ml/free.png"
       }
     ],
-    "question": "You are processing osteocyte samples for evaluation under large gradient high magnetic fields. The sample suspension has been transferred into the 10 mL centrifuge tube shown in the three-view images. According to the current experimental protocol, what is the most appropriate next operation to pellet the cells before proceeding with downstream analysis?",
+    "question": "You are processing osteocyte samples for protein analysis under a large gradient high magnetic field. The cell suspension has just been transferred into the item shown in the three views. Based on the vessel's capacity and the immediate downstream requirement in the protocol, determine the correct next operation.",
     "options": {
       "A": "centrifuge_sample(speed_xg=12000, duration_min=10)",
-      "B": "centrifuge_sample(speed_xg=300, duration_min=5)",
-      "C": "vortex_sample(speed=\"high\", duration_sec=30)",
-      "D": "incubate_tube(temperature_c=37, duration_h=24)",
-      "E": "freeze_sample(temperature_c=-80, duration_h=1)",
-      "F": "pipette_supernatant(volume_ml=5, destination=\"waste\")",
-      "G": "sonicate_sample(power_w=50, duration_min=2)",
-      "H": "heat_inactivate(temperature_c=95, duration_min=5)",
-      "I": "add_buffer(buffer=\"PBS\", volume_ml=2)",
-      "J": "seal_tube(seal_type=\"parafilm\", duration_min=0)"
+      "B": "incubate_on_rocker(speed_rpm=20, duration_min=10, temperature_c=4)",
+      "C": "pipette_lyse_cells(action=\"blow_bottom\", repetitions=10)",
+      "D": "mix_protein_buffer(ratio=\"1:4\", volume_ul=20)",
+      "E": "heat_sample(temperature_c=100, duration_min=5)",
+      "F": "store_sample(temperature_c=-20, duration_days=30)",
+      "G": "wash_cells(buffer=\"1x_PBS\", volume_ml=2)",
+      "H": "centrifuge_sample(speed_xg=3000, duration_min=5)",
+      "I": "vortex_sample(speed=\"maximum\", duration_s=15)",
+      "J": "filter_supernatant(pore_size_um=0.22, volume_ml=5)"
     },
     "reasoning_steps": [
-      "The three-view images clearly depict a 10 mL centrifuge tube, which is designed to hold medium-volume liquid samples and withstand high rotational forces.",
-      "The protocol explicitly states that after sample collection, the next step is to centrifuge the samples at 12,000 × g for 10 min to pellet the osteocytes.",
-      "Options involving vortexing, incubation, freezing, or low-speed centrifugation do not match the required pelleting parameters specified in the protocol.",
-      "Therefore, operating the centrifuge at 12,000 × g for 10 minutes is the correct next step that aligns with both the asset's purpose and the protocol instructions."
+      "The three views depict a medium-volume conical vessel designed to securely hold liquid samples during high-speed rotational separation.",
+      "The protocol workflow indicates that immediately after collecting the osteocyte suspension into this vessel, the sample must undergo mechanical separation to pellet cells or isolate components.",
+      "Step 21 explicitly mandates centrifugation at 12,000 × g for 10 minutes, which aligns with the vessel's structural purpose and the specified experimental parameters.",
+      "Alternative options describe earlier lysis or washing steps, later heating or storage procedures, or apply incorrect centrifugation speeds that do not satisfy the protocol requirements."
     ],
     "answer": "A",
     "source_protocol_id": "star:PMC11284420",
@@ -50,920 +1029,69 @@
       20,
       21
     ],
+    "source_protocol_nearby_step_indices": [
+      16,
+      17,
+      18,
+      19,
+      22,
+      23,
+      24,
+      25
+    ],
     "protocol_alignment": {
       "protocol_id": "star:PMC11284420",
       "title": "Protocol for evaluating the effects of large gradient high magnetic fields on osteocyte function",
       "step_indices": [
+        20,
         21
       ],
-      "explanation": "The correct answer directly implements Step 21 of the protocol, which requires centrifuging the collected samples at 12,000 × g for 10 min. The 10 mL centrifuge tube shown in the images is the appropriate vessel for this medium-volume centrifugation step, and the specified speed and duration match the protocol exactly."
-    }
-  },
-  {
-    "question_id": "level1_q0002",
-    "entry_id": "labutopia_beaker_family",
-    "entry_name": "Beaker Family",
-    "asset_family": "beaker",
-    "source_project": "labutopia",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/labutopia_beaker_family/free.png",
-      "data/benchmark_inventory/multiview/labutopia_beaker_family/left.png",
-      "data/benchmark_inventory/multiview/labutopia_beaker_family/right.png"
-    ],
-    "views": [
-      {
-        "view": "free",
-        "path": "data/benchmark_inventory/multiview/labutopia_beaker_family/free.png"
-      },
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/labutopia_beaker_family/left.png"
-      },
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/labutopia_beaker_family/right.png"
-      }
-    ],
-    "question": "You are performing FAA fixation and paraffin embedding for Arabidopsis shoot apical meristem samples. The dissected samples have been transferred to a 10 mL glass beaker, and paraffin chips have been sprinkled until the mixture reaches half the beaker's volume. Based on the asset shown in the three views and the protocol requirements, what is the most appropriate next operation to process the samples?",
-    "options": {
-      "A": "centrifuge_sample(speed_xg=3000, duration_min=10, temperature_c=4)",
-      "B": "place_in_oven(temperature_c=60, duration_h=24)",
-      "C": "vortex_sample(speed=\"medium\", duration_min=2)",
-      "D": "freeze_in_cryostat(temperature_c=-20, duration_h=2)",
-      "E": "pipette_supernatant(volume_ml=5, destination=\"waste_tube\")",
-      "F": "incubate_at_room_temp(temperature_c=22, duration_h=16)",
-      "G": "autoclave_beaker(temperature_c=121, pressure_psi=15, duration_min=30)",
-      "H": "stir_on_magnetic_plate(speed_rpm=500, duration_min=30)",
-      "I": "rinse_with_ethanol(volume_ml=10, cycles=3)",
-      "J": "seal_with_parafilm_and_store(temperature_c=4, duration_days=7)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly show a 10 mL glass beaker, which matches the container specified in the protocol for holding the plant tissue during paraffin infiltration.",
-      "The current sample state indicates that paraffin chips have just been added to the Lemosol mixture, requiring a thermal step to melt the paraffin completely.",
-      "Step 34 of the protocol explicitly instructs placing the beaker in a 60°C oven for approximately 24 hours to achieve full paraffin melting.",
-      "Alternative operations like centrifugation, vortexing, or room temperature incubation fail to provide the necessary sustained heat for paraffin melting and are therefore incompatible with this protocol stage."
-    ],
-    "answer": "B",
-    "source_protocol_id": "star:PMC12509976",
-    "source_protocol_title": "Protocol for immunofluorescence imaging of epitope-tagged protein in Arabidopsis shoot apical meristem",
-    "source_protocol_step_indices": [
-      30,
-      31,
-      32,
-      33,
-      34,
-      35,
-      36,
-      37
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC12509976",
-      "title": "Protocol for immunofluorescence imaging of epitope-tagged protein in Arabidopsis shoot apical meristem",
-      "step_indices": [
-        34
-      ],
-      "explanation": "The correct answer directly corresponds to Step 34, which mandates placing the 10 mL beaker containing the samples and paraffin chips into a 60°C oven for approximately 24 hours. This thermal treatment is essential to completely melt the paraffin chips and infiltrate the tissue, aligning perfectly with the visual asset (beaker) and the specified temperature and duration parameters."
-    }
-  },
-  {
-    "question_id": "level1_q0003",
-    "entry_id": "autobio_pipette",
-    "entry_name": "Micropipette",
-    "asset_family": "pipette",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_pipette/back.png",
-      "data/benchmark_inventory/multiview/autobio_pipette/front.png",
-      "data/benchmark_inventory/multiview/autobio_pipette/bottom.png"
-    ],
-    "views": [
-      {
-        "view": "back",
-        "path": "data/benchmark_inventory/multiview/autobio_pipette/back.png"
-      },
-      {
-        "view": "front",
-        "path": "data/benchmark_inventory/multiview/autobio_pipette/front.png"
-      },
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/autobio_pipette/bottom.png"
-      }
-    ],
-    "question": "You are preparing for ex vivo patch-clamp electrophysiology recordings. The K-gluconate internal solution aliquot has just been thawed, and the asset shown in the three views is the pipetting equipment available for loading the recording electrodes. Based on the asset function, the current solution state, and the protocol preparation requirements, choose the most appropriate next operation.",
-    "options": {
-      "A": "centrifuge_sample(speed_xg=10000, duration_min=5, temperature_c=4)",
-      "B": "fill_pipette_with_internal(solution=\"K-gluconate\", volume_ml=1, filter_size_um=4, remove_air_bubbles=True)",
-      "C": "vortex_sample(speed=\"maximum\", duration_min=2)",
-      "D": "incubate_in_thermal_cycler(temperature_c=37, duration_min=30)",
-      "E": "seal_pcr_plate(seal_type=\"clear_adhesive_film\")",
-      "F": "sterilize_in_autoclave(temperature_c=121, duration_min=20)",
-      "G": "place_tube_on_magnetic_rack(duration_min=3)",
-      "H": "sonicate_coverslips(solvent=\"ethanol\", duration_min=10)",
-      "I": "wash_pellet(buffer=\"cold_70_percent_ethanol\", volume_ul=400)",
-      "J": "incubate_on_roller(speed_rpm=20, duration_h=1, temperature_c=25)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a single-channel manual micropipette, a standard laboratory tool designed for precise liquid aspiration and dispensing.",
-      "The current experimental state involves a thawed aliquot of K-gluconate internal solution that must be carefully loaded into glass patch pipettes prior to electrophysiological recording.",
-      "Protocol steps 24 and 25 explicitly instruct to draw the solution using a 1 mL syringe fitted with a 4 μm filter and microloader, fill the pipettes, and gently flick them to eliminate trapped air bubbles.",
-      "Distractors such as centrifugation, vortexing, thermal cycling, or sonication are mechanically incompatible with the delicate task of back-filling recording electrodes and would either damage the glass tips or alter the solution composition.",
-      "Therefore, the operation that correctly utilizes the pipetting asset and strictly follows the protocol's filling and bubble-removal parameters is fill_pipette_with_internal(solution=\"K-gluconate\", volume_ml=1, filter_size_um=4, remove_air_bubbles=True)."
-    ],
-    "answer": "B",
-    "source_protocol_id": "star:PMC12657727",
-    "source_protocol_title": "Covalent anchoring of tethered ligands to chemogenetic handles for targeted in vivo neuropharmacology",
-    "source_protocol_step_indices": [
-      23,
-      24,
-      25,
-      31,
-      34,
-      36,
-      60,
-      108
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC12657727",
-      "title": "Covalent anchoring of tethered ligands to chemogenetic handles for targeted in vivo neuropharmacology",
-      "step_indices": [
-        24,
-        25
-      ],
-      "explanation": "The correct answer directly implements the protocol instructions from steps 24 and 25, which specify drawing the thawed K-gluconate internal solution with a 1 mL syringe equipped with a 4 μm filter, filling the patch pipettes, and flicking to remove air bubbles. The visual asset (micropipette) confirms the use of precise liquid handling equipment for this preparation step, while the distractors represent unrelated physical or thermal processing methods."
-    }
-  },
-  {
-    "question_id": "level1_q0004",
-    "entry_id": "labutopia_muffle_furnace",
-    "entry_name": "Muffle Furnace",
-    "asset_family": "muffle_furnace",
-    "source_project": "labutopia",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/labutopia_muffle_furnace/front.png",
-      "data/benchmark_inventory/multiview/labutopia_muffle_furnace/left.png",
-      "data/benchmark_inventory/multiview/labutopia_muffle_furnace/right.png"
-    ],
-    "views": [
-      {
-        "view": "front",
-        "path": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/front.png"
-      },
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/left.png"
-      },
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/labutopia_muffle_furnace/right.png"
-      }
-    ],
-    "question": "You are fabricating shifted tG silica nanoparticles and have prepared the precursor powder for high-temperature treatment. The equipment shown in the three views is available for the next step. Based on the asset's function and the specific thermal requirements of the protocol, select the most appropriate operation to proceed.",
-    "options": {
-      "A": "centrifuge_sample(speed_rpm=10000, duration_min=10)",
-      "B": "incubate_in_water_bath(temperature_c=37, duration_h=2)",
-      "C": "calcinate_in_muffle_furnace(temperature_c=550, duration_h=6, heating_rate_c_per_min=1)",
-      "D": "sonicate_in_ultrasonic_bath(solvent=\"ethanol\", duration_min=30)",
-      "E": "freeze_dry_sample(temperature_c=-80, duration_h=24)",
-      "F": "calcinate_in_muffle_furnace(temperature_c=800, duration_h=2, heating_rate_c_per_min=5)",
-      "G": "stir_mixture(speed_rpm=300, duration_h=1, temperature_c=25)",
-      "H": "autoclave_sample(temperature_c=121, duration_min=20, pressure_psi=15)",
-      "I": "dry_in_vacuum_oven(temperature_c=60, duration_h=12)",
-      "J": "heat_on_hotplate(temperature_c=100, duration_min=15)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a muffle furnace, a laboratory device specifically designed for high-temperature calcination and thermal treatment of solid samples.",
-      "The current experimental stage involves converting a powder precursor into shifted tG silica nanoparticles, which requires a controlled calcination step rather than liquid-phase mixing, drying, or low-temperature incubation.",
-      "Protocol step 46 explicitly specifies calcinating the powder in a muffle furnace at 550°C for 6 hours with a precise heating rate of 1 °C min⁻¹.",
-      "Options involving centrifugation, sonication, autoclaving, vacuum drying, or incorrect furnace parameters (such as 800°C or a faster heating rate) contradict both the asset's intended function and the exact protocol requirements.",
-      "Therefore, the operation that correctly matches both the visual asset and the precise protocol parameters is calcinate_in_muffle_furnace(temperature_c=550, duration_h=6, heating_rate_c_per_min=1)."
-    ],
-    "answer": "C",
-    "source_protocol_id": "star:PMC11616519",
-    "source_protocol_title": "Protocol for the symmetry manipulation of gyroidal mesostructures through the binary self-assembly of block copolymer and cationic surfactant",
-    "source_protocol_step_indices": [
-      46
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC11616519",
-      "title": "Protocol for the symmetry manipulation of gyroidal mesostructures through the binary self-assembly of block copolymer and cationic surfactant",
-      "step_indices": [
-        46
-      ],
-      "explanation": "The correct option directly implements Step 46, which requires calcinating the powder in a muffle furnace at exactly 550°C for 6 hours with a 1 °C/min heating rate. The three-view images confirm the presence of a muffle furnace, and the selected parameters precisely match the protocol's thermal treatment specifications for fabricating shifted tG silica nanoparticles."
-    }
-  },
-  {
-    "question_id": "level1_q0005",
-    "entry_id": "autobio_tip_200ul",
-    "entry_name": "200 uL Pipette Tip",
-    "asset_family": "pipette_tip",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_tip_200ul/back.png",
-      "data/benchmark_inventory/multiview/autobio_tip_200ul/right.png",
-      "data/benchmark_inventory/multiview/autobio_tip_200ul/bottom.png"
-    ],
-    "views": [
-      {
-        "view": "back",
-        "path": "data/benchmark_inventory/multiview/autobio_tip_200ul/back.png"
-      },
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/autobio_tip_200ul/right.png"
-      },
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/autobio_tip_200ul/bottom.png"
-      }
-    ],
-    "question": "You are performing organoid maintenance for human intestinal organoids to remove Matrigel while keeping the organoids intact. The sample is currently in a suspension state after initial centrifugation and partial supernatant removal. The three-view asset shows a disposable 200 μL pipette tip ready to be mounted on a 10 mL serological pipette. Based on the asset function, current sample state, and protocol requirements, choose the most appropriate next operation.",
-    "options": {
-      "A": "aspirate_and_dispense(tip_volume_ul=200, cycles=3, note=\"avoid_foam\")",
-      "B": "centrifuge_sample(speed_xg=300, duration_min=5, temperature_c=4)",
-      "C": "vortex_sample(speed=\"high\", duration_sec=30)",
-      "D": "incubate_in_water_bath(temperature_c=37, duration_min=15)",
-      "E": "dispense_ecm_mix(volume_ul=1.8, port=\"gel_inlet\", pipette_type=\"multi_dispenser\")",
-      "F": "sonicate_sample(frequency_khz=40, duration_min=5)",
-      "G": "freeze_sample(temperature_c=-80, duration_h=24)",
-      "H": "filter_suspension(pore_size_um=40, vacuum_pressure_kpa=50)",
-      "I": "stain_cells(dye=\"DAPI\", concentration_ug_ml=1, duration_min=10)",
-      "J": "lyophilize_sample(vacuum_mbar=0.1, temperature_c=-50, duration_h=12)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a standard 200 μL disposable pipette tip, designed for precise liquid handling and mounting on a pipette.",
-      "The protocol step for human organoid maintenance specifies equipping a 10 mL pipette with a 200 μL tip to aspirate and dispense the suspension exactly 3 times to remove Matrigel without dissociating fragile organoids.",
-      "The correct operation must reflect the 3-cycle aspiration/dispense action while explicitly noting the need to avoid foam formation, as incomplete volume release can damage the organoids.",
-      "Distractors such as centrifugation, vortexing, or ECM dispensing either use incompatible equipment, apply excessive shear forces that would dissociate the organoids, or correspond to entirely different protocol phases."
-    ],
-    "answer": "A",
-    "source_protocol_id": "star:PMC11066468",
-    "source_protocol_title": "Protocol for generating and analyzing organ-on-chip using human and mouse intestinal organoids",
-    "source_protocol_step_indices": [
-      6,
-      8,
-      12,
-      21,
-      27,
-      28,
-      30,
-      37
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC11066468",
-      "title": "Protocol for generating and analyzing organ-on-chip using human and mouse intestinal organoids",
-      "step_indices": [
-        6
-      ],
-      "explanation": "The correct answer directly implements Step 6, which instructs to equip a 10 mL pipette with a 200 μL pipette tip and aspirate/dispense the human organoid suspension 3 times to remove Matrigel while avoiding foam formation. The asset shown is precisely the 200 μL tip required for this step."
-    }
-  },
-  {
-    "question_id": "level1_q0006",
-    "entry_id": "labutopia_conical_bottle_family",
-    "entry_name": "Conical Bottle / Flask Family",
-    "asset_family": "conical_bottle",
-    "source_project": "labutopia",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/back.png",
-      "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/bottom.png",
-      "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/front.png"
-    ],
-    "views": [
-      {
-        "view": "back",
-        "path": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/back.png"
-      },
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/bottom.png"
-      },
-      {
-        "view": "front",
-        "path": "data/benchmark_inventory/multiview/labutopia_conical_bottle_family/front.png"
-      }
-    ],
-    "question": "You are performing large-scale liquid culture for C. elegans affinity purification. The worms have been washed and resuspended in 6 mL of M9 buffer. The asset shown in the three views is the glassware prepared for the next culture step. Based on the asset function, the current sample state, and the protocol volume requirements, choose the most appropriate next operation.",
-    "options": {
-      "A": "transfer_sample(destination=\"erlenmeyer_flask\", volume_ml=3)",
-      "B": "centrifuge_tube(speed_xg=350, duration_min=1.5)",
-      "C": "vortex_mixer(speed=\"high\", duration_s=10)",
-      "D": "pipette_to_microplate(volume_ul=100, destination=\"96_well_plate\")",
-      "E": "freeze_in_liquid_nitrogen(duration_min=5)",
-      "F": "sonicate_bath(frequency_khz=40, duration_min=10)",
-      "G": "incubate_in_shaker(speed_rpm=200, temperature_c=20)",
-      "H": "add_antibiotic(concentration_ug_ml=50, volume_ml=1)",
-      "I": "measure_od600(sample_volume_ul=200, blank=\"M9_buffer\")",
-      "J": "seal_container(seal_type=\"parafilm\", tension=\"high\")"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a conical bottle/Erlenmeyer flask, which is standard laboratory glassware designed for liquid culture, mixing, and pouring.",
-      "The current experimental state involves C. elegans worms resuspended in 6 mL of M9 buffer following the washing phase, requiring division for large-scale growth.",
-      "Protocol Step 27 explicitly directs dividing the resuspended worms equally (3 mL) into two prepared Erlenmeyer flasks.",
-      "Operations like centrifugation, microplate pipetting, or sonication are either performed during earlier washing steps or require incompatible vessels, making direct transfer into the flask the only protocol-compliant next action."
-    ],
-    "answer": "A",
-    "source_protocol_id": "star:PMC10323129",
-    "source_protocol_title": "Optimized protocol for in vivo affinity purification proteomics and biochemistry using C. elegans",
-    "source_protocol_step_indices": [
-      26,
-      27,
-      33,
-      35,
-      38,
-      54,
-      56,
-      59
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC10323129",
-      "title": "Optimized protocol for in vivo affinity purification proteomics and biochemistry using C. elegans",
-      "step_indices": [
-        27
-      ],
-      "explanation": "The visual asset is an Erlenmeyer flask/conical bottle, which matches the glassware specified in Step 27 for large-scale liquid culture. The correct option directly implements the protocol instruction to divide the 6 mL resuspended worm suspension into 3 mL aliquots per flask, preserving the exact volume parameter required for the culture setup."
-    }
-  },
-  {
-    "question_id": "level1_q0007",
-    "entry_id": "labutopia_heat_device",
-    "entry_name": "Heat Device / Hot Plate",
-    "asset_family": "heating_device",
-    "source_project": "labutopia",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/labutopia_heat_device/back.png",
-      "data/benchmark_inventory/multiview/labutopia_heat_device/front.png",
-      "data/benchmark_inventory/multiview/labutopia_heat_device/free.png"
-    ],
-    "views": [
-      {
-        "view": "back",
-        "path": "data/benchmark_inventory/multiview/labutopia_heat_device/back.png"
-      },
-      {
-        "view": "front",
-        "path": "data/benchmark_inventory/multiview/labutopia_heat_device/front.png"
-      },
-      {
-        "view": "free",
-        "path": "data/benchmark_inventory/multiview/labutopia_heat_device/free.png"
-      }
-    ],
-    "question": "You are performing downstream processing for polyhydroxyalkanoate (PHA) extraction. A screw-capped tube containing the reaction mixture has been prepared and placed on the equipment shown in the three views. Based on the asset's function, the current sample state, and the protocol requirements for polymer extraction, choose the most appropriate next operation to incubate the mixture.",
-    "options": {
-      "A": "centrifuge_sample(speed_xg=10000, duration_min=10, temperature_c=4)",
-      "B": "heat_on_plate(temperature_c=100, duration_h=4)",
-      "C": "vortex_mix(speed=\"high\", duration_sec=30)",
-      "D": "pipette_supernatant(volume_ul=500, destination=\"waste\")",
-      "E": "cool_in_ice_bath(temperature_c=0, duration_min=15)",
-      "F": "stir_in_heating_mantle(temperature_c=65, duration_h=5)",
-      "G": "seal_tube_with_parafilm(wrap_layers=2)",
-      "H": "sonicate_sample(frequency_khz=40, duration_min=10)",
-      "I": "incubate_in_shaker(speed_rpm=200, temperature_c=37, duration_h=12)",
-      "J": "sterilize_in_autoclave(temperature_c=121, duration_min=20)"
-    },
-    "reasoning_steps": [
-      "The three-view images show a laboratory hot plate/heating device, which is designed to provide controlled, steady thermal incubation for tubes or flasks.",
-      "The current sample is a prepared PHA extraction mixture in a screw-capped tube, requiring thermal treatment for polymer extraction.",
-      "The protocol specifies incubating this mixture at 100°C for 4 hours using a heating plate or digital block heater, emphasizing the need for controlled temperature maintenance throughout the process.",
-      "Distractors such as centrifugation, vortexing, cooling, or shaker incubation do not match the thermal incubation requirement or the asset's primary function.",
-      "Therefore, operating the heating plate at 100°C for 4 hours directly aligns with both the visual asset and the cited protocol step."
-    ],
-    "answer": "B",
-    "source_protocol_id": "star:PMC12720318",
-    "source_protocol_title": "Protocol for obtaining polyhydroxyalkanoates from microbial cultures: Production, quantification, and analytical assays",
-    "source_protocol_step_indices": [
-      120,
-      124,
-      138,
-      141,
-      188,
-      194
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC12720318",
-      "title": "Protocol for obtaining polyhydroxyalkanoates from microbial cultures: Production, quantification, and analytical assays",
-      "step_indices": [
-        120,
-        124
-      ],
-      "explanation": "The correct answer aligns with Step 120, which requires incubating the mixture at 100°C for 4 hours, and Step 124, which explicitly notes the use of a heating plate to maintain a controlled temperature. The asset shown is a hot plate, making the thermal incubation operation the only protocol-compliant choice."
-    }
-  },
-  {
-    "question_id": "level1_q0008",
-    "entry_id": "autobio_centrifuge_15ml_screw",
-    "entry_name": "15 mL Screw-Cap Centrifuge Tube",
-    "asset_family": "centrifuge_tube_15ml",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/right.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/top.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/bottom.png"
-    ],
-    "views": [
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/right.png"
-      },
-      {
-        "view": "top",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/top.png"
-      },
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_15ml_screw/bottom.png"
-      }
-    ],
-    "question": "You are processing murine trophoblast giant cells (TGCs) for functional characterization. After neutralizing trypsin with TS complete media, you have transferred the cell suspension into the 15 mL screw-cap centrifuge tube shown in the three views. Based on the asset's function, the current sample state, and the protocol requirements, choose the most appropriate next operation.",
-    "options": {
-      "A": "centrifuge_sample(speed_xg=200, duration_min=5)",
-      "B": "incubate_in_water_bath(temperature_c=37, duration_min=30)",
-      "C": "vortex_sample(speed=\"maximum\", duration_sec=15)",
-      "D": "freeze_in_liquid_nitrogen(duration_min=5)",
-      "E": "aspirate_supernatant(volume_ml=14)",
-      "F": "add_trypsin(volume_ml=1, concentration=\"0.05_percent\")",
-      "G": "centrifuge_sample(speed_xg=10000, duration_min=10)",
-      "H": "place_on_magnetic_rack(duration_min=2)",
-      "I": "sonicate_sample(power_w=50, duration_sec=30)",
-      "J": "filter_through_0_22um_membrane()"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a standard 15 mL screw-cap conical centrifuge tube, which is specifically designed to hold liquid samples during low-to-medium speed centrifugation.",
-      "The protocol states that immediately after transferring the neutralized cell suspension into this tube, the cells must be pelleted to separate them from the media.",
-      "Steps 7, 84, and 87 explicitly specify centrifugation at 200 × g for 5 minutes, a gentle speed appropriate for fragile trophoblast giant cells.",
-      "High-speed centrifugation, vortexing, or immediate supernatant aspiration would either damage the cells or attempt to process the liquid phase before separation, making them incompatible with the current state.",
-      "Therefore, centrifuging at 200 × g for 5 minutes is the only operation that correctly matches both the visual asset and the cited protocol parameters."
-    ],
-    "answer": "A",
-    "source_protocol_id": "star:PMC9307567",
-    "source_protocol_title": "Protocol for functional characterization of endoreduplicated murine trophoblast cells",
-    "source_protocol_step_indices": [
-      7,
-      13,
-      36,
-      40,
-      58,
-      59,
-      84,
-      87
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC9307567",
-      "title": "Protocol for functional characterization of endoreduplicated murine trophoblast cells",
-      "step_indices": [
-        7,
-        84
-      ],
-      "explanation": "The correct answer directly follows the protocol instruction to centrifuge the transferred cell suspension at 200 × g for 5 minutes. This low-speed centrifugation is necessary to gently pellet the fragile endoreduplicated TGCs in the 15 mL conical tube without causing shear damage, aligning perfectly with the asset's intended use."
-    }
-  },
-  {
-    "question_id": "level1_q0009",
-    "entry_id": "autobio_centrifuge_plate_60well",
-    "entry_name": "60-Well Plate Rack",
-    "asset_family": "tube_rack",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/free.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/front.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/left.png"
-    ],
-    "views": [
-      {
-        "view": "free",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/free.png"
-      },
-      {
-        "view": "front",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/front.png"
-      },
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_plate_60well/left.png"
-      }
-    ],
-    "question": "You are performing the biotinylation and magnetic bead isolation step for aging yeast cells. After incubating the progenitor cells with streptavidin-coupled magnetic beads, the mixture is ready for bead immobilization. The asset shown in the three views is a multi-well tube rack suitable for holding microcentrifuge or Falcon tubes. Based on the asset function and the protocol requirements for magnetic separation, choose the most appropriate next operation.",
-    "options": {
-      "A": "incubate_in_shaker(speed_rpm=200, duration_min=30, temperature_c=30)",
-      "B": "place_tube_on_magnetic_rack(duration_min=1)",
-      "C": "centrifuge_sample(speed_xg=12000, duration_min=5, temperature_c=4)",
-      "D": "vortex_sample(speed=\"high\", duration_min=30)",
-      "E": "heat_in_dry_bath(temperature_c=65, duration_min=10)",
-      "F": "seal_tube_with_parafilm()",
-      "G": "pipette_supernatant(volume_ul=500, discard=True)",
-      "H": "add_reagent(volume_ul=100, reagent=\"lysis_buffer\")",
-      "I": "store_in_freezer(temperature_c=-80, duration_h=24)",
-      "J": "measure_od600(cuvette_path=\"sample_1\")"
-    },
-    "reasoning_steps": [
-      "The three views depict a multi-well tube rack designed to securely hold and organize small tubes or vials during laboratory workflows.",
-      "The current experimental state involves streptavidin-coupled magnetic beads bound to biotinylated yeast cells, which requires a static immobilization step to separate the beads from the liquid supernatant.",
-      "Protocol Step 35 explicitly instructs placing the tube in a magnetic test tube rack for 1 minute to immobilize the magnetic beads before supernatant removal.",
-      "Operations like centrifugation, vortexing, or shaking would either disrupt the magnetic separation process or are unnecessary at this specific immobilization stage.",
-      "Therefore, placing the tube on the magnetic rack for exactly 1 minute directly aligns with both the visual asset's organizational purpose and the cited protocol parameters."
-    ],
-    "answer": "B",
-    "source_protocol_id": "star:PMC9344026",
-    "source_protocol_title": "Enrichment of aging yeast cells and budding polarity assay in Saccharomyces cerevisiae",
-    "source_protocol_step_indices": [
-      4,
-      11,
-      12,
-      14,
-      35,
-      41,
-      42,
-      50
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC9344026",
-      "title": "Enrichment of aging yeast cells and budding polarity assay in Saccharomyces cerevisiae",
-      "step_indices": [
-        35
-      ],
-      "explanation": "The correct answer matches Step 35, which specifies placing the tube in a magnetic test tube rack for 1 minute to immobilize magnetic beads. The asset shown is a tube rack that serves this exact organizational and functional purpose during the magnetic separation phase of the protocol."
-    }
-  },
-  {
-    "question_id": "level1_q0010",
-    "entry_id": "autobio_thermal_cycler_c1000",
-    "entry_name": "Bio-Rad C1000 Thermal Cycler",
-    "asset_family": "thermal_cycler",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/top.png",
-      "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/right.png",
-      "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/left.png"
-    ],
-    "views": [
-      {
-        "view": "top",
-        "path": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/top.png"
-      },
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/right.png"
-      },
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_thermal_cycler_c1000/left.png"
-      }
-    ],
-    "question": "You are performing the 3' ligation step for an sncRNA library preparation. The reaction mixture has been aliquoted into a PCR tube strip and capped. The equipment shown in the three views is the Bio-Rad C1000 thermal cycler. Based on the asset's function and the protocol's specified cycling conditions for this step, select the most appropriate next operation to initiate the reaction.",
-    "options": {
-      "A": "run_thermal_cycler(program='28C_1h_65C_20min_4C_5min_4C_hold')",
-      "B": "centrifuge_sample(speed_xg=12000, duration_min=1, temperature_c=4)",
-      "C": "incubate_in_dry_bath(temperature_c=65, duration_min=20)",
-      "D": "vortex_sample(speed='maximum', duration_sec=15)",
-      "E": "store_in_liquid_nitrogen(duration_h=24)",
-      "F": "run_thermal_cycler(program='95C_15min_60C_30s_72C_15s_22cycles')",
-      "G": "seal_tube_strip(seal_type='adhesive_film')",
-      "H": "incubate_on_rotator(speed_rpm=30, temperature_c=25, duration_h=1)",
-      "I": "run_thermal_cycler(program='50C_1h_70C_15min_4C_5min_4C_hold')",
-      "J": "pipette_master_mix(destination='96_well_plate', volume_ul=20)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a Bio-Rad C1000 thermal cycler, an instrument specifically designed for executing precise multi-step temperature cycling programs for nucleic acid reactions.",
-      "The current experimental state involves a prepared 3' ligation reaction mixture in a capped PCR strip that is ready for enzymatic incubation.",
-      "According to Step 43 of the protocol, this specific reaction requires a thermal cycler program consisting of 28°C for 1 hour, 65°C for 20 minutes, 4°C for at least 5 minutes, followed by a 4°C hold.",
-      "Options involving centrifugation, vortexing, dry baths, or alternative temperature profiles correspond to different protocol stages or incompatible equipment, making the specified thermal cycling program the only correct next operation."
-    ],
-    "answer": "A",
-    "source_protocol_id": "star:PMC8219884",
-    "source_protocol_title": "Protocol to analyze circulating small non-coding RNAs by high-throughput RNA sequencing from human plasma samples",
-    "source_protocol_step_indices": [
-      43,
-      48,
-      51,
-      71,
-      74,
-      78,
-      81,
-      109
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC8219884",
-      "title": "Protocol to analyze circulating small non-coding RNAs by high-throughput RNA sequencing from human plasma samples",
-      "step_indices": [
-        43
-      ],
-      "explanation": "The correct answer directly implements the thermal cycling conditions specified in Step 43 for the 3' ligation reaction. The Bio-Rad C1000 thermal cycler shown in the images is the exact equipment required to execute this multi-temperature profile, whereas other options describe centrifugation, different cycling programs, or manual handling steps that occur either before or after this specific incubation."
-    }
-  },
-  {
-    "question_id": "level1_q0011",
-    "entry_id": "autobio_thermal_mixer_eppendorf_c",
-    "entry_name": "Eppendorf C Thermal Mixer",
-    "asset_family": "thermal_mixer",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/top.png",
-      "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/bottom.png",
-      "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/left.png"
-    ],
-    "views": [
-      {
-        "view": "top",
-        "path": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/top.png"
-      },
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/bottom.png"
-      },
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_thermal_mixer_eppendorf_c/left.png"
-      }
-    ],
-    "question": "You are performing a restriction digest step for a dinoflagellate genome mapping experiment. The reaction tubes containing the DNA, buffer, and restriction enzyme have been prepared and placed into the instrument shown in the three views. Based on the asset's capabilities and the protocol requirements for this step, select the most appropriate next operation.",
-    "options": {
-      "A": "centrifuge_sample(speed_rpm=14000, duration_min=10, temperature_c=4)",
-      "B": "incubate_in_thermal_mixer(temperature_c=37, duration_h=2, shaking_rpm=1000)",
-      "C": "run_thermal_cycler(temperature_c=37, duration_min=120, ramp_rate=1.0)",
-      "D": "bind_to_magnetic_beads(duration_min=5, elution_volume_ul=50)",
-      "E": "vortex_sample(speed=high, duration_min=10)",
-      "F": "incubate_in_static_oven(temperature_c=65, duration_h=12)",
-      "G": "shake_on_orbital_shaker(speed_rpm=200, duration_h=1, temperature_c=25)",
-      "H": "place_on_heat_block(temperature_c=95, duration_min=5)",
-      "I": "store_in_refrigerator(temperature_c=4, duration_h=24)",
-      "J": "sonicate_sample(amplitude=40, duration_sec=30, cycles=3)"
-    },
-    "reasoning_steps": [
-      "The three-view images depict an Eppendorf C Thermal Mixer, an instrument specifically designed for simultaneous temperature control and orbital shaking of microcentrifuge tubes.",
-      "The current experimental stage is the restriction digest step in the dinoflagellate genome mapping protocol, which requires precise thermal and agitation conditions to ensure complete enzymatic digestion.",
-      "The protocol explicitly specifies incubating the reaction at 37°C for 2 hours or longer with shaking at 1000 rpm in a Thermomixer.",
-      "Options involving centrifugation, static heating, vortexing, or room-temperature shaking do not match the required temperature, agitation speed, or instrument type, making the thermal mixer incubation the only correct choice."
-    ],
-    "answer": "B",
-    "source_protocol_id": "star:PMC10950746",
-    "source_protocol_title": "Protocol for mapping the three-dimensional organization of dinoflagellate genomes",
-    "source_protocol_step_indices": [
-      20,
-      23,
-      29,
-      47,
-      50,
-      55,
-      60,
-      62
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC10950746",
-      "title": "Protocol for mapping the three-dimensional organization of dinoflagellate genomes",
-      "step_indices": [
-        20
-      ],
-      "explanation": "The correct answer directly implements Step 20 of the protocol, which mandates a 37°C incubation for 2 hours with 1000 rpm shaking in a Thermomixer. This matches both the functional capabilities of the Eppendorf C Thermal Mixer shown in the images and the exact parameter requirements for the restriction digest step."
-    }
-  },
-  {
-    "question_id": "level1_q0012",
-    "entry_id": "autobio_pcr_plate_96well",
-    "entry_name": "96-Well PCR Plate",
-    "asset_family": "pcr_plate",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/top.png",
-      "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/left.png",
-      "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/back.png"
-    ],
-    "views": [
-      {
-        "view": "top",
-        "path": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/top.png"
-      },
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/left.png"
-      },
-      {
-        "view": "back",
-        "path": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/back.png"
-      }
-    ],
-    "question": "You are performing high-throughput plasmid DNA transformation into E. coli. Plate A, a 96-well low-profile skirted PCR plate containing competent cells and plasmid DNA, has just completed a 30-minute incubation on ice. The asset shown in the three views is the plate currently in use. Based on the asset function, the current sample state, and the protocol temperature and duration requirements, choose the most appropriate next operation.",
-    "options": {
-      "A": "centrifuge_plate(speed_rpm=3000, duration_min=5)",
-      "B": "incubate_in_plate_block(temperature_c=42, duration_s=90)",
-      "C": "seal_with_foil(seal_type=\"aluminum\", pressure_kpa=50)",
-      "D": "pipette_master_mix(destination=\"96_well_pcr_plate\", volume_ul=15)",
-      "E": "autoclave_materials(temperature_c=121, duration_min=20)",
-      "F": "vortex_plate(speed=\"high\", duration_min=2)",
-      "G": "incubate_in_plate_block(temperature_c=-20, duration_min=30)",
-      "H": "wash_wells(buffer=\"cold_70_percent_ethanol\", volume_ul=200)",
-      "I": "incubate_in_plate_block(temperature_c=37, duration_h=16)",
-      "J": "sonicate_plate(solvent=\"water\", duration_min=10)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a standard 96-well low-profile, skirted PCR plate, which is designed for high-throughput liquid handling and thermal block incubation.",
-      "The current experimental state indicates that the plate has just finished a 30-minute ice incubation following plasmid addition, which is the standard pre-heat shock step in bacterial transformation.",
-      "The protocol explicitly specifies that after the 30-minute incubation, Plate A must be transferred to a pre-warmed plate block at 42°C for a 90-second heat shock.",
-      "Distractors such as centrifugation, vortexing, or incubation at 37°C or -20°C do not align with the critical heat shock step required for plasmid uptake in this transformation workflow.",
-      "Therefore, the operation that correctly matches both the visual asset and the cited protocol parameters is incubate_in_plate_block(temperature_c=42, duration_s=90)."
-    ],
-    "answer": "B",
-    "source_protocol_id": "curprot:PMC12306927",
-    "source_protocol_title": "High‐Throughput Pipeline for Protein Expression and Solubility Profiling Using Synthetically Generated Plasmids",
-    "source_protocol_step_indices": [
-      13,
-      18,
-      19,
-      20,
-      23,
-      24,
-      45,
-      46
-    ],
-    "protocol_alignment": {
-      "protocol_id": "curprot:PMC12306927",
-      "title": "High‐Throughput Pipeline for Protein Expression and Solubility Profiling Using Synthetically Generated Plasmids",
-      "step_indices": [
-        23
-      ],
-      "explanation": "The correct answer directly implements Step 23 of the protocol, which mandates placing the 96-well PCR plate into a pre-warmed block at 42°C for exactly 90 seconds to perform the heat shock. This aligns with the visual identification of the PCR plate and the required thermal parameters for successful E. coli transformation."
-    }
-  },
-  {
-    "question_id": "level1_q0013",
-    "entry_id": "autobio_pipette_rack_tri",
-    "entry_name": "Triangular Pipette Rack",
-    "asset_family": "pipette_rack",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/right.png",
-      "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/left.png",
-      "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/top.png"
-    ],
-    "views": [
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/right.png"
-      },
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/left.png"
-      },
-      {
-        "view": "top",
-        "path": "data/benchmark_inventory/multiview/autobio_pipette_rack_tri/top.png"
-      }
-    ],
-    "question": "You are preparing for a stereotaxic microinjection in an ex vivo spinal cord experiment. A glass microinjection pipette has just been filled with viral solution and carefully retracted from the loading droplet. The asset shown in the three views is the equipment available for temporary storage before mounting the pipette to the stereotaxic manipulator. Based on the asset's function, the fragile nature of the filled pipette, and standard electrophysiology workflow, choose the most appropriate next operation.",
-    "options": {
-      "A": "place_pipette_in_rack(orientation='upright', rack_type='triangular')",
-      "B": "centrifuge_sample(speed_xg=14000, duration_min=10)",
-      "C": "vortex_pipette(speed='maximum', duration_s=15)",
-      "D": "incubate_in_thermal_cycler(temperature_c=37, duration_min=30)",
-      "E": "seal_pcr_plate(seal_type='clear_adhesive_film')",
-      "F": "wash_pellet(buffer='cold_70_percent_ethanol', volume_ul=400)",
-      "G": "sonicate_coverslips(solvent='95_percent_ethanol', duration_min=15)",
-      "H": "sterilize_in_muffle_furnace(temperature_c=500, duration_h=5)",
-      "I": "mount_pipette_to_manipulator(force_n=10.0, immediate=True)",
-      "J": "pipette_master_mix(destination='96_well_pcr_plate', volume_ul=20)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a triangular pipette rack, a standard laboratory accessory designed with conical slots to securely hold glass micropipettes in an upright position.",
-      "The current experimental state involves a freshly filled microinjection pipette containing a precise volume of viral solution, which must be kept stable and contamination-free before mounting to the stereotaxic manipulator as described in protocol steps 15 and 70.",
-      "Upright storage in a dedicated rack prevents tip damage, minimizes solution backflow, and maintains sterility, aligning with the careful handling parameters required for delicate electrophysiology and injection equipment.",
-      "Distractors such as centrifugation, vortexing, thermal incubation, plate sealing, pellet washing, sonication, and high-temperature sterilization are designed for tubes, plates, or coverslips and would mechanically break the glass pipette or degrade the viral solution.",
-      "Therefore, placing the pipette upright in the triangular rack is the only operation that matches the visual asset, preserves the sample integrity, and correctly follows the protocol workflow."
-    ],
-    "answer": "A",
-    "source_protocol_id": "bioprot:PMC12602122",
-    "source_protocol_title": "Optogenetic Approach for Investigating Descending Control of Nociception in Ex Vivo Spinal Cord Preparation",
-    "source_protocol_step_indices": [
-      2,
-      15,
-      16,
-      17,
-      50,
-      67,
-      68,
-      70
-    ],
-    "protocol_alignment": {
-      "protocol_id": "bioprot:PMC12602122",
-      "title": "Optogenetic Approach for Investigating Descending Control of Nociception in Ex Vivo Spinal Cord Preparation",
-      "step_indices": [
-        15,
-        70
-      ],
-      "explanation": "The correct answer aligns with protocol steps 15 and 70, which detail the careful filling and handling of glass micropipettes for stereotaxic injection and patch-clamp recording. After aspirating the viral solution or internal solution, the pipette must be temporarily stored upright to prevent tip damage, contamination, or solution backflow. The triangular pipette rack shown in the images provides the exact equipment needed for this safe, intermediate storage step before mounting the pipette to the manipulator or headstage."
-    }
-  },
-  {
-    "question_id": "level1_q0014",
-    "entry_id": "autobio_cell_dish_100",
-    "entry_name": "100 mm Cell Dish",
-    "asset_family": "cell_dish",
-    "source_project": "autobio",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_cell_dish_100/left.png",
-      "data/benchmark_inventory/multiview/autobio_cell_dish_100/bottom.png",
-      "data/benchmark_inventory/multiview/autobio_cell_dish_100/free.png"
-    ],
-    "views": [
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_cell_dish_100/left.png"
-      },
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/autobio_cell_dish_100/bottom.png"
-      },
-      {
-        "view": "free",
-        "path": "data/benchmark_inventory/multiview/autobio_cell_dish_100/free.png"
-      }
-    ],
-    "question": "You are preparing 100 mm cell dishes for a proof-of-principle growth curve experiment with VERO or A549 cells. The dishes shown in the three views have been properly labeled and equilibrated. Based on the asset function, the current sample state, and the protocol requirements, choose the most appropriate next operation.",
-    "options": {
-      "A": "add_medium_to_dish(volume_ml=2.5, medium_type='OUR_with_fibronectin')",
-      "B": "centrifuge_dish(speed_rpm=3000, duration_min=5, temperature_c=4)",
-      "C": "autoclave_dish(temperature_c=121, pressure_atm=1.0, duration_min=20)",
-      "D": "vortex_dish(speed='maximum', duration_min=2)",
-      "E": "add_medium_to_dish(volume_ml=10.0, medium_type='DMEM_with_10_percent_FBS')",
-      "F": "freeze_dish_in_liquid_nitrogen(temperature_c=-196, duration_min=30)",
-      "G": "image_dish(magnification='40x', channel='fluorescence')",
-      "H": "wash_dish_with_pbs(volume_ml=5.0, repetitions=3)",
-      "I": "trypsinize_monolayer(volume_ml=2.0, duration_min=5, temperature_c=37)",
-      "J": "seal_dish_with_parafilm(layers=2, tension='high')"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a standard 100 mm cell culture dish, which is designed for adherent cell seeding, medium addition, and incubation.",
-      "The experimental context indicates that the dishes have just been labeled and equilibrated, placing the workflow at the initial medium addition stage.",
-      "Protocol Step 81 explicitly instructs to add 2.5 mL of OUR medium containing fibronectin to each dish to prepare the surface for subsequent cell seeding.",
-      "Distractors propose actions like centrifugation, vortexing, or using incorrect volumes/media types that are either incompatible with open culture dishes or belong to later protocol stages such as imaging or passaging.",
-      "Therefore, the operation that precisely matches the asset, current state, and cited protocol parameters is adding 2.5 mL of the specified OUR medium."
-    ],
-    "answer": "A",
-    "source_protocol_id": "star:PMC12076805",
-    "source_protocol_title": "Protocol for the use of Oredsson universal replacement medium for cell banking and routine culturing of monolayer and suspension cultures",
-    "source_protocol_step_indices": [
-      80,
-      81,
-      86,
-      88,
-      89,
-      90,
-      91,
-      94
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC12076805",
-      "title": "Protocol for the use of Oredsson universal replacement medium for cell banking and routine culturing of monolayer and suspension cultures",
-      "step_indices": [
-        80,
-        81
-      ],
-      "explanation": "The correct answer directly implements Step 81, which mandates adding exactly 2.5 mL of OUR medium containing fibronectin to each labeled Petri dish. This aligns with the visual identification of a 100 mm cell dish and establishes the proper substrate before cell suspension is added in subsequent steps."
+      "explanation": "The correct answer directly implements Step 21, which requires centrifuging the collected samples at 12,000 × g for 10 min immediately following collection (Step 20). The pictured 10 mL tube serves as the appropriate passive container to withstand and facilitate this high-speed separation step."
     }
   },
   {
     "question_id": "level1_q0015",
-    "entry_id": "autobio_centrifuge_5430",
-    "entry_name": "Eppendorf 5430 Centrifuge",
+    "entry_id": "autobio_centrifuge_tgear_mini",
+    "entry_name": "Tiangen Tgear Mini Centrifuge",
     "asset_family": "centrifuge",
     "source_project": "autobio",
     "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_centrifuge_5430/right.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_5430/top.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_5430/back.png"
+      "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/right.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/top.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/back.png"
     ],
     "views": [
       {
         "view": "right",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/right.png"
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/right.png"
       },
       {
         "view": "top",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/top.png"
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/top.png"
       },
       {
         "view": "back",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5430/back.png"
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_tgear_mini/back.png"
       }
     ],
-    "question": "You are processing nasopharyngeal swab samples for SARS-CoV-2 RNA extraction. The sample tube currently contains 560 µl of Buffer AVL-carrier RNA mix and has been capped. The three-view images show the available benchtop centrifuge. Based on the asset's function, the current sample state, and the protocol requirements, choose the most appropriate next operation.",
+    "question": "You are processing nasopharyngeal swab specimens for viral RNA extraction. The sample has just been mixed with Buffer AVL and carrier RNA in a 1.5-ml tube, and the cap has been securely closed. The item shown in the three views is the equipment required for the immediate next step. Based on the visual design of the device, the current sample preparation state, and the specified protocol parameters, select the most appropriate operation to perform next.",
     "options": {
-      "A": "centrifuge_sample(speed_xg=6000, duration_min=1)",
-      "B": "vortex_sample(speed=\"maximum\", duration_min=30)",
-      "C": "incubate_in_thermal_cycler(temperature_c=37, duration_min=15)",
-      "D": "pipette_master_mix(volume_ul=560, destination=\"tube\")",
-      "E": "centrifuge_sample(speed_xg=20000, duration_min=1)",
-      "F": "seal_pcr_plate(seal_type=\"clear_adhesive_film\")",
-      "G": "wash_column(buffer=\"70_percent_ethanol\", volume_ul=500)",
-      "H": "heat_inactivate(temperature_c=95, duration_min=5)",
-      "I": "sonicate_sample(duration_min=3, power_w=50)",
-      "J": "store_at_minus_80(temperature_c=-80, duration_h=24)"
+      "A": "microcentrifuge_sample(speed_xg=6000, duration_min=1)",
+      "B": "vortex_sample(speed=\"maximum\", duration_s=15)",
+      "C": "pipette_specimen(volume_ul=140, destination=\"extraction_tube\")",
+      "D": "add_wash_buffer(buffer_name=\"AW1\", volume_ul=500)",
+      "E": "transfer_column(destination=\"fresh_collection_tube\")",
+      "F": "discard_flowthrough_and_retain_column()",
+      "G": "centrifuge_tube(speed_xg=14000, duration_min=10, temperature_c=4)",
+      "H": "prepare_carrier_rna(volume_buffer_ave_ul=56.4, volume_stock_ul=3.6)",
+      "I": "verify_solution_temperature(target_c=25)",
+      "J": "spin_down_pellet(speed_xg=300, duration_min=5)"
     },
     "reasoning_steps": [
-      "The three-view images clearly depict an Eppendorf 5430 benchtop microcentrifuge, designed for spinning small-volume tubes at controlled speeds.",
-      "The current sample state follows the initial buffer addition step, where 560 µl of Buffer AVL-carrier RNA mix has been added to a 1.5-ml tube and capped, requiring immediate clarification before proceeding.",
-      "The protocol explicitly specifies microcentrifugation at 6000 × g for 1 minute at this stage to pellet debris and prepare the lysate.",
-      "Distractors such as vortexing, thermal cycling, or high-speed (20,000 × g) centrifugation are either incompatible with the current extraction phase or belong to later wash steps, making the 6000 × g spin the only correct next operation."
+      "The three views depict a compact benchtop device with a hinged rotor lid and a small footprint, visually identifying it as a mini centrifuge designed for rapid tube clarification.",
+      "The protocol context indicates that immediately after mixing the specimen with lysis buffer and carrier RNA, the capped tube must be briefly spun to collect the liquid at the bottom before column loading.",
+      "Step 15 explicitly specifies operating the device at 6000 × g for exactly 1 minute, which aligns with the pictured asset's capability for quick, room-temperature spin-downs.",
+      "Distractors involving vortexing, pipetting, buffer addition, or column transfers correspond to earlier or later workflow stages, while the refrigerated high-speed option specifies incorrect parameters and temperature requirements that exceed this compact device's design."
     ],
     "answer": "A",
     "source_protocol_id": "curprot:PMC8206654",
@@ -978,277 +1106,258 @@
       27,
       35
     ],
+    "source_protocol_nearby_step_indices": [
+      7,
+      9,
+      14,
+      16,
+      17,
+      19,
+      20,
+      22
+    ],
     "protocol_alignment": {
       "protocol_id": "curprot:PMC8206654",
       "title": "A Multiplex One‐Step RT‐qPCR Protocol to Detect SARS‐CoV‐2 in NP/OP Swabs and Saliva",
       "step_indices": [
         15
       ],
-      "explanation": "The correct answer directly implements Step 15 of the protocol, which instructs to microcentrifuge the capped tube at 6000 × g for 1 minute after adding the AVL buffer mix. This matches the function of the Eppendorf 5430 centrifuge shown in the images and prepares the sample for the subsequent extraction steps."
+      "explanation": "The correct answer directly implements Step 15, which instructs to close the cap and microcentrifuge at 6000 × g for 1 minute. The pictured mini centrifuge is the exact asset used for this rapid spin-down step prior to applying the lysate to the purification column."
     }
   },
   {
     "question_id": "level1_q0016",
-    "entry_id": "labutopia_glass_rod",
-    "entry_name": "Glass Rod",
-    "asset_family": "glass_rod",
-    "source_project": "labutopia",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/labutopia_glass_rod/right.png",
-      "data/benchmark_inventory/multiview/labutopia_glass_rod/back.png",
-      "data/benchmark_inventory/multiview/labutopia_glass_rod/front.png"
-    ],
-    "views": [
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/labutopia_glass_rod/right.png"
-      },
-      {
-        "view": "back",
-        "path": "data/benchmark_inventory/multiview/labutopia_glass_rod/back.png"
-      },
-      {
-        "view": "front",
-        "path": "data/benchmark_inventory/multiview/labutopia_glass_rod/front.png"
-      }
-    ],
-    "question": "You are performing bacterial isolation for a plant growth-promoting rhizobacteria study. A volume of 60 μL of a bacterial dilution has just been dispensed onto the surface of a minimal agar plate. The asset shown in the three views is the tool available for the next step. Based on the asset's function and the protocol requirements for bacterial isolation, choose the most appropriate next operation.",
-    "options": {
-      "A": "centrifuge_sample(speed_xg=4000, duration_min=10, temperature_c=25)",
-      "B": "incubate_plate(temperature_c=37, duration_h=24, humidity_percent=80)",
-      "C": "vortex_tube(speed=\"maximum\", duration_min=2)",
-      "D": "pipette_supernatant(volume_ul=500, destination=\"microcentrifuge_tube\")",
-      "E": "sterilize_inoculation_loop(flame_duration_sec=5)",
-      "F": "spread_bacterial_dilution(tool=\"glass_rod\", volume_ul=60, medium=\"minimal_agar\")",
-      "G": "seal_plate_with_parafilm(layers=2, tension=\"moderate\")",
-      "H": "add_selective_antibiotic(concentration_mg_ml=25, volume_ul=10)",
-      "I": "count_colonies(magnification_x=10, grid_method=\"quadrant\")",
-      "J": "autoclave_waste(temperature_c=121, duration_min=20, pressure_psi=15)"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a glass rod, which is a standard laboratory instrument designed for manually spreading liquid samples across solid agar surfaces to isolate colonies.",
-      "The current experimental state involves a freshly dispensed 60 μL bacterial dilution on a minimal agar plate that requires even distribution before incubation.",
-      "The cited protocol step explicitly mandates performing spread plating using a glass rod with exactly 60 μL of dilution on minimal agar medium.",
-      "Alternative operations such as centrifugation, vortexing, loop sterilization, or immediate incubation are incompatible with the current sample state, utilize incorrect equipment, or bypass the required spreading procedure specified in the protocol."
-    ],
-    "answer": "F",
-    "source_protocol_id": "bioprot:PMC12514138",
-    "source_protocol_title": "Quantitative Estimation of Auxin, Siderophore, and Hydrogen Cyanide Production in Halo and Drought-Tolerant Bacterial Isolates for Cucumber Growth",
-    "source_protocol_step_indices": [
-      8
-    ],
-    "protocol_alignment": {
-      "protocol_id": "bioprot:PMC12514138",
-      "title": "Quantitative Estimation of Auxin, Siderophore, and Hydrogen Cyanide Production in Halo and Drought-Tolerant Bacterial Isolates for Cucumber Growth",
-      "step_indices": [
-        8
-      ],
-      "explanation": "The correct answer directly implements Step 8 of the protocol, which specifies performing spread plating with a glass rod after dispensing 60 μL of bacterial dilution onto minimal agar medium. The visual asset confirms the use of a glass rod, and the function parameters preserve the exact volume and medium type required by the protocol."
-    }
-  },
-  {
-    "question_id": "level1_q0017",
     "entry_id": "autobio_centrifuge_5910_ri",
     "entry_name": "Eppendorf 5910 Ri Centrifuge",
     "asset_family": "centrifuge",
     "source_project": "autobio",
     "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/bottom.png",
       "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/right.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/left.png"
+      "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/back.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/front.png"
     ],
     "views": [
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/bottom.png"
-      },
       {
         "view": "right",
         "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/right.png"
       },
       {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/left.png"
+        "view": "back",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/back.png"
+      },
+      {
+        "view": "front",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_5910_ri/front.png"
       }
     ],
-    "question": "You are performing the quality control step of a Hi-C 3.0 protocol. The aqueous phase samples have been transferred to 1.7-ml microcentrifuge tubes and are ready for clarification. The equipment shown in the three views is available in the lab. Based on the asset function, the current sample state, and the protocol speed and duration requirements, choose the most appropriate next operation.",
+    "question": "You are processing nasopharyngeal swab samples for viral RNA extraction. The specimen has been mixed with Buffer AVL and carrier RNA in a capped 1.5-ml tube. The item shown in the three views is the equipment available for the next clarification step. Based on the device's rotational function and the protocol's specified spin parameters, select the appropriate operation to proceed.",
     "options": {
-      "A": "centrifuge_tubes(speed_xg=14000, duration_min=5)",
-      "B": "incubate_in_water_bath(temperature_c=65, duration_min=10)",
-      "C": "vortex_samples(speed=\"high\", duration_sec=15)",
-      "D": "run_gel_electrophoresis(voltage_v=120, duration_min=45)",
-      "E": "sonicate_samples(amplitude_percent=30, duration_sec=10)",
-      "F": "pipette_supernatant(volume_ul=50, destination=\"new_tube\")",
-      "G": "freeze_samples(temperature_c=-80, duration_h=2)",
-      "H": "incubate_on_shaker(speed_rpm=200, duration_h=1, temperature_c=37)",
-      "I": "add_reagent(reagent=\"proteinase_k\", volume_ul=10)",
-      "J": "seal_tubes(seal_type=\"heat_seal\")"
+      "A": "centrifuge_sample(speed_xg=6000, duration_min=1)",
+      "B": "vortex_mix(speed=\"high\", duration_sec=15)",
+      "C": "pipette_specimen(volume_ul=140, destination=\"lysis_tube\")",
+      "D": "incubate_sample(temperature_c=22, duration_min=10)",
+      "E": "centrifuge_sample(speed_xg=20000, duration_min=1)",
+      "F": "transfer_column(destination=\"fresh_collection_tube\")",
+      "G": "add_wash_buffer(buffer=\"AW1\", volume_ul=500)",
+      "H": "discard_flowthrough()",
+      "I": "elute_rna(buffer=\"AVE\", volume_ul=60)",
+      "J": "mix_by_pipetting(repetitions=3)"
     },
     "reasoning_steps": [
-      "The three-view images depict a benchtop refrigerated centrifuge, which is designed for high-speed spinning of microcentrifuge tubes to pellet debris or separate phases.",
-      "The current protocol step involves clarifying Hi-C samples in 1.7-ml tubes after phase transfer, requiring a centrifugation step rather than incubation, mixing, or electrophoresis.",
-      "Step 76 of the Hi-C 3.0 protocol explicitly instructs to centrifuge the tubes for 5 minutes at 14,000 × g (maximum speed).",
-      "Therefore, the operation that correctly utilizes the shown centrifuge and matches the protocol parameters is centrifuge_tubes(speed_xg=14000, duration_min=5)."
+      "The three views depict a benchtop refrigerated centrifuge, identifiable by its sealed rotor lid, digital control interface, and compact chassis, which is designed to spin capped tubes at precise rotational forces.",
+      "The sample has already been combined with lysis buffer and carrier RNA and capped, placing the workflow at the pre-extraction clarification stage prior to column loading.",
+      "The protocol explicitly mandates a 1-minute spin at 6000 × g at this exact stage to pellet cellular debris and clarify the lysate.",
+      "Vortexing and pipetting occur in earlier steps, while high-speed spins at 20,000 × g and column transfers are reserved for later wash and elution phases, making the 6000 × g spin the only correct next action for this asset and workflow state."
     ],
     "answer": "A",
-    "source_protocol_id": "curprot:PMC8362010",
-    "source_protocol_title": "Hi‐C 3.0: Improved Protocol for Genome‐Wide Chromosome Conformation Capture",
+    "source_protocol_id": "curprot:PMC8206654",
+    "source_protocol_title": "A Multiplex One‐Step RT‐qPCR Protocol to Detect SARS‐CoV‐2 in NP/OP Swabs and Saliva",
     "source_protocol_step_indices": [
-      30,
-      45,
-      67,
-      69,
-      71,
-      76,
-      77,
-      87
+      8,
+      15,
+      18,
+      21,
+      24,
+      26,
+      27,
+      35
+    ],
+    "source_protocol_nearby_step_indices": [
+      7,
+      9,
+      14,
+      16,
+      17,
+      19,
+      20,
+      22
     ],
     "protocol_alignment": {
-      "protocol_id": "curprot:PMC8362010",
-      "title": "Hi‐C 3.0: Improved Protocol for Genome‐Wide Chromosome Conformation Capture",
+      "protocol_id": "curprot:PMC8206654",
+      "title": "A Multiplex One‐Step RT‐qPCR Protocol to Detect SARS‐CoV‐2 in NP/OP Swabs and Saliva",
       "step_indices": [
-        76
+        15
       ],
-      "explanation": "The correct answer aligns with Step 76 of the Hi-C 3.0 protocol, which specifies centrifuging tubes for 5 minutes at 14,000 × g. The visual asset is a benchtop centrifuge capable of this speed and tube format, making it the only appropriate equipment for this clarification step."
+      "explanation": "The correct answer directly implements Step 15 of the protocol, which instructs to microcentrifuge the capped lysis mixture for 1 minute at 6000 × g. The pictured refrigerated centrifuge provides the necessary rotational force and tube capacity to execute this clarification step before proceeding to column binding."
+    }
+  },
+  {
+    "question_id": "level1_q0017",
+    "entry_id": "autobio_tip_box_24slot",
+    "entry_name": "24-Slot Tip Box",
+    "asset_family": "tip_box",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_tip_box_24slot/bottom.png",
+      "data/benchmark_inventory/multiview/autobio_tip_box_24slot/right.png",
+      "data/benchmark_inventory/multiview/autobio_tip_box_24slot/left.png"
+    ],
+    "views": [
+      {
+        "view": "bottom",
+        "path": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/bottom.png"
+      },
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/right.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_tip_box_24slot/left.png"
+      }
+    ],
+    "question": "You are performing an immunofluorescence staining protocol on mouse masseter muscle cryosections mounted on glass slides. The slides have been blocked and are ready for primary antibody incubation. The item shown in the three views is available on the bench. Based on its physical structure and the protocol requirements for maintaining humidity during an overnight incubation at 4 °C, choose the most appropriate next operation.",
+    "options": {
+      "A": "setup_humidified_chamber(container=\"tip_box\", moisture=\"wet_paper_towel\", load_slides=True, temperature_c=4, duration_h=12)",
+      "B": "apply_permeabilization_buffer(reagent=\"0.1_percent_Triton_X_100\", volume_ul=400, duration_min=2, temperature_c=25)",
+      "C": "apply_blocking_solution(reagent=\"10_percent_goat_serum\", volume_ul=400, duration_min=20, temperature_c=25)",
+      "D": "wash_slides_in_jar(container=\"coplin_jar\", buffer=\"1x_PBS\", duration_min=5, repeats=3)",
+      "E": "apply_secondary_antibody(dilution=\"1:500\", duration_h=1, temperature_c=25, light_condition=\"dark\")",
+      "F": "stain_nuclei(reagent=\"DAPI_working_solution\", volume_ul=300, duration_min=20)",
+      "G": "seal_slide_edges(marker=\"hydrophobic_pen\", coverage=\"tissue_perimeter\")",
+      "H": "equilibrate_frozen_slides(target_temp_c=25, duration_min=15)",
+      "I": "setup_humidified_chamber(container=\"tip_box\", moisture=\"dry_paper_towel\", load_slides=True, temperature_c=37, duration_h=1)",
+      "J": "incubate_in_thermal_cycler(temperature_c=4, duration_h=12)"
+    },
+    "reasoning_steps": [
+      "The three views depict a rectangular plastic container with a uniform grid of slots, visually identifiable as a standard pipette tip box that functions as a passive storage and organization vessel.",
+      "The protocol requires a humidified environment for the overnight primary antibody incubation at 4 °C to prevent the staining solution from evaporating off the microscope slides.",
+      "Step 14 explicitly instructs repurposing an empty tip box by adding a wet paper towel and using its original holder to cover and support the prepared slides.",
+      "Options B through H correspond to earlier permeabilization, blocking, or later washing and detection steps, while option I uses incorrect moisture and temperature parameters, and option J requires active heating/cycling equipment not present.",
+      "Therefore, configuring the pictured container as a humidified incubation chamber at 4 °C correctly matches both the asset's physical affordances and the immediate protocol requirement."
+    ],
+    "answer": "A",
+    "source_protocol_id": "bioprot:PMC11986697",
+    "source_protocol_title": "Optimizing Confocal Imaging Protocols for Muscle Fiber Typing in the Mouse Masseter Muscle",
+    "source_protocol_step_indices": [
+      14
+    ],
+    "source_protocol_nearby_step_indices": [
+      10,
+      11,
+      12,
+      13,
+      15,
+      16,
+      17,
+      18
+    ],
+    "protocol_alignment": {
+      "protocol_id": "bioprot:PMC11986697",
+      "title": "Optimizing Confocal Imaging Protocols for Muscle Fiber Typing in the Mouse Masseter Muscle",
+      "step_indices": [
+        14
+      ],
+      "explanation": "Step 14 specifies creating a humidified chamber for overnight primary antibody incubation at 4 °C by placing a wet paper towel inside an empty tip box and covering it with the tip holder to support the slides. The correct option directly implements this repurposing of the pictured asset, while distractors correspond to other immunofluorescence steps, incorrect parameters, or incompatible active equipment."
     }
   },
   {
     "question_id": "level1_q0018",
-    "entry_id": "labutopia_graduated_cylinder_03",
-    "entry_name": "Graduated Cylinder",
-    "asset_family": "graduated_cylinder",
-    "source_project": "labutopia",
-    "image_paths": [
-      "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/left.png",
-      "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/bottom.png",
-      "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/front.png"
-    ],
-    "views": [
-      {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/left.png"
-      },
-      {
-        "view": "bottom",
-        "path": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/bottom.png"
-      },
-      {
-        "view": "front",
-        "path": "data/benchmark_inventory/multiview/labutopia_graduated_cylinder_03/front.png"
-      }
-    ],
-    "question": "You are preparing liquid incentive solutions for an fMRI experiment. According to the protocol, you need to accurately measure a specific volume of distilled water before mixing it with other components. The three-view images show the volumetric measuring device currently available on the bench. Based on the asset's function and the protocol requirements, choose the most appropriate next operation.",
-    "options": {
-      "A": "measure_liquid(asset=\"graduated_cylinder\", volume_ml=250, liquid_type=\"distilled_water\")",
-      "B": "centrifuge_sample(speed_xg=3000, duration_min=5)",
-      "C": "heat_solution(temperature_c=100, duration_min=10)",
-      "D": "pipette_liquid(asset=\"micropipette\", volume_ul=5)",
-      "E": "filter_solution(filter_pore_size_um=0.22)",
-      "F": "weigh_solute(balance_precision_g=0.01, target_mass_g=50)",
-      "G": "vortex_mix(speed_rpm=2000, duration_sec=30)",
-      "H": "sterilize_equipment(temperature_c=121, duration_min=20)",
-      "I": "dispense_via_syringe_pump(rate_ml_min=0.5, volume_ml=10)",
-      "J": "measure_ph(electrode_type=\"glass\", calibration_buffer=\"pH_7.0\")"
-    },
-    "reasoning_steps": [
-      "The three-view images clearly depict a graduated cylinder, a standard laboratory glassware designed for accurately measuring and dispensing liquid volumes.",
-      "The current experimental phase involves preparing liquid incentive solutions, which requires measuring specific macro-volumes of distilled water before mixing.",
-      "The protocol explicitly instructs to measure out 250 mL of distilled water using a graduated cylinder in Steps 1 and 10.",
-      "Operations such as centrifugation, heating, micropipetting, or pH measurement are incompatible with the asset shown and do not match the specified volumetric preparation step, making the graduated cylinder measurement the only valid choice."
-    ],
-    "answer": "A",
-    "source_protocol_id": "star:PMC9641260",
-    "source_protocol_title": "An fMRI protocol for administering liquid incentives to human participants",
-    "source_protocol_step_indices": [
-      1,
-      6,
-      8,
-      10
-    ],
-    "protocol_alignment": {
-      "protocol_id": "star:PMC9641260",
-      "title": "An fMRI protocol for administering liquid incentives to human participants",
-      "step_indices": [
-        1
-      ],
-      "explanation": "The correct answer aligns with Step 1 of the protocol, which explicitly requires measuring 250 mL of distilled water using a graduated cylinder. The visual asset confirms the presence of this specific volumetric glassware, making it the appropriate tool for this macro-volume measurement task, whereas the distractors involve unrelated equipment or micro-volume handling."
-    }
-  },
-  {
-    "question_id": "level1_q0019",
     "entry_id": "autobio_centrifuge_50ml",
     "entry_name": "50 mL Centrifuge Tube",
     "asset_family": "centrifuge_tube_50ml",
     "source_project": "autobio",
     "image_paths": [
-      "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/front.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/free.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/right.png"
+      "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/left.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/bottom.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/front.png"
     ],
     "views": [
       {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/left.png"
+      },
+      {
+        "view": "bottom",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/bottom.png"
+      },
+      {
         "view": "front",
         "path": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/front.png"
-      },
-      {
-        "view": "free",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/free.png"
-      },
-      {
-        "view": "right",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_50ml/right.png"
       }
     ],
-    "question": "You are initiating the differential centrifugation phase for isolating plant-derived extracellular vesicles. The crude plant extract has been homogenized and filtered, and the asset shown in the three views is the primary vessel required for this stage. Based on the asset's capacity and the protocol's initial processing requirements, choose the most appropriate next operation.",
+    "question": "You are processing a lentiviral supernatant harvest. The viral-containing liquid has just been transferred into the item shown in the three views. Based on the protocol requirements for sedimenting residual cells before filtration, what is the most appropriate next operation to perform on this sample?",
     "options": {
-      "A": "transfer_to_centrifuge_tube(container=\"50ml_conical\", sample=\"crude_extract\", volume_ml=40)",
-      "B": "load_ultracentrifuge_tube(container=\"13.2ml_tube\", sample=\"concentrate\", speed_xg=100000, duration_min=60)",
-      "C": "layer_sucrose_gradient(tube=\"13.2ml_ultracentrifuge\", densities=[60, 45, 30, 8], temp_c=4)",
-      "D": "vortex_sample(container=\"1.5ml_microcentrifuge\", speed=\"maximum\", duration_sec=15)",
-      "E": "incubate_in_shaker(container=\"250ml_flask\", speed_rpm=150, duration_h=12)",
-      "F": "filter_through_membrane(pore_size_um=0.22, pressure_psi=15)",
-      "G": "freeze_sample_in_liquid_nitrogen(container=\"cryovial_2ml\", duration_min=5)",
-      "H": "sonicate_tissue(container=\"50ml_falcon\", amplitude_percent=40, cycles=3)",
-      "I": "centrifuge_sample(container=\"15ml_conical\", speed_xg=12000, duration_min=30, temperature_c=25)",
-      "J": "pipette_supernatant(destination=\"96_well_plate\", volume_ul=100)"
+      "A": "centrifuge_sample(speed_xg=2000, duration_min=10, temperature_c=4)",
+      "B": "centrifuge_sample(speed_xg=300, duration_min=5, temperature_c=20)",
+      "C": "incubate_in_water_bath(temperature_c=37, duration_min=30)",
+      "D": "filter_supernatant(pore_size_um=0.45, volume_ml=50)",
+      "E": "resuspend_pellet(buffer=\"complete_DMEM\", volume_ml=15)",
+      "F": "vortex_sample(speed=\"medium\", duration_min=2)",
+      "G": "aliquot_sample(destination=\"cryovials\", volume_ul=500)",
+      "H": "seal_container(seal_type=\"screw_cap\", torque=\"hand_tight\")",
+      "I": "lyse_cells(buffer=\"RIPA\", volume_ml=5)",
+      "J": "measure_od600(dilution_factor=10, path_length_mm=10)"
     },
     "reasoning_steps": [
-      "The three-view images clearly depict a 50 mL conical centrifuge tube, which is the standard vessel for holding larger volumes of liquid during low-to-medium speed differential centrifugation.",
-      "According to Step 1 of the protocol, the initial processing phase requires transferring the prepared crude plant extract into 50 mL centrifuge tubes before the first spin.",
-      "Options involving 1.5 mL microcentrifuge tubes, 13.2 mL ultracentrifuge tubes, or sucrose gradients correspond to later purification steps or incompatible vessel sizes for the initial crude extract volume.",
-      "Therefore, transferring the crude extract into the 50 mL conical tube aligns precisely with both the visual asset and the protocol's first operational requirement."
+      "The three views depict a large conical tube, which functions as a passive sample container designed to withstand centrifugal forces during liquid processing.",
+      "The experimental context involves clarifying viral supernatant by removing residual cellular debris before downstream filtration.",
+      "Step 19 of the protocol explicitly directs centrifuging these tubes at 2000 × g for 10 minutes at 4°C to achieve proper sedimentation.",
+      "A 300 × g spin is used elsewhere in the workflow for initial cell pelleting but lacks the force required to clarify supernatant, making it an incorrect parameter choice here.",
+      "Consequently, the operation specifying 2000 × g, 10 minutes, and 4°C correctly matches both the vessel's intended use and the protocol's clarification requirements."
     ],
     "answer": "A",
-    "source_protocol_id": "star:PMC12934269",
-    "source_protocol_title": "Protocol for isolating plant-derived extracellular vesicles",
+    "source_protocol_id": "star:PMC8605094",
+    "source_protocol_title": "Production of human CAR-NK cells with lentiviral vectors and functional assessment in vitro",
     "source_protocol_step_indices": [
-      1,
-      4,
+      8,
+      11,
+      18,
+      19,
+      100,
+      106,
+      110,
+      111
+    ],
+    "source_protocol_nearby_step_indices": [
       7,
       9,
-      11,
+      10,
+      12,
       17,
-      21,
-      22
+      20,
+      99,
+      101
     ],
     "protocol_alignment": {
-      "protocol_id": "star:PMC12934269",
-      "title": "Protocol for isolating plant-derived extracellular vesicles",
+      "protocol_id": "star:PMC8605094",
+      "title": "Production of human CAR-NK cells with lentiviral vectors and functional assessment in vitro",
       "step_indices": [
-        1
+        18,
+        19
       ],
-      "explanation": "Step 1 explicitly instructs transferring the crude extract into 50 mL centrifuge tubes for the first round of differential centrifugation. The visual asset confirms the use of a 50 mL conical tube, making the transfer operation the correct next step before initiating the centrifuge run."
+      "explanation": "The correct answer aligns with Step 19, which instructs to centrifuge the 50 mL falcon tubes containing viral supernatant at 2000 × g for 10 min at 4°C to sediment collected cells. The pictured asset is the 50 mL conical tube used to hold the supernatant during this clarification step."
     }
   },
   {
-    "question_id": "level1_q0020",
+    "question_id": "level1_q0019",
     "entry_id": "autobio_centrifuge_1_5ml_screw",
     "entry_name": "1.5 mL Screw-Cap Microcentrifuge Tube",
     "asset_family": "microcentrifuge_tube_1_5ml",
     "source_project": "autobio",
     "image_paths": [
       "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/front.png",
-      "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/left.png",
+      "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/free.png",
       "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/right.png"
     ],
     "views": [
@@ -1257,54 +1366,142 @@
         "path": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/front.png"
       },
       {
-        "view": "left",
-        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/left.png"
+        "view": "free",
+        "path": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/free.png"
       },
       {
         "view": "right",
         "path": "data/benchmark_inventory/multiview/autobio_centrifuge_1_5ml_screw/right.png"
       }
     ],
-    "question": "You are performing the propagation of pooled Candida albicans cultures under different environmental conditions. The current task requires collecting 1 mL of culture from each replicate set. The asset shown in the three views is the sterile container designated for this collection step. Based on the asset function, the current sample state, and the protocol volume requirements, choose the most appropriate next operation.",
+    "question": "You are preparing a chemokine receptor staining cocktail for a multiparametric flow cytometry experiment. The small screw-cap vessel shown in the three views is the primary container for this low-volume reagent mix. Based on the container's capacity and the protocol's initial mixing requirements, choose the most appropriate next operation.",
     "options": {
-      "A": "pipette_sample(destination=\"1.5ml_screw_cap_tube\", volume_ul=1000)",
-      "B": "centrifuge_pellet(speed_xg=14000, duration_min=5, temperature_c=4)",
-      "C": "incubate_culture(speed_rpm=220, duration_h=16, temperature_c=30)",
-      "D": "vortex_tube(speed=\"high\", duration_sec=15)",
-      "E": "seal_pcr_plate(seal_type=\"adhesive_film\")",
-      "F": "load_spin_column(matrix=\"silica\", volume_ul=500)",
-      "G": "add_beads(type=\"glass\", diameter_mm=0.5, count=10)",
-      "H": "excise_gel_band(gel_type=\"agarose\", target_bp=300)",
-      "I": "quantify_dna(method=\"fluorometric\", volume_ul=2)",
-      "J": "run_pcr(cycle_count=35, annealing_temp_c=58)"
+      "A": "prepare_cocktail(container=\"1.5ml_screw_cap\", initial_reagent=\"PBS\", follow_table=\"Table_2\")",
+      "B": "load_cell_counting_slide(sample_volume_ul=10, mix_ratio=\"1:1\")",
+      "C": "prepare_live_dead_stain(container=\"0.5ml_tube\", dilution=\"1:60\", solvent=\"PBS\")",
+      "D": "centrifuge_sample(speed_xg=14000, duration_min=5, temperature_c=4)",
+      "E": "prepare_cocktail(container=\"15ml_conical\", initial_reagent=\"staining_buffer\", volume_ul=500)",
+      "F": "add_antibodies_in_decreasing_order(container=\"1.5ml_screw_cap\", mix_vortex=True)",
+      "G": "seal_cryotube_and_store(temperature_c=-80, duration_days=30)",
+      "H": "prepare_foxp3_working_solution(container=\"1.5ml_screw_cap\", concentrate_ratio=\"1:3\", diluent=\"perm_diluent\")",
+      "I": "decant_supernatant_into_15ml_tube(pipette_type=\"P1000\", remaining_volume_ul=50)",
+      "J": "incubate_on_roller(speed_rpm=20, duration_h=1, temperature_c=25)"
     },
     "reasoning_steps": [
-      "The three-view images clearly depict a standard 1.5 mL screw-cap microcentrifuge tube, which is visually identifiable by its conical bottom, graduated markings, and threaded screw cap, designed for small-volume liquid handling.",
-      "According to the current protocol state in Step 23, the immediate experimental requirement is to collect exactly 1 mL of pooled culture from replicate sets and transfer it into sterile microcentrifuge tubes.",
-      "The relevant parameter to preserve is the exact 1 mL (1000 μL) volume specified for transfer, which fits within the 1.5 mL capacity of the shown asset without risking overflow.",
-      "Distractors such as centrifugation, thermal incubation, gel excision, or PCR amplification represent downstream processing, upstream growth, or unrelated quantification steps that do not match the immediate liquid collection phase or the specified volume.",
-      "Therefore, pipetting 1000 μL into the 1.5 mL screw-cap tube is the only operation that correctly follows the protocol instruction and utilizes the visual asset as intended."
+      "The three views depict a 1.5 mL screw-cap microcentrifuge tube, identifiable by its small cylindrical shape, conical bottom, and threaded cap, which is designed for low-volume liquid handling and mixing.",
+      "The experimental context involves preparing a chemokine receptor antibody cocktail for flow cytometry, which requires precise low-volume reagent mixing in an appropriately sized vessel.",
+      "Protocol Step 16 explicitly specifies using a 1.5 mL tube for this cocktail and mandates starting the preparation by adding PBS before introducing antibodies.",
+      "Distractors involving 0.5 mL tubes, 15 mL conicals, or vortex mixing contradict the specified container size, initial buffer requirement, or bubble-avoidance guidelines in the protocol.",
+      "Therefore, initiating the cocktail preparation with PBS in the pictured 1.5 mL vessel is the correct next operation."
     ],
     "answer": "A",
-    "source_protocol_id": "star:PMC11889967",
-    "source_protocol_title": "Protocol to identify genes important for Candida albicans fitness in diverse environmental conditions using pooled bar-seq screening approach",
+    "source_protocol_id": "star:PMC7757334",
+    "source_protocol_title": "Phenotypic Characterization of SLe x + and CLA+ CD4+ T Cells",
     "source_protocol_step_indices": [
-      23,
-      32,
-      54,
-      63,
-      99,
-      101,
-      104,
-      137
+      5,
+      16,
+      20,
+      26,
+      30,
+      31,
+      37,
+      86
+    ],
+    "source_protocol_nearby_step_indices": [
+      4,
+      6,
+      15,
+      17,
+      19,
+      21,
+      25,
+      27
     ],
     "protocol_alignment": {
-      "protocol_id": "star:PMC11889967",
-      "title": "Protocol to identify genes important for Candida albicans fitness in diverse environmental conditions using pooled bar-seq screening approach",
+      "protocol_id": "star:PMC7757334",
+      "title": "Phenotypic Characterization of SLe x + and CLA+ CD4+ T Cells",
       "step_indices": [
-        23
+        16
       ],
-      "explanation": "Step 23 explicitly instructs transferring 1 mL of culture into sterile microcentrifuge tubes. The correct option directly implements this liquid transfer into the 1.5 mL screw-cap tube shown in the images, preserving the exact 1000 μL volume specified by the protocol."
+      "explanation": "The pictured 1.5 mL screw-cap vessel matches the container specified in Step 16 for preparing the chemokine receptor cocktail. The protocol explicitly instructs to start the preparation by adding PBS before other reagents, making option A the correct initial step."
+    }
+  },
+  {
+    "question_id": "level1_q0020",
+    "entry_id": "autobio_pcr_plate_96well",
+    "entry_name": "96-Well PCR Plate",
+    "asset_family": "pcr_plate",
+    "source_project": "autobio",
+    "image_paths": [
+      "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/front.png",
+      "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/left.png",
+      "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/right.png"
+    ],
+    "views": [
+      {
+        "view": "front",
+        "path": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/front.png"
+      },
+      {
+        "view": "left",
+        "path": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/left.png"
+      },
+      {
+        "view": "right",
+        "path": "data/benchmark_inventory/multiview/autobio_pcr_plate_96well/right.png"
+      }
+    ],
+    "question": "The item shown in the three views is currently positioned on the benchtop after a filtration step has transferred liquid into its individual receptacles. Based on the asset function, the current sample state, and the protocol requirements for preparing HPLC analysis samples, choose the most appropriate next operation.",
+    "options": {
+      "A": "centrifuge_plate(speed_xg=1500, duration_min=5)",
+      "B": "incubate_plate(temperature_c=70, duration_min=20)",
+      "C": "add_reagent(volume_ul=50, reagent=\"diluted_enzyme\")",
+      "D": "store_at_temperature(temperature_c=-80, duration_h=\"indefinite\")",
+      "E": "vortex_plate(speed=\"maximum\", duration_min=2)",
+      "F": "seal_with_film(seal_type=\"aluminum\", temperature_c=95)",
+      "G": "add_reagent(volume_ul=40, reagent=\"cold_methanol\")",
+      "H": "incubate_shaker(temperature_c=37, speed_rpm=500, duration_h=2.5)",
+      "I": "transfer_sample(source=\"stock_plate\", destination=\"current_plate\", volume_ul=5)",
+      "J": "wash_wells(buffer=\"PBS\", volume_ul=200, cycles=3)"
+    },
+    "reasoning_steps": [
+      "The three views show a standard multi-receptacle vessel with a rectangular footprint and a grid of small cylindrical wells, functioning as a passive container for liquid samples.",
+      "The protocol context indicates that after filtering or transferring samples into this vessel, the liquid must be collected at the bottom of the receptacles for downstream HPLC analysis.",
+      "Steps 269 and 272 explicitly specify centrifuging the vessel at 1,500 × g to collect the samples into the collection container.",
+      "Other options like incubation at 70°C, adding methanol, or shaking at 500 rpm correspond to earlier reaction setup or expression phases, not the immediate sample collection step required here.",
+      "Therefore, centrifuging the pictured vessel at 1,500 × g is the correct next operation that aligns with both the visual asset and the protocol instructions."
+    ],
+    "answer": "A",
+    "source_protocol_id": "star:PMC12281158",
+    "source_protocol_title": "Protocol for engineering poly(ethylene terephthalate) hydrolases via directed evolution using a high-throughput screening assay",
+    "source_protocol_step_indices": [
+      99,
+      121,
+      154,
+      261,
+      268,
+      269,
+      270,
+      272
+    ],
+    "source_protocol_nearby_step_indices": [
+      98,
+      100,
+      120,
+      122,
+      153,
+      155,
+      260,
+      262
+    ],
+    "protocol_alignment": {
+      "protocol_id": "star:PMC12281158",
+      "title": "Protocol for engineering poly(ethylene terephthalate) hydrolases via directed evolution using a high-throughput screening assay",
+      "step_indices": [
+        269,
+        272
+      ],
+      "explanation": "The correct answer directly implements Steps 269 and 272, which instruct to centrifuge the vessel at 1,500 × g to collect the filtered samples. The visual identification of the multi-receptacle container as a passive collection vessel aligns with this centrifugation step, distinguishing it from earlier incubation or reagent addition steps in the workflow."
     }
   }
 ]

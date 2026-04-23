@@ -3,14 +3,15 @@
 
 The pipeline uses the repository's benchmark inventory, rendered multiview
 images, and protocol-to-inventory matches to build one multiple-choice question
-per selected asset/protocol pair. The OpenRouter API key is read only from an
-environment variable, stdin, or an interactive prompt; it is never written to
-disk.
+per selected asset/protocol pair. OpenRouter credentials may be loaded from a
+local ignored `.env` file, environment variables, stdin, or an interactive
+prompt.
 """
 
 from __future__ import annotations
 
 import argparse
+import ast
 import getpass
 import json
 import os
@@ -20,21 +21,114 @@ import sys
 import time
 import urllib.error
 import urllib.request
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
+DEFAULT_ENV_PATH = Path(__file__).with_name(".env")
 DEFAULT_MULTIVIEW_MANIFEST = REPO_ROOT / "data/benchmark_inventory/multiview_manifest.json"
 DEFAULT_CORE_INVENTORY = REPO_ROOT / "data/benchmark_inventory/benchmark_core_inventory.json"
 DEFAULT_PROTOCOL_MATCHES = REPO_ROOT / "data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl"
 DEFAULT_DEMO_TEMPLATE = REPO_ROOT / "data/benchmark_inventory/level-1-demo.md"
 DEFAULT_OUTPUT = REPO_ROOT / "pipeline/level-1/generated/level1_questions_20.json"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+
+
+def parse_dotenv_value(raw_value: str) -> str:
+    value = raw_value.strip()
+    if len(value) >= 2 and value[0] == value[-1] and value[0] in {"'", '"'}:
+        return value[1:-1]
+    return value
+
+
+def load_dotenv_file(path: Path) -> None:
+    if not path.is_file():
+        return
+    for line in path.read_text(encoding="utf-8").splitlines():
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if stripped.startswith("export "):
+            stripped = stripped[len("export ") :].strip()
+        if "=" not in stripped:
+            continue
+        key, raw_value = stripped.split("=", 1)
+        key = key.strip()
+        if not key or key in os.environ:
+            continue
+        os.environ[key] = parse_dotenv_value(raw_value)
+
+
+def load_local_env() -> None:
+    load_dotenv_file(REPO_ROOT / ".env")
+    load_dotenv_file(DEFAULT_ENV_PATH)
+
+
+load_local_env()
+
 DEFAULT_MODEL = os.environ.get("OPENROUTER_MODEL", "qwen/qwen3.6-plus")
 DEFAULT_VIEW_ORDER = ("front", "right", "left", "top", "free", "back", "bottom")
 CJK_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]")
+ZERO_VALUE_ARG_RE = re.compile(
+    r"\b(?:duration_[a-z]+|volume_[a-z]+|force_[a-z]+)\s*=\s*(?:0\.0+|0(?!\.))\b"
+)
+SUSPICIOUS_DISTRACTOR_TOKENS = (
+    "autoclave",
+    "parafilm",
+    "manipulator",
+    "gripper",
+    "robot",
+    "wrist",
+    "sonicate",
+    "coverslip",
+    "muffle_furnace",
+)
+PASSIVE_HOLDER_GROUPS = {"tube_rack", "pipette_rack", "tip_box"}
+PASSIVE_CONTAINER_GROUPS = {
+    "cell_dish",
+    "microcentrifuge_tube_1_5ml",
+    "centrifuge_tube_10ml",
+    "centrifuge_tube_15ml",
+    "centrifuge_tube_50ml",
+    "cryovial",
+    "pcr_plate",
+    "beaker",
+    "conical_bottle",
+    "graduated_cylinder",
+}
+ACTIVE_DEVICE_GROUPS = {
+    "centrifuge",
+    "thermal_cycler",
+    "thermal_mixer",
+    "vortex_mixer",
+    "drying_box",
+    "heating_device",
+    "muffle_furnace",
+}
+DISALLOWED_ENTRY_IDS = {
+    # This multi-well rack repeatedly invites unsupported magnetic-rack or
+    # sealing distractors and is a weak Level 1 benchmark candidate.
+    "autobio_centrifuge_plate_60well",
+}
+SPECIALIZED_REVEAL_TERMS = {
+    "beaker",
+    "centrifuge",
+    "cryovial",
+    "graduated cylinder",
+    "muffle furnace",
+    "pipette",
+    "pipette rack",
+    "pcr plate",
+    "thermal cycler",
+    "thermal mixer",
+    "thermocycler",
+    "tip box",
+    "tube rack",
+    "vortex mixer",
+}
 
 ENGLISH_DEMO_TEMPLATE = """
 Example structure:
@@ -91,6 +185,7 @@ class ProtocolCandidate:
     matched_group: str
     background_excerpt: str
     relevant_steps: tuple[dict[str, Any], ...]
+    nearby_steps: tuple[dict[str, Any], ...]
     score: int
 
 
@@ -171,6 +266,8 @@ def load_inventory_entries(
     entries: dict[str, InventoryEntry] = {}
     for manifest_entry in manifest.get("entries", []):
         entry_id = manifest_entry.get("entry_id")
+        if entry_id in DISALLOWED_ENTRY_IDS:
+            continue
         inventory_entry = inventory_by_id.get(entry_id)
         if not inventory_entry:
             continue
@@ -227,6 +324,60 @@ def extract_relevant_steps(
     return tuple(selected)
 
 
+def extract_nearby_steps(
+    protocol_row: dict[str, Any],
+    relevant_steps: tuple[dict[str, Any], ...],
+    *,
+    max_steps: int,
+    distance_window: int = 3,
+) -> tuple[dict[str, Any], ...]:
+    if not relevant_steps:
+        return ()
+
+    relevant_indices = {
+        int(step["idx"])
+        for step in relevant_steps
+        if step.get("idx") is not None
+    }
+    relevant_stages = {
+        normalize_key(str(step.get("stage") or ""))
+        for step in relevant_steps
+        if step.get("stage")
+    }
+
+    scored: list[dict[str, Any]] = []
+    for step in protocol_row.get("procedure", {}).get("steps", []):
+        step_idx = step.get("idx")
+        if step_idx is None:
+            continue
+        step_idx = int(step_idx)
+        if step_idx in relevant_indices:
+            continue
+
+        stage = compact_text(step.get("stage", ""), 140)
+        description = compact_text(step.get("description", ""), 850)
+        normalized_stage = normalize_key(stage)
+        min_distance = min(abs(step_idx - idx) for idx in relevant_indices)
+        same_stage = normalized_stage in relevant_stages if normalized_stage else False
+        if min_distance > distance_window and not same_stage:
+            continue
+
+        scored.append(
+            {
+                "idx": step_idx,
+                "stage": stage,
+                "description": description,
+                "distance": min_distance,
+                "same_stage": same_stage,
+            }
+        )
+
+    scored.sort(key=lambda item: (not item["same_stage"], item["distance"], item["idx"]))
+    selected = scored[:max_steps]
+    selected.sort(key=lambda item: int(item["idx"]))
+    return tuple(selected)
+
+
 def load_protocol_candidates(
     protocol_matches_path: Path,
     entries_by_id: dict[str, InventoryEntry],
@@ -254,6 +405,11 @@ def load_protocol_candidates(
             )
             if not relevant_steps:
                 continue
+            nearby_steps = extract_nearby_steps(
+                protocol_row,
+                relevant_steps,
+                max_steps=max_steps_per_protocol,
+            )
 
             step_score = sum(int(step.get("score") or 0) for step in relevant_steps)
             score = step_score + count_term_hits(background_excerpt, terms)
@@ -264,6 +420,7 @@ def load_protocol_candidates(
                     matched_group=candidate.get("match_group", entry.match_group),
                     background_excerpt=background_excerpt,
                     relevant_steps=relevant_steps,
+                    nearby_steps=nearby_steps,
                     score=score,
                 )
             )
@@ -354,19 +511,66 @@ def option_letters(count: int) -> list[str]:
     return [chr(ord("A") + idx) for idx in range(count)]
 
 
-def render_protocol_steps(protocol: ProtocolCandidate) -> str:
+def render_steps(steps: tuple[dict[str, Any], ...]) -> str:
     lines = []
-    for step in protocol.relevant_steps:
+    for step in steps:
         lines.append(
             f"- Step {step.get('idx')} | {step.get('stage')}: {step.get('description')}"
         )
     return "\n".join(lines)
 
 
+def render_protocol_steps(protocol: ProtocolCandidate) -> str:
+    return render_steps(protocol.relevant_steps)
+
+
+def render_nearby_steps(protocol: ProtocolCandidate) -> str:
+    return render_steps(protocol.nearby_steps)
+
+
+def build_affordance_guardrails(entry: InventoryEntry) -> str:
+    generic = f"- Asset purpose: {entry.purpose or 'No purpose text available.'}"
+    if entry.match_group in PASSIVE_HOLDER_GROUPS:
+        constraint = (
+            "- Treat the pictured asset as a passive holder or organizer. Do not invent "
+            "powered, magnetic, heating, mixing, or centrifugation capabilities unless "
+            "the asset metadata explicitly states them."
+        )
+    elif entry.match_group in PASSIVE_CONTAINER_GROUPS:
+        constraint = (
+            "- Treat the pictured asset as a passive vessel, measuring item, or sample "
+            "container. Do not describe it as a powered instrument."
+        )
+    elif entry.match_group == "pipette":
+        constraint = (
+            "- Treat the pictured asset as a manual liquid-handling tool. Plausible "
+            "operations should center on aspirating, dispensing, or transferring liquid."
+        )
+    elif entry.match_group == "pipette_tip":
+        constraint = (
+            "- Treat the pictured asset as a disposable consumable tip. Do not turn it "
+            "into a storage rack, heater, mixer, or measurement device."
+        )
+    elif entry.match_group in ACTIVE_DEVICE_GROUPS:
+        constraint = (
+            "- Treat the pictured asset as a specialized powered device. The correct "
+            "operation must fit the device's real function and the provided protocol."
+        )
+    else:
+        constraint = (
+            "- Stay within the explicit asset purpose and protocol evidence; do not invent "
+            "specialized capabilities that are not supported by the metadata."
+        )
+    return "\n".join((generic, constraint))
+
+
 def make_messages(job: QuestionJob, demo_template: str, option_count: int) -> list[dict[str, str]]:
     letters = option_letters(option_count)
     schema = {
-        "question": "English question stem. Include experiment context, current sample state, and ask for the best next operation based on the three-view asset.",
+        "question": (
+            "English question stem. Include experiment context, sample state, and the next-step decision. "
+            "Do not name the asset, brand, asset family, or aliases in the stem."
+        ),
         "options": {letter: "Candidate operation, preferably a valid and concise Python function call." for letter in letters},
         "reasoning_steps": ["3-5 English reasoning steps."],
         "answer": letters[0],
@@ -382,6 +586,7 @@ def make_messages(job: QuestionJob, demo_template: str, option_count: int) -> li
         f"- {view_name}: {image_path}" for view_name, image_path in job.selected_views
     )
     aliases = ", ".join(job.entry.aliases[:12]) if job.entry.aliases else "(none)"
+    affordance_guardrails = build_affordance_guardrails(job.entry)
     template_section = f"\n\nUse this English example as the style and structure template:\n{demo_template}" if demo_template else ""
 
     system = (
@@ -401,14 +606,28 @@ Hard requirements:
 3. The correct option must be directly supported by the provided protocol steps.
    Preserve protocol parameters such as temperature, duration, speed, force, and
    volume when they matter.
-4. Distractors should be plausible lab operations but incompatible with the
-   asset, current sample state, or cited protocol step.
-5. Options must be exactly {", ".join(letters)}, and answer must be one of those single letters.
-6. reasoning_steps must contain 3-5 English strings explaining visual asset
-   recognition, sample/protocol state, relevant parameters, and why distractors
-   are less appropriate.
-7. Do not reveal the correct answer in the question stem.
-8. Output exactly one JSON object matching the schema below.
+4. The question stem must NOT mention the asset's entry_name, brand, match_group,
+   aliases, or obvious type labels such as "thermal cycler", "pipette", "centrifuge",
+   "tube rack", "graduated cylinder", "beaker", or "muffle furnace". Refer to it
+   only indirectly, for example "the item shown in the three views" or "the pictured lab object".
+5. The question must require both visual asset understanding and protocol reasoning.
+   Avoid trivial stems where the answer is just "pour liquid into the obvious container"
+   unless a concrete protocol detail makes that choice genuinely discriminative.
+6. Distractors must be realistic, protocol-adjacent, and syntactically valid Python
+   function calls. Prefer three classes of distractors:
+   - adjacent or nearby steps from the same workflow,
+   - same-workflow operations with wrong parameters,
+   - operations that fit the sample state but use the wrong asset or wrong stage.
+7. Do not use obviously irrelevant distractors such as autoclaving, parafilm sealing,
+   robotic manipulation, sonication, or furnace operations unless those ideas are
+   explicitly supported by the provided protocol context.
+8. Respect the asset affordance guardrails below. Do not invent specialized functions
+   that the pictured asset cannot perform.
+9. Options must be exactly {", ".join(letters)}, and answer must be one of those single letters.
+10. reasoning_steps must contain 3-5 English strings explaining visual asset
+    recognition, sample/protocol state, relevant parameters, and why nearby but
+    incorrect operations are less appropriate.
+11. Output exactly one JSON object matching the schema below.
 
 Output schema example:
 {json.dumps(schema, ensure_ascii=False, indent=2)}
@@ -433,6 +652,12 @@ Relevant protocol:
 
 Available protocol step snippets:
 {render_protocol_steps(job.protocol)}
+
+Nearby protocol context that can inspire realistic distractors:
+{render_nearby_steps(job.protocol) or "- (none)"}
+
+Asset affordance guardrails:
+{affordance_guardrails}
 {template_section}
 """.strip()
     return [{"role": "system", "content": system}, {"role": "user", "content": user}]
@@ -530,7 +755,79 @@ def assert_english_text(value: Any, field_path: str) -> None:
             assert_english_text(item, f"{field_path}.{key}")
 
 
-def validate_generated_question(value: dict[str, Any], option_count: int) -> None:
+def parse_python_call(expr: str) -> ast.Call:
+    try:
+        tree = ast.parse(expr.strip(), mode="eval")
+    except SyntaxError as exc:
+        raise ValueError(f"Invalid Python call syntax: {expr}") from exc
+    if not isinstance(tree.body, ast.Call):
+        raise ValueError(f"Option is not a Python call: {expr}")
+    if not isinstance(tree.body.func, ast.Name):
+        raise ValueError(f"Option must call a simple function name: {expr}")
+    return tree.body
+
+
+def option_function_name(expr: str) -> str:
+    return parse_python_call(expr).func.id
+
+
+def stem_reveal_terms(entry: InventoryEntry) -> tuple[str, ...]:
+    raw_terms = [entry.entry_name, entry.match_group.replace("_", " "), *entry.aliases]
+    phrases: set[str] = set()
+    for term in raw_terms:
+        normalized = normalize_key(term)
+        if not normalized:
+            continue
+        if " " in normalized or normalized in SPECIALIZED_REVEAL_TERMS:
+            phrases.add(normalized)
+    return tuple(sorted(phrases))
+
+
+def build_context_text(job: QuestionJob) -> str:
+    parts = [
+        job.entry.purpose,
+        job.entry.entry_name,
+        job.entry.match_group.replace("_", " "),
+        " ".join(job.entry.aliases),
+        job.protocol.background_excerpt,
+        render_protocol_steps(job.protocol),
+        render_nearby_steps(job.protocol),
+    ]
+    return normalize_key(" ".join(part for part in parts if part))
+
+
+def validate_question_stem(question: str, entry: InventoryEntry) -> None:
+    normalized_question = normalize_key(question)
+    leaked = [term for term in stem_reveal_terms(entry) if term and term in normalized_question]
+    if leaked:
+        raise ValueError(f"question leaks asset identity: {', '.join(leaked[:4])}")
+
+
+def validate_option_text(option_text: str, job: QuestionJob) -> None:
+    call = parse_python_call(option_text)
+    function_name = call.func.id
+    normalized_option = normalize_key(option_text)
+    context_text = build_context_text(job)
+
+    if ZERO_VALUE_ARG_RE.search(option_text):
+        raise ValueError(f"option contains an implausible zero-valued operational parameter: {option_text}")
+
+    for token in SUSPICIOUS_DISTRACTOR_TOKENS:
+        if token in normalized_option and token not in context_text:
+            raise ValueError(f"option introduces off-context distractor token '{token}': {option_text}")
+
+    if job.entry.match_group in PASSIVE_HOLDER_GROUPS and "magnetic" in normalized_option:
+        asset_text = normalize_key(" ".join((job.entry.entry_name, job.entry.purpose, *job.entry.aliases)))
+        if "magnetic" not in asset_text:
+            raise ValueError(f"option invents magnetic functionality for passive holder asset: {option_text}")
+
+    if job.entry.match_group == "pipette_rack" and any(
+        token in function_name for token in ("aspirat", "dispens", "aliquot", "transfer", "dispense")
+    ):
+        raise ValueError(f"option treats a pipette rack as the liquid-handling tool: {option_text}")
+
+
+def validate_generated_question(value: dict[str, Any], option_count: int, job: QuestionJob) -> None:
     required = {"question", "options", "reasoning_steps", "answer"}
     missing = sorted(required - set(value))
     if missing:
@@ -539,6 +836,7 @@ def validate_generated_question(value: dict[str, Any], option_count: int) -> Non
     if not isinstance(value["question"], str) or not value["question"].strip():
         raise ValueError("question must be a non-empty string")
     assert_english_text(value["question"], "question")
+    validate_question_stem(value["question"], job.entry)
     if not isinstance(value["options"], dict):
         raise ValueError("options must be an object")
 
@@ -550,6 +848,7 @@ def validate_generated_question(value: dict[str, Any], option_count: int) -> Non
         if not isinstance(value["options"][letter], str) or not value["options"][letter].strip():
             raise ValueError(f"option {letter} must be a non-empty string")
         assert_english_text(value["options"][letter], f"options.{letter}")
+        validate_option_text(value["options"][letter], job)
 
     answer = value["answer"]
     if not isinstance(answer, str) or answer.strip() not in letters:
@@ -570,6 +869,7 @@ def validate_generated_question(value: dict[str, Any], option_count: int) -> Non
 
 def build_record(question_id: str, job: QuestionJob, generated: dict[str, Any]) -> dict[str, Any]:
     source_step_indices = [step.get("idx") for step in job.protocol.relevant_steps]
+    source_nearby_step_indices = [step.get("idx") for step in job.protocol.nearby_steps]
     return {
         "question_id": question_id,
         "entry_id": job.entry.entry_id,
@@ -591,6 +891,7 @@ def build_record(question_id: str, job: QuestionJob, generated: dict[str, Any]) 
         "source_protocol_id": job.protocol.protocol_id,
         "source_protocol_title": job.protocol.title,
         "source_protocol_step_indices": source_step_indices,
+        "source_protocol_nearby_step_indices": source_nearby_step_indices,
         "protocol_alignment": generated.get("protocol_alignment", {}),
     }
 
@@ -620,13 +921,62 @@ def generate_question_for_job(
                 timeout_s=timeout_s,
             )
             generated = parse_json_object(content)
-            validate_generated_question(generated, option_count)
+            validate_generated_question(generated, option_count, job)
             return generated
         except Exception as exc:  # noqa: BLE001 - report model/API validation context.
             last_error = exc
             if attempt <= retries:
+                messages = messages + [
+                    {
+                        "role": "user",
+                        "content": (
+                            "The previous output was rejected by the pipeline validator. "
+                            f"Validation error: {compact_text(str(exc), 600)}. "
+                            "Regenerate the full JSON object and fix this exact issue while "
+                            "keeping all prior requirements. Do not repeat the same invalid pattern."
+                        ),
+                    }
+                ]
                 time.sleep(min(2.0 * attempt, 8.0))
     raise RuntimeError(f"Failed after {retries + 1} attempt(s): {last_error}")
+
+
+def generate_record_for_job(
+    *,
+    idx: int,
+    total: int,
+    job: QuestionJob,
+    api_key: str,
+    model: str,
+    demo_template: str,
+    option_count: int,
+    temperature: float,
+    max_tokens: int,
+    timeout_s: float,
+    retries: int,
+    sleep_s: float,
+) -> tuple[int, dict[str, Any]]:
+    question_id = f"level1_q{idx:04d}"
+    print(
+        f"[{idx}/{total}] generating {question_id}: "
+        f"{job.entry.entry_id} x {job.protocol.protocol_id}",
+        file=sys.stderr,
+        flush=True,
+    )
+    generated = generate_question_for_job(
+        job,
+        api_key=api_key,
+        model=model,
+        demo_template=demo_template,
+        option_count=option_count,
+        temperature=temperature,
+        max_tokens=max_tokens,
+        timeout_s=timeout_s,
+        retries=retries,
+    )
+    if sleep_s > 0:
+        time.sleep(sleep_s)
+    return idx, build_record(question_id, job, generated)
 
 
 def write_outputs(records: list[dict[str, Any]], output_path: Path, metadata: dict[str, Any]) -> None:
@@ -658,6 +1008,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--timeout-s", type=float, default=90.0, help="HTTP timeout per API call.")
     parser.add_argument("--retries", type=int, default=2, help="Retries per question after API/validation failure.")
     parser.add_argument("--sleep-s", type=float, default=0.2, help="Sleep between successful API calls.")
+    parser.add_argument("--concurrency", type=int, default=4, help="Number of concurrent API requests.")
     parser.add_argument("--api-key-stdin", action="store_true", help="Read the API key from the first stdin line.")
     parser.add_argument("--include-scenes", action="store_true", help="Allow non-protocol-matchable scene entries if they have matches.")
     parser.add_argument("--dry-run", action="store_true", help="Print selected jobs without calling OpenRouter.")
@@ -674,6 +1025,8 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     option_letters(args.option_count)
+    if args.concurrency < 1:
+        raise ValueError("--concurrency must be at least 1")
 
     entries_by_id = load_inventory_entries(
         args.core_inventory,
@@ -698,41 +1051,60 @@ def main() -> int:
             views = ", ".join(view for view, _ in job.selected_views)
             print(
                 f"{idx:03d} {job.entry.entry_id} | {job.protocol.protocol_id} | "
-                f"steps={list(step.get('idx') for step in job.protocol.relevant_steps[:4])} | views={views}"
+                f"steps={list(step.get('idx') for step in job.protocol.relevant_steps[:4])} | "
+                f"nearby={list(step.get('idx') for step in job.protocol.nearby_steps[:4])} | "
+                f"views={views}"
             )
         return 0
 
     api_key = get_api_key(read_from_stdin=args.api_key_stdin)
     demo_template = read_demo_template(args.demo_template, args.template_max_chars)
-    records: list[dict[str, Any]] = []
+    record_slots: list[dict[str, Any] | None] = [None] * len(jobs)
 
-    for idx, job in enumerate(jobs, 1):
-        question_id = f"level1_q{idx:04d}"
-        print(
-            f"[{idx}/{len(jobs)}] generating {question_id}: "
-            f"{job.entry.entry_id} x {job.protocol.protocol_id}",
-            file=sys.stderr,
-            flush=True,
-        )
-        generated = generate_question_for_job(
-            job,
-            api_key=api_key,
-            model=args.model,
-            demo_template=demo_template,
-            option_count=args.option_count,
-            temperature=args.temperature,
-            max_tokens=args.max_tokens,
-            timeout_s=args.timeout_s,
-            retries=args.retries,
-        )
-        records.append(build_record(question_id, job, generated))
-        if args.sleep_s > 0:
-            time.sleep(args.sleep_s)
+    with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
+        futures = {
+            executor.submit(
+                generate_record_for_job,
+                idx=idx,
+                total=len(jobs),
+                job=job,
+                api_key=api_key,
+                model=args.model,
+                demo_template=demo_template,
+                option_count=args.option_count,
+                temperature=args.temperature,
+                max_tokens=args.max_tokens,
+                timeout_s=args.timeout_s,
+                retries=args.retries,
+                sleep_s=args.sleep_s,
+            ): idx
+            for idx, job in enumerate(jobs, 1)
+        }
+        for completed_count, future in enumerate(as_completed(futures), 1):
+            idx = futures[future]
+            try:
+                result_idx, record = future.result()
+            except Exception as exc:
+                for pending in futures:
+                    pending.cancel()
+                question_id = f"level1_q{idx:04d}"
+                raise RuntimeError(f"Failed generating {question_id}") from exc
+            record_slots[result_idx - 1] = record
+            print(
+                f"[{completed_count}/{len(jobs)}] completed level1_q{result_idx:04d}",
+                file=sys.stderr,
+                flush=True,
+            )
+
+    records = [record for record in record_slots if record is not None]
+    if len(records) != len(jobs):
+        raise RuntimeError(f"Generated {len(records)} records for {len(jobs)} jobs")
 
     metadata = {
         "count": len(records),
         "seed": args.seed,
         "model": args.model,
+        "concurrency": args.concurrency,
         "option_count": args.option_count,
         "multiview_manifest": str(args.multiview_manifest.relative_to(REPO_ROOT)),
         "core_inventory": str(args.core_inventory.relative_to(REPO_ROOT)),

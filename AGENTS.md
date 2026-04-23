@@ -359,10 +359,61 @@
   - `data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl`
   - `data/benchmark_inventory/level-1-demo.md`
 - 默认模型是 `qwen/qwen3.6-plus`，输出语言口径是英文；脚本会校验题干、选项、reasoning steps 和 protocol alignment 中不能出现 CJK 字符。
+- `pipeline/level-1/build_level1_questions.py` 现在会自动加载 `pipeline/level-1/.env` 与仓库根目录 `.env`；本地可在忽略掉的 `.env` 里放 `OPENROUTER_API_KEY` 与 `OPENROUTER_MODEL`，不要把真实密钥写进 README、AGENTS 或任何可提交文件。
+- 根目录 `.gitignore` 已覆盖 `.env`；`pipeline/level-1/.env` 会被自动忽略。提交前可用 `git check-ignore -v pipeline/level-1/.env` 复核忽略规则仍然生效。
+- 本地 `.env` 当前推荐只放两项：
+  - `OPENROUTER_API_KEY`
+  - `OPENROUTER_MODEL`
+- 如果用户切换网络节点或 OpenRouter 路由策略变化，不要假设过去的 `region unavailable` 结果仍然成立；应重新做最小 chat completion 探测，并记录 `model_requested` 与 OpenRouter 返回的具体 `model_returned`。
+- 脚本默认并发请求 OpenRouter，`--concurrency` 默认值是 `4`；最终写文件时会按题号排序，保持 JSON / JSONL 输出顺序稳定。如果调试限流问题，可设为 `--concurrency 1`。
+- 当前生成的真实瓶颈通常不是串行，而是：
+  - prompt 较长，包含相关 step、邻近 step 和 asset guardrail
+  - 输出要求是严格 JSON，且包含多选项与 reasoning
+  - 失败样本会整题重生
+  - OpenRouter 偶发长尾或连接重置
+- 因此在 `--concurrency 4` 下，单题模型调用常见在 `10-40s`，而整批墙钟时间更多取决于少数重试尾项。
+- 当前 prompt 要求题干不能直接点名资产、品牌或 `match_group`，并把 protocol 邻近步骤一并提供给模型，用于构造更接近真实 workflow 的干扰项。
+- 当前脚本会额外做题目质量过滤：题干资产泄露检测、选项 Python 函数调用语法检查、零值操作参数拒绝，以及对被动 rack 类资产的伪造 `magnetic` 功能拦截。
+- 邻近 step 不是装饰信息，而是当前干扰项质量的主要来源；如果以后改 prompt，优先保住这部分上下文。
+- 当前脚本里已经踩过两类规则误杀：
+  - `speed_rpm=0` 不能一概判错；对 thermal mixer 等设备，“加热但不振荡”可能是合理参数。
+  - 零值参数正则不能把 `volume_ml=0.5` 误判为零；当前正则只拦真正的 `0` 或 `0.0...`。
+- 当前重试逻辑不是盲重试。若模型输出被本地校验器拒绝，脚本会把具体错误回灌给模型，要求其重新生成并修复该问题。这一机制明显提高了通过率，特别是对 `parafilm` 等离题干扰项。
+- `autobio_centrifuge_plate_60well` 当前默认不进入 Level 1 候选池；它反复诱发不受图像支持的 rack 功能假设，容易生成弱题或错误干扰项。
+- `pipette_rack` 的规则要注意区分：
+  - 应拦把 rack 当成液体处理工具的动作
+  - 不应误拦“把玻璃移液工具放回 rack”的存放动作
+- 当前公开样例 `pipeline/level-1/generated/level1_questions_20.json` 是增强后重生成的版本，和更早那批质量较弱的样例不是同一批。不要用旧批次的失败模式直接评价当前脚本。
+- `pipeline/level-1/evaluate_level1_accuracy.py` 是独立评测脚本，会把 3 张本地图编码成 data URL，通过 OpenRouter 多模态请求评测模型在 Level 1 题集上的 `Answer Accuracy`，并把每题预测结果与汇总指标写入 `pipeline/level-1/generated/`。
+- 评测脚本与构题脚本一样会自动加载 `.env`，默认模型当前可直接设为 `openai/gpt-5.4`。
+- 评测输出当前包括：
+  - `level1_questions_20.eval.openai_gpt-5.4.json`
+  - `level1_questions_20.eval.openai_gpt-5.4.jsonl`
+- 评测脚本当前只评估 `answer`，不评 reasoning；也就是说这是 `Answer Accuracy`，不是完整的 Level 1 双指标评测。
+- 评测脚本会把 3 张图编码为 data URL 内联进 OpenRouter 请求，因此：
+  - 不依赖外部图床
+  - 但请求体更大，网络抖动时更容易遇到 `Connection reset by peer`
+  - 若要复现实验结果，优先使用 `--concurrency 1 --retries 5`
+- `2026-04-24` 的节点切换后，`openai/gpt-5.4` 已确认可经 OpenRouter 正常调用，返回的具体版本是 `openai/gpt-5.4-20260305`；当前本地 `.env` 默认模型可设回 `openai/gpt-5.4`。
+- `2026-04-24` 用 `pipeline/level-1/evaluate_level1_accuracy.py` 对当前 `level1_questions_20.json` 做了一次 `openai/gpt-5.4` 多模态评测：
+  - 先用 `--concurrency 2` 跑了一次，得到 `11/20 = 0.55`，但有 4 题受网络 `Connection reset by peer` 干扰
+  - 再用 `--concurrency 1 --retries 5` 重跑，结果仍是 `11/20 = 0.55`
+  - 第二次只剩 1 题网络失败，因此 `0.55` 可以近似视为当前题集上的真实 `Answer Accuracy`
+  - 若只按成功返回的 19 题算，命中率约为 `11/19 = 57.9%`
+- `gpt-5.4` 当前这批样例上的主要失分模式：
+  - 容器或被动资产题里选了错误但表面合理的近邻动作
+  - 离心相关题中，把下一步操作和前后邻近动作混淆
+  - 对低级容器题存在“功能认对了，但参数或阶段选错”的情况
+- 这批题的人工复核结论是：专业性明显好于前一版，但整体更接近“中高难初稿”，还不是稳定的高难 benchmark。后续若继续增强，优先减少：
+  - “被动容器 -> 直觉下一步”的题
+  - 同 protocol / 同动作的近重复题
+  - 题干里对功能类别的提前暗示
 - 启动命令写在 `pipeline/level-1/README.md`。常用方式是：
-  - `conda activate agent`
-  - `export OPENROUTER_API_KEY="..."`
-  - `PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --count 20`
+  - 自动加载 `.env`：
+    - `conda activate agent`
+    - `PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --count 20`
+  - 显式指定模型：
+    - `PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --count 20 --model openai/gpt-5.4`
 - 如果不想把 API key 放进 shell 环境，可以用：
   - `PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --api-key-stdin --count 20`
 - 公开仓库内不要记录真实 API key；README 和 AGENTS 只能写环境变量占位符或 stdin 方式。
@@ -370,6 +421,9 @@
   - `level1_questions_20.json`
   - `level1_questions_20.jsonl`
   - `level1_questions_20.metadata.json`
+- 当前评测结果默认也落在同一目录：
+  - `level1_questions_20.eval.openai_gpt-5.4.json`
+  - `level1_questions_20.eval.openai_gpt-5.4.jsonl`
 - 该 pipeline 会给每道题选择 3 张多视角图片，定位一个匹配 protocol 和相关 procedure steps，然后构造字段：
   - `image_paths`
   - `question`
@@ -377,11 +431,30 @@
   - `reasoning_steps`
   - `answer`
   - `source_protocol_id` / `source_protocol_step_indices`
+- 评测脚本每题会记录：
+  - `question_id`
+  - `gold_answer`
+  - `predicted_answer`
+  - `correct`
+  - `response_content`
+  - `model_returned`
+  - `usage`
+  - `latency_s`
 - 生成后至少检查：
   - JSON / JSONL 能解析
   - 每题正好 3 张图片，路径都存在
   - 每题选项键集合符合预期，例如默认 `A` 到 `J`
   - `answer` 是单个选项字母
+  - 生成文本无 CJK
+  - 用当前 `validate_generated_question` 回扫成品仍能全通过
+  - `git diff --check -- pipeline/level-1 AGENTS.md` 通过
+  - 用正则扫描真实 OpenRouter key 模式时，在可提交文件里无命中；不要把变量名占位符误当成泄漏
+- 评测后至少检查：
+  - 评测 JSON / JSONL 能解析
+  - `summary.model_requested` 与用户期望一致
+  - `summary.model_returned` 记录了 OpenRouter 实际落到的具体版本
+  - `invalid_count` 是否为 0；若不为 0，要区分是模型输出问题还是网络失败
+  - 对外报告准确率时，最好同时说明 `invalid_count`
   - `rg -n -P "[\x{3400}-\x{4dbf}\x{4e00}-\x{9fff}\x{3000}-\x{303f}\x{ff00}-\x{ffef}]" pipeline/level-1/generated/level1_questions_20.json` 没有命中
   - `git diff --check -- pipeline/level-1 AGENTS.md` 通过
 

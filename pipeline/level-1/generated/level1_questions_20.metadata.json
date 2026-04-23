@@ -2,6 +2,7 @@
   "count": 20,
   "seed": 20260423,
   "model": "qwen/qwen3.6-plus",
+  "concurrency": 4,
   "option_count": 10,
   "multiview_manifest": "data/benchmark_inventory/multiview_manifest.json",
   "core_inventory": "data/benchmark_inventory/benchmark_core_inventory.json",
