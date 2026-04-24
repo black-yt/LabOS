@@ -1,0 +1,11 @@
+{
+  "count": 20,
+  "seed": 20260424,
+  "model": "openai/gpt-5.4",
+  "concurrency": 1,
+  "option_count": 10,
+  "multiview_manifest": "data/benchmark_inventory/multiview_manifest.json",
+  "core_inventory": "data/benchmark_inventory/benchmark_core_inventory.json",
+  "protocol_matches": "data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl",
+  "demo_template": "data/benchmark_inventory/level-1-demo.md"
+}

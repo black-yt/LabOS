@@ -387,6 +387,20 @@
   - OpenRouter 偶发长尾或连接重置
 - 因此在 `--concurrency 4` 下，单题模型调用常见在 `10-40s`，而整批墙钟时间更多取决于少数重试尾项。
 - 当前 prompt 要求题干不能直接点名资产、品牌或 `match_group`，并把 protocol 邻近步骤一并提供给模型，用于构造更接近真实 workflow 的干扰项。
+- `2026-04-24` 起，Level 1 的主要加难策略不再依赖 self-play 过滤，而是直接把“难度结构”写进构题蓝图：
+  - 题干必须写入至少两个具体 protocol 数值
+  - 题干必须交代至少一个到两个前序动作或当前状态
+  - `A-C`、`D-F`、`G-I` 固定为 3 个动作族
+  - 每个 3 选项动作族内部必须使用相同函数名和相同参数键集合
+  - `J` 固定为 `none_of_the_above()`
+- 当前 grouped-option 口径下，如果 `answer != J`：
+  - 正确答案所在的 target family 必须只占一个 3 选项动作族
+  - 同族另外两个错项必须各自只改动一个参数值
+  - 这个改动参数必须包含数值型字面量，而不是只换 buffer 名称或动作对象
+- 当前 grouped-option 口径下，如果 `answer == J`：
+  - `J` 必须严格等于 `none_of_the_above()`
+  - `A-I` 都必须是合理但错误的候选
+  - 其中至少应有一个 3 选项动作族是“非常接近 target step，但数值微错”的 family
 - 当前 prompt 还会显式禁止题干用功能类提示词偷给答案，例如：
   - `volumetric measuring tool`
   - `passive storage function`
@@ -396,11 +410,20 @@
 - 当前脚本会额外做题目质量过滤：题干资产泄露检测、选项 Python 函数调用语法检查、零值操作参数拒绝，以及对被动 rack 类资产的伪造 `magnetic` 功能拦截。
 - 当前脚本也会拒绝“低难度选项集”：如果正确答案所在的动作族没有至少一个同函数竞争项（例如同一 `centrifuge_sample(...)` 但参数不同），题目会被打回重生成。这个约束的目的是减少“认出设备大类就能秒选”的题。
 - 邻近 step 不是装饰信息，而是当前干扰项质量的主要来源；如果以后改 prompt，优先保住这部分上下文。
+- 但 `2026-04-24` 之后的 `extract_nearby_steps()` 已经收紧到更小的局部窗口：
+  - 默认只保留与 target/relevant steps 距离不超过 `2` 的 procedure steps
+  - 不再因为“同 stage”就把更远的步骤放进 nearby pool
+  - 这样 nearby-step family 更接近真正的局部前后文，而不是跨很远的阶段跳转
 - `build_jobs()` 现在会优先选择更难的资产族，并尽量减少 protocol 重复；和早期版本相比，主动设备、可混淆参数题、以及带近邻阶段竞争项的样本会被更优先抽到。
 - 当前脚本里已经踩过两类规则误杀：
   - `speed_rpm=0` 不能一概判错；对 thermal mixer 等设备，“加热但不振荡”可能是合理参数。
   - 零值参数正则不能把 `volume_ml=0.5` 误判为零；当前正则只拦真正的 `0` 或 `0.0...`。
 - 当前重试逻辑不是盲重试。若模型输出被本地校验器拒绝，脚本会把具体错误回灌给模型，要求其重新生成并修复该问题。这一机制明显提高了通过率，特别是对 `parafilm` 等离题干扰项。
+- 当前重试反馈已经专门覆盖几类 grouped-option 失败：
+  - 3 个动作族没有按 `A-C / D-F / G-I` 分开
+  - `J` 不是严格的 `none_of_the_above()`
+  - target family 的错项没有做到“只改一个参数值”
+  - passive holder 又被错误写成带 `magnetic` 功能
 - `autobio_centrifuge_plate_60well` 当前默认不进入 Level 1 候选池；它反复诱发不受图像支持的 rack 功能假设，容易生成弱题或错误干扰项。
 - `pipette_rack` 的规则要注意区分：
   - 应拦把 rack 当成液体处理工具的动作
@@ -452,9 +475,21 @@
   - `level1_questions_20.json`
   - `level1_questions_20.jsonl`
   - `level1_questions_20.metadata.json`
+- 当前生成脚本支持断点续跑：
+  - 给定输出路径 `foo.json` 时，会同步维护 `foo.partial.jsonl`
+  - 如果上一次因为 OpenRouter 长尾或结构校验失败中断，再次运行同一命令会优先从 `.partial.jsonl` 恢复已完成题目
+  - 对高重试、高约束的 grouped-option 构题尤其有用
 - 当前评测结果默认也落在同一目录：
   - `level1_questions_20.eval.openai_gpt-5.4.json`
   - `level1_questions_20.eval.openai_gpt-5.4.jsonl`
+- `2026-04-24` 的 grouped-option 两轮实测结果要分开记：
+  - 第一轮 `level1_questions_20_gpt54_grouped.json`
+    - 结构：3 个动作族 + `J=none_of_the_above()`
+    - `openai/gpt-5.4` 多模态评测：`10/20 = 0.50`
+  - 第二轮 `level1_questions_20_gpt54_grouped_v2.json`
+    - 额外收紧：target family 错项必须只改一个数值参数；nearby-step family 只来自 ±2 step 的局部窗口
+    - `openai/gpt-5.4` 多模态评测：`11/20 = 0.55`
+  - 也就是说，这两个新约束在结构上更符合预期，但单次实测并没有把分数进一步压低到 `0.50` 以下；不要在公开文档里把它写成“必然更难”
 - 该 pipeline 会给每道题选择 3 张多视角图片，定位一个匹配 protocol 和相关 procedure steps，然后构造字段：
   - `image_paths`
   - `question`

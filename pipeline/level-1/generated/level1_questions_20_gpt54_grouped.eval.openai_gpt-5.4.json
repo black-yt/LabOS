@@ -1,0 +1,798 @@
+{
+  "summary": {
+    "questions_path": "pipeline/level-1/generated/level1_questions_20_gpt54_grouped.json",
+    "output_path": "pipeline/level-1/generated/level1_questions_20_gpt54_grouped.eval.openai_gpt-5.4.json",
+    "count": 20,
+    "model_requested": "openai/gpt-5.4",
+    "model_returned": [
+      "openai/gpt-5.4-20260305"
+    ],
+    "concurrency": 1,
+    "correct_count": 10,
+    "invalid_count": 0,
+    "answer_accuracy": 0.5,
+    "total_cost": 0.1526125,
+    "elapsed_s": 104.06
+  },
+  "results": [
+    {
+      "question_id": "level1_q0001",
+      "entry_id": "labutopia_heat_device",
+      "gold_answer": "G",
+      "reasoning_steps": [
+        "The pictured object is a small pinch clamp used to clamp flexible tubing, not to position tubing or perform syringe flushing.",
+        "The stem says this step is the next stage before the outlet tube is clamped 5 cm from the free end.",
+        "Among the options, only D/E/F describe using a pinch clamp on the outlet tube.",
+        "Because the protocol specifies 5 cm from the free end, the matching operation is clamp_tubing at 5 cm."
+      ],
+      "predicted_answer": "E",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a small pinch clamp used to clamp flexible tubing, not to position tubing or perform syringe flushing.\",\"The stem says this step is the next stage before the outlet tube is clamped 5 cm from the free end.\",\"Among the options, only D/E/F describe using a pinch clamp on the outlet tube.\",\"Because the protocol specifies 5 cm from the free end, the matching operation is clamp_tubing at 5 cm.\"],\"answer\":\"E\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2276,
+        "completion_tokens": 107,
+        "total_tokens": 2383,
+        "cost": 0.007295,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.007295,
+          "upstream_inference_prompt_cost": 0.00569,
+          "upstream_inference_completions_cost": 0.001605
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 5.164
+    },
+    {
+      "question_id": "level1_q0002",
+      "entry_id": "labutopia_drying_box_family",
+      "gold_answer": "B",
+      "reasoning_steps": [
+        "The pictured bench device is a vacuum drying oven, so the next step should be a heat-under-vacuum operation rather than electrode setup or CV scanning.",
+        "The stem says CV oxidation for 600 cycles is already completed and the GP has been washed, so options repeating electrochemical configuration or scans are not next.",
+        "In the MEO-GP protocol, the oxidized GP is then dried at 60 °C under vacuum for 12 h.",
+        "This matches the exact parameter set in option B and excludes 10 h or 65 °C variants."
+      ],
+      "predicted_answer": "B",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured bench device is a vacuum drying oven, so the next step should be a heat-under-vacuum operation rather than electrode setup or CV scanning.\",\"The stem says CV oxidation for 600 cycles is already completed and the GP has been washed, so options repeating electrochemical configuration or scans are not next.\",\"In the MEO-GP protocol, the oxidized GP is then dried at 60 °C under vacuum for 12 h.\",\"This matches the exact parameter set in option B and excludes 10 h or 65 °C variants.\"],\"answer\":\"B\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2255,
+        "completion_tokens": 127,
+        "total_tokens": 2382,
+        "cost": 0.0075425,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0075425,
+          "upstream_inference_prompt_cost": 0.0056375,
+          "upstream_inference_completions_cost": 0.001905
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 4.171
+    },
+    {
+      "question_id": "level1_q0003",
+      "entry_id": "autobio_vortex_mixer_genie_2",
+      "gold_answer": "F",
+      "reasoning_steps": [
+        "The pictured bench device is a vortex mixer, so the next step should use shaking rather than rotary mixing or incubation binding.",
+        "The stem says binding and washes are already complete for Ni-NTA resin loaded from pooled eluate with 10 mM imidazole, so the next operation is the first imidazole elution.",
+        "For His-tag Ni-NTA elution, the matching protocol choice uses T150 with 200 mM imidazole, 120 uL, at 4°C.",
+        "Among the options, only F gives a full first elution operation with shake mixing at 1100 rpm for 10 min; A/B are incomplete variants and others are wrong material/additive/stage."
+      ],
+      "predicted_answer": "F",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured bench device is a vortex mixer, so the next step should use shaking rather than rotary mixing or incubation binding.\",\"The stem says binding and washes are already complete for Ni-NTA resin loaded from pooled eluate with 10 mM imidazole, so the next operation is the first imidazole elution.\",\"For His-tag Ni-NTA elution, the matching protocol choice uses T150 with 200 mM imidazole, 120 uL, at 4°C.\",\"Among the options, only F gives a full first elution operation with shake mixing at 1100 rpm for 10 min; A/B are incomplete variants and others are wrong material/additive/stage.\"],\"answer\":\"F\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2452,
+        "completion_tokens": 158,
+        "total_tokens": 2610,
+        "cost": 0.0085,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0085,
+          "upstream_inference_prompt_cost": 0.00613,
+          "upstream_inference_completions_cost": 0.00237
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 3.167
+    },
+    {
+      "question_id": "level1_q0004",
+      "entry_id": "autobio_thermal_mixer_eppendorf_c",
+      "gold_answer": "G",
+      "reasoning_steps": [
+        "The stem says the magnetic wash/removal and 200 µL cDNA mix addition have already been completed.",
+        "The pictured bench device is the incubating/shaking module used for reverse transcription, not a magnet or pipetting step.",
+        "Protocol specifies the immediate next step as 37°C with shaking at 1,200 rpm for 20 min.",
+        "Options with magnet use or Exonuclease I addition are later or already finished, and the 1000 rpm/30 min variants do not match."
+      ],
+      "predicted_answer": "G",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The stem says the magnetic wash/removal and 200 µL cDNA mix addition have already been completed.\",\"The pictured bench device is the incubating/shaking module used for reverse transcription, not a magnet or pipetting step.\",\"Protocol specifies the immediate next step as 37°C with shaking at 1,200 rpm for 20 min.\",\"Options with magnet use or Exonuclease I addition are later or already finished, and the 1000 rpm/30 min variants do not match.\"],\"answer\":\"G\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2272,
+        "completion_tokens": 117,
+        "total_tokens": 2389,
+        "cost": 0.007435,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.007435,
+          "upstream_inference_prompt_cost": 0.00568,
+          "upstream_inference_completions_cost": 0.001755
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 3.406
+    },
+    {
+      "question_id": "level1_q0005",
+      "entry_id": "autobio_thermal_cycler_c1000",
+      "gold_answer": "J",
+      "reasoning_steps": [
+        "The pictured bench device is a thermocycler/heat block used for incubation, not for mixing or purification.",
+        "The stem says ligation reagents were already added, mixed at least 10 times, and quick-spun, so the next step is the ligation incubation.",
+        "NEBNext Ultra II DNA ligation after adding Ligation Master Mix, Enhancer, and adapter is incubated at 20°C for 15 minutes.",
+        "The thermocycler lid is typically set heated/on for this incubation step in the protocol-style options given."
+      ],
+      "predicted_answer": "B",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured bench device is a thermocycler/heat block used for incubation, not for mixing or purification.\",\"The stem says ligation reagents were already added, mixed at least 10 times, and quick-spun, so the next step is the ligation incubation.\",\"NEBNext Ultra II DNA ligation after adding Ligation Master Mix, Enhancer, and adapter is incubated at 20°C for 15 minutes.\",\"The thermocycler lid is typically set heated/on for this incubation step in the protocol-style options given.\"],\"answer\":\"B\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2202,
+        "completion_tokens": 127,
+        "total_tokens": 2329,
+        "cost": 0.00741,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00741,
+          "upstream_inference_prompt_cost": 0.005505,
+          "upstream_inference_completions_cost": 0.001905
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 3.906
+    },
+    {
+      "question_id": "level1_q0006",
+      "entry_id": "labutopia_muffle_furnace",
+      "gold_answer": "C",
+      "reasoning_steps": [
+        "The pictured object is a box furnace/oven, not a sampler inlet or storage bag.",
+        "The stem says filters are already individually wrapped in aluminum foil and asks for the next step before storage in self-sealing bags.",
+        "That implies the pre-baking/heating step for quartz filters must happen now.",
+        "Among the heating options, the protocol match for Tissuquartz filters is 500°C for 5 hours while individually wrapped in aluminum foil."
+      ],
+      "predicted_answer": "C",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a box furnace/oven, not a sampler inlet or storage bag.\", \"The stem says filters are already individually wrapped in aluminum foil and asks for the next step before storage in self-sealing bags.\", \"That implies the pre-baking/heating step for quartz filters must happen now.\", \"Among the heating options, the protocol match for Tissuquartz filters is 500°C for 5 hours while individually wrapped in aluminum foil.\"],\"answer\":\"C\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2236,
+        "completion_tokens": 108,
+        "total_tokens": 2344,
+        "cost": 0.00721,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00721,
+          "upstream_inference_prompt_cost": 0.00559,
+          "upstream_inference_completions_cost": 0.00162
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 3.556
+    },
+    {
+      "question_id": "level1_q0007",
+      "entry_id": "autobio_pipette_rack_tri",
+      "gold_answer": "H",
+      "reasoning_steps": [
+        "The pictured bench object is a single triangular stand/rack used to hold a fragile glass tool upright between steps.",
+        "The stem says viral solution has already been placed on Parafilm and the next later step is advancing 5.8 mm, so the immediate stage is just before loading the microinjection pipette from the Parafilm droplet.",
+        "Only one microinjection glass piece is implied, not multiple tools or patch-clamp glass.",
+        "The option matching a single microinjection glass piece parked before loading 50-100 nL from Parafilm is H."
+      ],
+      "predicted_answer": "H",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured bench object is a single triangular stand/rack used to hold a fragile glass tool upright between steps.\",\"The stem says viral solution has already been placed on Parafilm and the next later step is advancing 5.8 mm, so the immediate stage is just before loading the microinjection pipette from the Parafilm droplet.\",\"Only one microinjection glass piece is implied, not multiple tools or patch-clamp glass.\",\"The option matching a single microinjection glass piece parked before loading 50-100 nL from Parafilm is H.\"],\"answer\":\"H\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2308,
+        "completion_tokens": 132,
+        "total_tokens": 2440,
+        "cost": 0.00775,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00775,
+          "upstream_inference_prompt_cost": 0.00577,
+          "upstream_inference_completions_cost": 0.00198
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 3.942
+    },
+    {
+      "question_id": "level1_q0008",
+      "entry_id": "autobio_pipette",
+      "gold_answer": "A",
+      "reasoning_steps": [
+        "The pictured object is a handheld micropipette, used to manipulate small liquid volumes rather than run the capillary puller itself.",
+        "The stem says you are using it during preparation of the glass capillary after the capillary has already been prepared for viral injections, which matches loading virus into the capillary from a small drop.",
+        "Options A-C describe puller parameter setup/loading, but those are machine settings and not an operation done with this pipette.",
+        "At the capillary loading stage for AAV on parafilm, the protocol uses a very small aspirated volume; among the choices, 1 µL best matches this exact step."
+      ],
+      "predicted_answer": "D",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a handheld micropipette, used to manipulate small liquid volumes rather than run the capillary puller itself.\",\"The stem says you are using it during preparation of the glass capillary after the capillary has already been prepared for viral injections, which matches loading virus into the capillary from a small drop.\",\"Options A-C describe puller parameter setup/loading, but those are machine settings and not an operation done with this pipette.\",\"At the capillary loading stage for AAV on parafilm, the protocol uses a very small aspirated volume; among the choices, 1 µL best matches this exact step.\"],\"answer\":\"D\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2417,
+        "completion_tokens": 144,
+        "total_tokens": 2561,
+        "cost": 0.0082025,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0082025,
+          "upstream_inference_prompt_cost": 0.0060425,
+          "upstream_inference_completions_cost": 0.00216
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 5.234
+    },
+    {
+      "question_id": "level1_q0009",
+      "entry_id": "autobio_tip_box_24slot",
+      "gold_answer": "A",
+      "reasoning_steps": [
+        "The pictured object is used as part of a humidified chamber setup for antibody incubation on slides, not for PBS washes in a Coplin jar.",
+        "The stem says permeabilization and blocking are already complete, so the next IF step is primary antibody incubation.",
+        "After blocking, standard sequence is primary antibody before any wash or secondary antibody step.",
+        "Among the primary-antibody choices, the protocol-matching condition is dilution 1:50 in 0.5% BSA + 2% goat serum + 1x PBS, overnight at 4°C in a humidified chamber."
+      ],
+      "predicted_answer": "A",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is used as part of a humidified chamber setup for antibody incubation on slides, not for PBS washes in a Coplin jar.\",\"The stem says permeabilization and blocking are already complete, so the next IF step is primary antibody incubation.\",\"After blocking, standard sequence is primary antibody before any wash or secondary antibody step.\",\"Among the primary-antibody choices, the protocol-matching condition is dilution 1:50 in 0.5% BSA + 2% goat serum + 1x PBS, overnight at 4°C in a humidified chamber.\"],\"answer\":\"A\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2439,
+        "completion_tokens": 133,
+        "total_tokens": 2572,
+        "cost": 0.0080925,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0080925,
+          "upstream_inference_prompt_cost": 0.0060975,
+          "upstream_inference_completions_cost": 0.001995
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 6.688
+    },
+    {
+      "question_id": "level1_q0010",
+      "entry_id": "autobio_tip_200ul",
+      "gold_answer": "J",
+      "reasoning_steps": [
+        "The pictured item is a single straight, tapered tube tip with a wider cylindrical top, not a curved piece and not an already assembled soft-tubing set.",
+        "The stem says this exact object was already cut and inserted into the side holes of the PDMS slab as gas inlets, so the needed operation for this item is the insertion step.",
+        "Because gas inlets are on the side holes and two are used, the matching option must specify side_holes, straight geometry, count=2.",
+        "Assembly options with soft tubing and curved geometry do not match the shown standalone rigid tip."
+      ],
+      "predicted_answer": "F",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured item is a single straight, tapered tube tip with a wider cylindrical top, not a curved piece and not an already assembled soft-tubing set.\",\"The stem says this exact object was already cut and inserted into the side holes of the PDMS slab as gas inlets, so the needed operation for this item is the insertion step.\",\"Because gas inlets are on the side holes and two are used, the matching option must specify side_holes, straight geometry, count=2.\",\"Assembly options with soft tubing and curved geometry do not match the shown standalone rigid tip.\"],\"answer\":\"F\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2242,
+        "completion_tokens": 133,
+        "total_tokens": 2375,
+        "cost": 0.0076,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0076,
+          "upstream_inference_prompt_cost": 0.005605,
+          "upstream_inference_completions_cost": 0.001995
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 2.497
+    },
+    {
+      "question_id": "level1_q0011",
+      "entry_id": "labutopia_glass_rod",
+      "gold_answer": "J",
+      "reasoning_steps": [
+        "The pictured object is a simple straight stirring rod/spatula-like tool used for manual agitation, not for rinsing or adding LiBr.",
+        "The stem explicitly says the cocoon pieces are already in the boiling sodium carbonate solution and this stage must continue for exactly 20 min.",
+        "It further specifies using the tool occasionally to promote dispersion by poking rather than whirling.",
+        "Therefore the correct operation is occasional manual stirring/poking for 20 min."
+      ],
+      "predicted_answer": "A",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a simple straight stirring rod/spatula-like tool used for manual agitation, not for rinsing or adding LiBr.\",\"The stem explicitly says the cocoon pieces are already in the boiling sodium carbonate solution and this stage must continue for exactly 20 min.\",\"It further specifies using the tool occasionally to promote dispersion by poking rather than whirling.\",\"Therefore the correct operation is occasional manual stirring/poking for 20 min.\"],\"answer\":\"A\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2271,
+        "completion_tokens": 105,
+        "total_tokens": 2376,
+        "cost": 0.0072525,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0072525,
+          "upstream_inference_prompt_cost": 0.0056775,
+          "upstream_inference_completions_cost": 0.001575
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 3.93
+    },
+    {
+      "question_id": "level1_q0012",
+      "entry_id": "labutopia_test_tube_rack",
+      "gold_answer": "F",
+      "reasoning_steps": [
+        "The pictured object is a bench tube rack holding conical centrifuge tubes as a passive holder, not a reagent or wash step itself.",
+        "The stem says the biotin reagent has already been prepared, so dissolve_biotin options are completed and not the next step.",
+        "It also states the culture was assessed so that 4 OD600-mL of cells can be handled next, which matches transferring that amount of culture before later PBS/PEG washes.",
+        "Among transfer options, the correct amount is 4 OD600-mL and the appropriate tube for the subsequent centrifuge/wash workflow is a sterile SS34 centrifuge tube."
+      ],
+      "predicted_answer": "C",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a bench tube rack holding conical centrifuge tubes as a passive holder, not a reagent or wash step itself.\",\"The stem says the biotin reagent has already been prepared, so dissolve_biotin options are completed and not the next step.\",\"It also states the culture was assessed so that 4 OD600-mL of cells can be handled next, which matches transferring that amount of culture before later PBS/PEG washes.\",\"Among transfer options, the correct amount is 4 OD600-mL and the appropriate tube for the subsequent centrifuge/wash workflow is a sterile SS34 centrifuge tube.\"],\"answer\":\"C\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2299,
+        "completion_tokens": 141,
+        "total_tokens": 2440,
+        "cost": 0.0078625,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0078625,
+          "upstream_inference_prompt_cost": 0.0057475,
+          "upstream_inference_completions_cost": 0.002115
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 7.606
+    },
+    {
+      "question_id": "level1_q0013",
+      "entry_id": "autobio_centrifuge_10slot_rack",
+      "gold_answer": "E",
+      "reasoning_steps": [
+        "The pictured item is a microcentrifuge tube rack/holder, shown empty in top/front/right views.",
+        "The stem says this is still the liquid-nitrogen tissue-processing stage, so room-temperature incubation and bead transfer steps are not the next action.",
+        "During this cold-processing stage, both microcentrifuge tubes and the rack should be pre-chilled before receiving frozen material.",
+        "The protocol branch later mentions other timings, but here the standard next step is a brief 3-minute dry-ice pre-chill rather than 1 minute."
+      ],
+      "predicted_answer": "B",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured item is a microcentrifuge tube rack/holder, shown empty in top/front/right views.\",\"The stem says this is still the liquid-nitrogen tissue-processing stage, so room-temperature incubation and bead transfer steps are not the next action.\",\"During this cold-processing stage, both microcentrifuge tubes and the rack should be pre-chilled before receiving frozen material.\",\"The protocol branch later mentions other timings, but here the standard next step is a brief 3-minute dry-ice pre-chill rather than 1 minute.\"],\"answer\":\"B\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2243,
+        "completion_tokens": 125,
+        "total_tokens": 2368,
+        "cost": 0.0074825,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0074825,
+          "upstream_inference_prompt_cost": 0.0056075,
+          "upstream_inference_completions_cost": 0.001875
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 4.255
+    },
+    {
+      "question_id": "level1_q0014",
+      "entry_id": "autobio_pcr_plate_96well",
+      "gold_answer": "D",
+      "reasoning_steps": [
+        "The pictured object is a 96-well qPCR plate, matching the mentioned 8-by-12 grid and tip-box alignment for loading.",
+        "The stem says the 6-standard 4-fold dilution is already completed, so the next use is not serial dilution preparation.",
+        "It also states master mix is placed into each position before any template is added, so the immediate next operation with this plate is dispensing master mix.",
+        "For 10 µL qPCR reactions, standard setup is 9 µL master mix plus 1 µL template, leaving template transfer for the following step."
+      ],
+      "predicted_answer": "D",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a 96-well qPCR plate, matching the mentioned 8-by-12 grid and tip-box alignment for loading.\",\"The stem says the 6-standard 4-fold dilution is already completed, so the next use is not serial dilution preparation.\",\"It also states master mix is placed into each position before any template is added, so the immediate next operation with this plate is dispensing master mix.\",\"For 10 µL qPCR reactions, standard setup is 9 µL master mix plus 1 µL template, leaving template transfer for the following step.\"],\"answer\":\"D\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2296,
+        "completion_tokens": 133,
+        "total_tokens": 2429,
+        "cost": 0.007735,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.007735,
+          "upstream_inference_prompt_cost": 0.00574,
+          "upstream_inference_completions_cost": 0.001995
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 5.067
+    },
+    {
+      "question_id": "level1_q0015",
+      "entry_id": "autobio_cryovial_1_8ml",
+      "gold_answer": "C",
+      "reasoning_steps": [
+        "The pictured object is a sterile 2.0 mL screw-cap cryovial, matching the containers just filled with 0.5 mL CPA-treated cells.",
+        "The stem asks for the next step before moving to the pre-treated cooling system, so this is the equilibration period for the filled cryovials rather than transfer or thawing.",
+        "After adding CPA to reach 10% MeOH, standard protocol is to let the sealed vials equilibrate at room temperature for 15 minutes.",
+        "Among the options, the exact equilibration step matching this is 21°C for 15 min with parafilm sealing."
+      ],
+      "predicted_answer": "C",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a sterile 2.0 mL screw-cap cryovial, matching the containers just filled with 0.5 mL CPA-treated cells.\",\"The stem asks for the next step before moving to the pre-treated cooling system, so this is the equilibration period for the filled cryovials rather than transfer or thawing.\",\"After adding CPA to reach 10% MeOH, standard protocol is to let the sealed vials equilibrate at room temperature for 15 minutes.\",\"Among the options, the exact equilibration step matching this is 21°C for 15 min with parafilm sealing.\"],\"answer\":\"C\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2274,
+        "completion_tokens": 141,
+        "total_tokens": 2415,
+        "cost": 0.0078,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0078,
+          "upstream_inference_prompt_cost": 0.005685,
+          "upstream_inference_completions_cost": 0.002115
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 4.37
+    },
+    {
+      "question_id": "level1_q0016",
+      "entry_id": "autobio_centrifuge_10ml",
+      "gold_answer": "E",
+      "reasoning_steps": [
+        "The pictured object is a microcentrifuge tube, which is the standard vessel for collected RIPA lysate.",
+        "After RIPA lysis and transfer, the usual next step is to clarify the lysate by centrifugation, not further rocking or loading-buffer prep.",
+        "The protocol context for whole-cell lysate cleanup matches 12,000×g for 10 min at room temperature.",
+        "Among the options, only B matches that centrifugation condition exactly."
+      ],
+      "predicted_answer": "B",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a microcentrifuge tube, which is the standard vessel for collected RIPA lysate.\",\"After RIPA lysis and transfer, the usual next step is to clarify the lysate by centrifugation, not further rocking or loading-buffer prep.\",\"The protocol context for whole-cell lysate cleanup matches 12,000×g for 10 min at room temperature.\",\"Among the options, only B matches that centrifugation condition exactly.\"],\"answer\":\"B\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2302,
+        "completion_tokens": 109,
+        "total_tokens": 2411,
+        "cost": 0.00739,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.00739,
+          "upstream_inference_prompt_cost": 0.005755,
+          "upstream_inference_completions_cost": 0.001635
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 9.149
+    },
+    {
+      "question_id": "level1_q0017",
+      "entry_id": "autobio_centrifuge_15ml_screw",
+      "gold_answer": "D",
+      "reasoning_steps": [
+        "The pictured item is a labeled collection tube, not a tool for cleaning.",
+        "The stem says 5–10 mL tissue wash buffer has already been aliquoted into this tube and kept on ice, so buffer aliquoting options are already done.",
+        "After cutting off the ear pinna, the next step is to place the intact ear pinna into the corresponding pre-chilled tube.",
+        "'Kept it on ice' matches hold_temp_c=0 better than 4°C wording in the options."
+      ],
+      "predicted_answer": "D",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured item is a labeled collection tube, not a tool for cleaning.\",\"The stem says 5–10 mL tissue wash buffer has already been aliquoted into this tube and kept on ice, so buffer aliquoting options are already done.\",\"After cutting off the ear pinna, the next step is to place the intact ear pinna into the corresponding pre-chilled tube.\",\"'Kept it on ice' matches hold_temp_c=0 better than 4°C wording in the options.\"],\"answer\":\"D\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2199,
+        "completion_tokens": 116,
+        "total_tokens": 2315,
+        "cost": 0.0072375,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0072375,
+          "upstream_inference_prompt_cost": 0.0054975,
+          "upstream_inference_completions_cost": 0.00174
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 5.756
+    },
+    {
+      "question_id": "level1_q0018",
+      "entry_id": "labutopia_beaker_family",
+      "gold_answer": "B",
+      "reasoning_steps": [
+        "The pictured object is a beaker on a hot plate with stir bar, matching the vessel in the stem.",
+        "The stem says the solution is still cloudy at 60°C while pH is being tracked toward the critical point, so the next action should be another small NaOH addition to the same beaker.",
+        "At this stage protocols use incremental base additions rather than waiting/resting, and the smallest listed increment best matches cautious approach near the critical pH.",
+        "The record-measurement and bench-top rest steps occur later or are already ongoing, so the next discrete step is adding 0.5 mL of 0.1 M NaOH."
+      ],
+      "predicted_answer": "A",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a beaker on a hot plate with stir bar, matching the vessel in the stem.\",\"The stem says the solution is still cloudy at 60°C while pH is being tracked toward the critical point, so the next action should be another small NaOH addition to the same beaker.\",\"At this stage protocols use incremental base additions rather than waiting/resting, and the smallest listed increment best matches cautious approach near the critical pH.\",\"The record-measurement and bench-top rest steps occur later or are already ongoing, so the next discrete step is adding 0.5 mL of 0.1 M NaOH.\"],\"answer\":\"A\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2273,
+        "completion_tokens": 147,
+        "total_tokens": 2420,
+        "cost": 0.0078875,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0078875,
+          "upstream_inference_prompt_cost": 0.0056825,
+          "upstream_inference_completions_cost": 0.002205
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 7.562
+    },
+    {
+      "question_id": "level1_q0019",
+      "entry_id": "labutopia_conical_bottle_family",
+      "gold_answer": "I",
+      "reasoning_steps": [
+        "The pictured item is a vented mouse irradiation container with a cap, matching the stem that the mouse is already placed inside and the cap is loosely closed.",
+        "The stem says irradiation time has already been entered, so the next step is to load the container into the irradiator and start the cycle rather than only position it or remove it.",
+        "For irradiation, the container is used with the metal holder, and the cap remains loosely closed for ventilation as specified."
+      ],
+      "predicted_answer": "I",
+      "correct": true,
+      "response_content": "{\"reasoning_steps\":[\"The pictured item is a vented mouse irradiation container with a cap, matching the stem that the mouse is already placed inside and the cap is loosely closed.\",\"The stem says irradiation time has already been entered, so the next step is to load the container into the irradiator and start the cycle rather than only position it or remove it.\",\"For irradiation, the container is used with the metal holder, and the cap remains loosely closed for ventilation as specified.\"],\"answer\":\"I\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2228,
+        "completion_tokens": 107,
+        "total_tokens": 2335,
+        "cost": 0.007175,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.007175,
+          "upstream_inference_prompt_cost": 0.00557,
+          "upstream_inference_completions_cost": 0.001605
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 4.26
+    },
+    {
+      "question_id": "level1_q0020",
+      "entry_id": "autobio_centrifuge_50ml",
+      "gold_answer": "J",
+      "reasoning_steps": [
+        "The pictured object is a conical centrifuge tube holding the harvested HEK293T cell suspension.",
+        "The stem says the next step is before resuspending the pellet in warm complete DMEM and counting, so the immediate operation must be a spin to form that pellet.",
+        "For HEK293T harvest after trypsin neutralization, the standard collection step is centrifugation at 300 × g at room temperature.",
+        "Among the centrifugation options, 300 × g for 4 min at 22°C matches this protocol step best."
+      ],
+      "predicted_answer": "A",
+      "correct": false,
+      "response_content": "{\"reasoning_steps\":[\"The pictured object is a conical centrifuge tube holding the harvested HEK293T cell suspension.\",\"The stem says the next step is before resuspending the pellet in warm complete DMEM and counting, so the immediate operation must be a spin to form that pellet.\",\"For HEK293T harvest after trypsin neutralization, the standard collection step is centrifugation at 300 × g at room temperature.\",\"Among the centrifugation options, 300 × g for 4 min at 22°C matches this protocol step best.\"],\"answer\":\"A\"}",
+      "model_returned": "openai/gpt-5.4-20260305",
+      "usage": {
+        "prompt_tokens": 2345,
+        "completion_tokens": 126,
+        "total_tokens": 2471,
+        "cost": 0.0077525,
+        "is_byok": false,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "cache_write_tokens": 0,
+          "audio_tokens": 0,
+          "video_tokens": 0
+        },
+        "cost_details": {
+          "upstream_inference_cost": 0.0077525,
+          "upstream_inference_prompt_cost": 0.0058625,
+          "upstream_inference_completions_cost": 0.00189
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 0,
+          "image_tokens": 0,
+          "audio_tokens": 0
+        }
+      },
+      "latency_s": 10.082
+    }
+  ]
+}

@@ -13,6 +13,7 @@ from __future__ import annotations
 import argparse
 import ast
 import getpass
+import importlib.util
 import json
 import os
 import random
@@ -35,6 +36,20 @@ DEFAULT_PROTOCOL_MATCHES = REPO_ROOT / "data/benchmark_inventory/protocol_min_v1
 DEFAULT_DEMO_TEMPLATE = REPO_ROOT / "data/benchmark_inventory/level-1-demo.md"
 DEFAULT_OUTPUT = REPO_ROOT / "pipeline/level-1/generated/level1_questions_20.json"
 OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions"
+_EVALUATOR_MODULE: Any | None = None
+NONE_OF_ABOVE_CALL = "none_of_the_above()"
+GROUPED_OPTION_TRIOS = (("A", "B", "C"), ("D", "E", "F"), ("G", "H", "I"))
+QUESTION_NUMBER_RE = re.compile(r"\b\d+(?:\.\d+)?(?:[–-]\d+(?:\.\d+)?)?\b")
+QUESTION_SEQUENCE_CUES = (
+    "already",
+    "just",
+    "after",
+    "before",
+    "previous",
+    "prior",
+    "then",
+    "next",
+)
 
 
 def parse_dotenv_value(raw_value: str) -> str:
@@ -141,6 +156,13 @@ DISALLOWED_ENTRY_IDS = {
     # This multi-well rack repeatedly invites unsupported magnetic-rack or
     # sealing distractors and is a weak Level 1 benchmark candidate.
     "autobio_centrifuge_plate_60well",
+    # GPT-5.4 repeatedly leaks the asset family for active centrifuge devices in
+    # the question stem even after targeted repair prompts. Excluding the
+    # unstable device entries keeps the batch generator reliable without
+    # removing the passive tube-style centrifuge consumables.
+    "autobio_centrifuge_5430",
+    "autobio_centrifuge_5910_ri",
+    "autobio_centrifuge_tgear_mini",
 }
 SPECIALIZED_REVEAL_TERMS = {
     "beaker",
@@ -163,35 +185,37 @@ ENGLISH_DEMO_TEMPLATE = """
 Example structure:
 
 Question:
-You are preparing a vector digestion reaction for a plant transformation protocol.
-The reaction tube already contains the plasmid backbone, buffer, restriction
-enzyme, and nuclease-free water, and the mixture has been gently mixed. The
-asset shown in the three views is the equipment that may be used next. Based on
-the asset function, the current reaction state, and the protocol temperature and
-duration requirements, choose the most appropriate next operation.
+You have already mixed the ligation reaction, quick-spun the tube, and kept the
+sample on ice for 2 min. The pictured bench device is now used for the next
+stage before transformation. According to the protocol, the reaction should be
+held at 16 C for 30 min and then moved immediately to ice. Which operation is
+the best match for this exact stage?
 
 Options:
-A. centrifuge_sample(speed_xg=14000, duration_min=15, temperature_c=4)
-B. incubate_in_thermal_cycler(temperature_c=37, duration_min=30)
-C. vortex_sample(speed="maximum", duration_min=5)
-D. seal_pcr_plate(seal_type="clear_adhesive_film")
-E. sterilize_in_muffle_furnace(temperature_c=500, duration_h=5)
-F. pipette_master_mix(destination="96_well_pcr_plate", volume_ul=20)
-G. place_tube_on_magnetic_rack(duration_min=3)
-H. incubate_on_roller(speed_rpm=20, duration_h=1, temperature_c=25)
-I. wash_pellet(buffer="cold_70_percent_ethanol", volume_ul=400)
-J. sonicate_coverslips(solvent="95_percent_ethanol", duration_min=15)
+A. incubate_reaction(temperature_c=16, duration_min=20, post_step='move_to_ice')
+B. incubate_reaction(temperature_c=16, duration_min=30, post_step='move_to_ice')
+C. incubate_reaction(temperature_c=18, duration_min=30, post_step='move_to_ice')
+D. centrifuge_sample(speed_xg=12000, duration_min=1, temperature_c=4)
+E. centrifuge_sample(speed_xg=12000, duration_min=2, temperature_c=4)
+F. centrifuge_sample(speed_xg=14000, duration_min=2, temperature_c=4)
+G. add_competent_cells(volume_ul=50, temperature_c=0)
+H. add_competent_cells(volume_ul=25, temperature_c=0)
+I. add_competent_cells(volume_ul=50, temperature_c=4)
+J. none_of_the_above()
 
 Answer: B
 
 Reasoning steps:
-1. The three views show a PCR thermal cycler, which is used for controlled
-temperature incubation or cycling of reactions in PCR tubes or plates.
-2. The current task is not clarification, vortex mixing, plate sealing, or
-high-temperature sterilization; it is an enzyme digestion reaction.
-3. The protocol specifies incubation at 37 C for 30 min in a thermal cycler.
-4. Therefore, the operation that matches both the asset and protocol evidence is
-incubate_in_thermal_cycler(temperature_c=37, duration_min=30).
+1. The stem already specifies the immediately preceding actions and two concrete
+protocol numbers, so the decision is about the exact next operation rather than
+a broad workflow category.
+2. A-C form one action family with only subtle parameter changes, and only B
+matches the required 16 C for 30 min before returning the sample to ice.
+3. D-F are a nearby centrifugation family that could happen elsewhere in the
+workflow but not at this stage.
+4. G-I are a later transformation-loading family, again plausible in the same
+protocol but not the next action here.
+5. Because one of A-I exactly matches the target step, J is incorrect.
 """.strip()
 
 
@@ -223,6 +247,7 @@ class QuestionJob:
     entry: InventoryEntry
     protocol: ProtocolCandidate
     selected_views: tuple[tuple[str, str], ...]
+    target_answer_letter: str = "A"
 
 
 def entry_difficulty_rank(entry: InventoryEntry) -> int:
@@ -238,6 +263,20 @@ def entry_difficulty_rank(entry: InventoryEntry) -> int:
 def load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
+
+
+def load_level1_evaluator_module() -> Any:
+    global _EVALUATOR_MODULE
+    if _EVALUATOR_MODULE is not None:
+        return _EVALUATOR_MODULE
+    evaluator_path = REPO_ROOT / "pipeline/level-1/evaluate_level1_accuracy.py"
+    spec = importlib.util.spec_from_file_location("labos_level1_evaluator", evaluator_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError(f"Unable to load evaluator module from {evaluator_path}")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    _EVALUATOR_MODULE = module
+    return module
 
 
 def iter_jsonl(path: Path):
@@ -371,7 +410,7 @@ def extract_nearby_steps(
     relevant_steps: tuple[dict[str, Any], ...],
     *,
     max_steps: int,
-    distance_window: int = 3,
+    distance_window: int = 2,
 ) -> tuple[dict[str, Any], ...]:
     if not relevant_steps:
         return ()
@@ -401,7 +440,7 @@ def extract_nearby_steps(
         normalized_stage = normalize_key(stage)
         min_distance = min(abs(step_idx - idx) for idx in relevant_indices)
         same_stage = normalized_stage in relevant_stages if normalized_stage else False
-        if min_distance > distance_window and not same_stage:
+        if min_distance > distance_window:
             continue
 
         scored.append(
@@ -414,7 +453,7 @@ def extract_nearby_steps(
             }
         )
 
-    scored.sort(key=lambda item: (not item["same_stage"], item["distance"], item["idx"]))
+    scored.sort(key=lambda item: (item["distance"], not item["same_stage"], item["idx"]))
     selected = scored[:max_steps]
     selected.sort(key=lambda item: int(item["idx"]))
     return tuple(selected)
@@ -496,36 +535,49 @@ def build_jobs(
         for entry in entries_by_id.values()
         if protocols_by_entry.get(entry.entry_id)
     ]
-    eligible_entries.sort(key=lambda item: (entry_difficulty_rank(item), rng.random(), item.entry_id))
+    primary_entries = [
+        entry for entry in eligible_entries if entry.match_group not in PASSIVE_CONTAINER_GROUPS
+    ]
+    fallback_entries = [
+        entry for entry in eligible_entries if entry.match_group in PASSIVE_CONTAINER_GROUPS
+    ]
+    primary_entries.sort(key=lambda item: (entry_difficulty_rank(item), rng.random(), item.entry_id))
+    fallback_entries.sort(key=lambda item: (entry_difficulty_rank(item), rng.random(), item.entry_id))
+    ordered_entry_groups = [primary_entries]
+    if fallback_entries:
+        ordered_entry_groups.append(fallback_entries)
 
     jobs: list[QuestionJob] = []
     used_pairs: set[tuple[str, str]] = set()
     used_protocol_ids: set[str] = set()
     while len(jobs) < count:
         made_progress = False
-        for entry in eligible_entries:
-            available_protocols = [
-                protocol
-                for protocol in protocols_by_entry[entry.entry_id]
-                if (entry.entry_id, protocol.protocol_id) not in used_pairs
-            ]
-            if not available_protocols:
-                continue
-            unseen_protocols = [
-                protocol for protocol in available_protocols if protocol.protocol_id not in used_protocol_ids
-            ]
-            candidate_pool = unseen_protocols or available_protocols
-            protocol = rng.choice(candidate_pool[: min(12, len(candidate_pool))])
-            used_pairs.add((entry.entry_id, protocol.protocol_id))
-            used_protocol_ids.add(protocol.protocol_id)
-            jobs.append(
-                QuestionJob(
-                    entry=entry,
-                    protocol=protocol,
-                    selected_views=select_three_views(entry, rng),
+        for entries in ordered_entry_groups:
+            for entry in entries:
+                available_protocols = [
+                    protocol
+                    for protocol in protocols_by_entry[entry.entry_id]
+                    if (entry.entry_id, protocol.protocol_id) not in used_pairs
+                ]
+                if not available_protocols:
+                    continue
+                unseen_protocols = [
+                    protocol for protocol in available_protocols if protocol.protocol_id not in used_protocol_ids
+                ]
+                candidate_pool = unseen_protocols or available_protocols
+                protocol = rng.choice(candidate_pool[: min(12, len(candidate_pool))])
+                used_pairs.add((entry.entry_id, protocol.protocol_id))
+                used_protocol_ids.add(protocol.protocol_id)
+                jobs.append(
+                    QuestionJob(
+                        entry=entry,
+                        protocol=protocol,
+                        selected_views=select_three_views(entry, rng),
+                    )
                 )
-            )
-            made_progress = True
+                made_progress = True
+                if len(jobs) >= count:
+                    break
             if len(jobs) >= count:
                 break
         if not made_progress:
@@ -556,6 +608,27 @@ def option_letters(count: int) -> list[str]:
     if count < 2 or count > 10:
         raise ValueError("--option-count must be between 2 and 10")
     return [chr(ord("A") + idx) for idx in range(count)]
+
+
+def build_target_answer_letters(
+    count: int,
+    option_count: int,
+    seed: int,
+    *,
+    none_above_rate: float,
+) -> list[str]:
+    letters = option_letters(option_count)
+    rng = random.Random(seed + 97)
+    none_letter = letters[-1]
+    base_letters = letters[:-1]
+    none_count = 0
+    if none_above_rate > 0:
+        none_count = max(1, round(count * none_above_rate))
+        none_count = min(count, none_count)
+    assigned = [none_letter] * none_count
+    assigned.extend(base_letters[idx % len(base_letters)] for idx in range(count - none_count))
+    rng.shuffle(assigned)
+    return assigned
 
 
 def render_steps(steps: tuple[dict[str, Any], ...]) -> str:
@@ -615,12 +688,12 @@ def make_messages(job: QuestionJob, demo_template: str, option_count: int) -> li
     letters = option_letters(option_count)
     schema = {
         "question": (
-            "English question stem. Include experiment context, sample state, and the next-step decision. "
-            "Do not name the asset, brand, asset family, or aliases in the stem."
+            "English question stem. Include concrete protocol numbers, at least one or two prior actions already completed, "
+            "the current sample state, and the next-step decision. Do not name the asset, brand, asset family, or aliases in the stem."
         ),
-        "options": {letter: "Candidate operation, preferably a valid and concise Python function call." for letter in letters},
+        "options": {letter: "Candidate operation as a valid Python function call." for letter in letters},
         "reasoning_steps": ["3-5 English reasoning steps."],
-        "answer": letters[0],
+        "answer": job.target_answer_letter,
         "protocol_alignment": {
             "protocol_id": job.protocol.protocol_id,
             "title": job.protocol.title,
@@ -634,7 +707,7 @@ def make_messages(job: QuestionJob, demo_template: str, option_count: int) -> li
     )
     aliases = ", ".join(job.entry.aliases[:12]) if job.entry.aliases else "(none)"
     affordance_guardrails = build_affordance_guardrails(job.entry)
-    forbidden_stem_terms = ", ".join(stem_reveal_terms(job.entry)[:16]) or "(none)"
+    forbidden_stem_terms = forbidden_stem_terms_text(job.entry)
     template_section = f"\n\nUse this English example as the style and structure template:\n{demo_template}" if demo_template else ""
 
     system = (
@@ -654,35 +727,58 @@ Hard requirements:
 3. The correct option must be directly supported by the provided protocol steps.
    Preserve protocol parameters such as temperature, duration, speed, force, and
    volume when they matter.
-4. The question stem must NOT mention the asset's entry_name, brand, match_group,
+4. The question stem must include concrete protocol details: at least two numeric
+   values and at least two prior or current workflow actions that have already
+   happened before the decision point.
+5. The question stem must NOT mention the asset's entry_name, brand, match_group,
    aliases, or obvious type labels such as "thermal cycler", "pipette", "centrifuge",
    "tube rack", "graduated cylinder", "beaker", or "muffle furnace". Refer to it
    only indirectly, for example "the item shown in the three views" or "the pictured lab object".
-5. The question must require both visual asset understanding and protocol reasoning.
-   Avoid trivial stems where the answer is just "pour liquid into the obvious container"
-   unless a concrete protocol detail makes that choice genuinely discriminative.
-6. Do NOT give away the answer direction by describing the object as a "volumetric
+   Treat the forbidden stem terms list below as an exact banned vocabulary list for
+   the stem. Do not use any of those words even as a generic noun.
+6. The question must be hard because the protocol stage and parameter details are
+   specific. Visual alignment is still required, but it does not need to be the
+   only decisive signal.
+7. Do NOT give away the answer direction by describing the object as a "volumetric
    measuring tool", "passive storage function", "rotational function", "container
    capacity", "vessel dimensions", or similar functional hints in the question stem.
    Forbidden stem terms for this asset: {forbidden_stem_terms}
-7. Distractors must be realistic, protocol-adjacent, and syntactically valid Python
-   function calls. Prefer three classes of distractors:
-   - adjacent or nearby steps from the same workflow,
-   - same-workflow operations with wrong parameters,
-   - operations that fit the sample state but use the wrong asset or wrong stage.
-8. At least two options must stay within the same action family as the correct answer,
-   differing by key parameters, workflow stage, or asset assumptions. The goal is to
-   force fine-grained reasoning instead of category-level elimination.
-9. Do not use obviously irrelevant distractors such as autoclaving, parafilm sealing,
+8. Options A-I must follow a fixed blueprint:
+   - A-C are one action family.
+   - D-F are a second action family.
+   - G-I are a third action family.
+   - Within each 3-option family, use the same function name and the same keyword set;
+     only the keyword values may change.
+   - Across A-I, use exactly three distinct function names.
+9. The three action families must mix two error types:
+   - nearby-step families from immediately before or after the target step, ideally
+     within about two protocol steps of the target decision point,
+   - subtle parameter rewrites of the target or nearby steps.
+   Do not make the wrong options obviously irrelevant.
+10. If the answer is not J, exactly one of A-I must be the target step with the
+   correct parameters. The other two options in that same 3-option family must be
+   close parameter variants that are still wrong, and each wrong variant should
+   differ from the correct target by only one keyword value, preferably a small
+   numeric change such as one duration, one temperature, one volume, one speed,
+   one cycle count, or one measured distance. The other two 3-option families
+   must come from realistic nearby protocol actions.
+11. If the answer is J, J must be exactly {NONE_OF_ABOVE_CALL}, and every option in
+    A-I must be plausible but still wrong. In that case, include one 3-option family
+    that is very close to the target step but has subtle wrong numbers differing
+    by only one keyword value at a time, plus two 3-option nearby-step families
+    from the same local protocol window.
+12. Option J must always be exactly {NONE_OF_ABOVE_CALL}.
+13. Do not use obviously irrelevant distractors such as autoclaving, parafilm sealing,
    robotic manipulation, sonication, or furnace operations unless those ideas are
    explicitly supported by the provided protocol context.
-10. Respect the asset affordance guardrails below. Do not invent specialized functions
-   that the pictured asset cannot perform.
-11. Options must be exactly {", ".join(letters)}, and answer must be one of those single letters.
-12. reasoning_steps must contain 3-5 English strings explaining visual asset
-    recognition, sample/protocol state, relevant parameters, and why nearby but
-    incorrect operations are less appropriate.
-13. Output exactly one JSON object matching the schema below.
+14. Respect the asset affordance guardrails below. Do not invent specialized functions
+    that the pictured asset cannot perform.
+15. Options must be exactly {", ".join(letters)}. The correct option must be placed at
+    letter {job.target_answer_letter}, and the answer field must be exactly "{job.target_answer_letter}".
+16. reasoning_steps must contain 3-5 English strings explaining the completed prior
+    actions, the exact numeric protocol evidence, which 3-option family is the true
+    target family, and why the nearby-step families or subtle parameter variants are wrong.
+17. Output exactly one JSON object matching the schema below.
 
 Output schema example:
 {json.dumps(schema, ensure_ascii=False, indent=2)}
@@ -838,6 +934,10 @@ def stem_reveal_terms(entry: InventoryEntry) -> tuple[str, ...]:
     return tuple(sorted(phrases))
 
 
+def forbidden_stem_terms_text(entry: InventoryEntry) -> str:
+    return ", ".join(stem_reveal_terms(entry)[:16]) or "(none)"
+
+
 def build_context_text(job: QuestionJob) -> str:
     parts = [
         job.entry.purpose,
@@ -859,11 +959,75 @@ def validate_question_stem(question: str, entry: InventoryEntry) -> None:
     leaked_cues = [phrase for phrase in GENERIC_STEM_CUE_PHRASES if phrase and phrase in normalized_question]
     if leaked_cues:
         raise ValueError(f"question leaks functional hint: {', '.join(leaked_cues[:3])}")
+    if len(QUESTION_NUMBER_RE.findall(question)) < 2:
+        raise ValueError("question must include at least two concrete protocol numbers")
+    if not any(cue in normalized_question for cue in QUESTION_SEQUENCE_CUES):
+        raise ValueError("question must mention prior-step or sequencing context")
 
 
-def validate_option_text(option_text: str, job: QuestionJob) -> None:
+def option_keyword_signature(expr: str) -> tuple[str, ...]:
+    call = parse_python_call(expr)
+    return tuple(sorted((keyword.arg or "") for keyword in call.keywords))
+
+
+def option_keyword_node_map(expr: str) -> dict[str, ast.AST]:
+    call = parse_python_call(expr)
+    return {(keyword.arg or ""): keyword.value for keyword in call.keywords}
+
+
+def ast_node_signature(node: ast.AST) -> str:
+    return ast.dump(node, annotate_fields=False, include_attributes=False)
+
+
+def ast_node_contains_numeric_literal(node: ast.AST) -> bool:
+    return any(
+        isinstance(child, ast.Constant) and isinstance(child.value, (int, float))
+        for child in ast.walk(node)
+    )
+
+
+def validate_target_family_precision(value: dict[str, Any]) -> None:
+    answer_letter = value["answer"]
+    if answer_letter == "J":
+        return
+
+    target_trio = next(
+        trio for trio in GROUPED_OPTION_TRIOS if answer_letter in trio
+    )
+    options = value["options"]
+    answer_nodes = option_keyword_node_map(options[answer_letter])
+    for letter in target_trio:
+        if letter == answer_letter:
+            continue
+        candidate_nodes = option_keyword_node_map(options[letter])
+        changed_keys = [
+            key
+            for key in sorted(answer_nodes)
+            if ast_node_signature(answer_nodes[key]) != ast_node_signature(candidate_nodes[key])
+        ]
+        if len(changed_keys) != 1:
+            raise ValueError(
+                "target family variants must differ from the correct option by exactly one keyword value"
+            )
+        changed_key = changed_keys[0]
+        if not (
+            ast_node_contains_numeric_literal(answer_nodes[changed_key])
+            and ast_node_contains_numeric_literal(candidate_nodes[changed_key])
+        ):
+            raise ValueError(
+                "target family variants must differ through a numeric parameter change"
+            )
+
+
+def validate_option_text(option_letter: str, option_text: str, job: QuestionJob) -> None:
     call = parse_python_call(option_text)
     function_name = call.func.id
+    if option_letter == "J":
+        if option_text.strip() != NONE_OF_ABOVE_CALL:
+            raise ValueError(f"option J must be exactly {NONE_OF_ABOVE_CALL}")
+        return
+    if function_name == "none_of_the_above":
+        raise ValueError("only option J may use none_of_the_above()")
     normalized_option = normalize_key(option_text)
     context_text = build_context_text(job)
 
@@ -891,14 +1055,36 @@ def validate_difficulty_structure(value: dict[str, Any]) -> None:
     option_values = list(options.values())
     if len(set(option_values)) != len(option_values):
         raise ValueError("options contain duplicate candidate strings")
+    if options.get("J", "").strip() != NONE_OF_ABOVE_CALL:
+        raise ValueError(f"option J must be exactly {NONE_OF_ABOVE_CALL}")
+
+    trio_functions: list[str] = []
+    for trio in GROUPED_OPTION_TRIOS:
+        trio_values = [options[letter] for letter in trio]
+        trio_function_names = [option_function_name(text) for text in trio_values]
+        if len(set(trio_function_names)) != 1:
+            raise ValueError(f"options {trio[0]}-{trio[-1]} must share the same function name")
+        trio_keyword_signatures = [option_keyword_signature(text) for text in trio_values]
+        if len(set(trio_keyword_signatures)) != 1:
+            raise ValueError(f"options {trio[0]}-{trio[-1]} must share the same keyword set")
+        trio_functions.append(trio_function_names[0])
+
+    if len(set(trio_functions)) != len(trio_functions):
+        raise ValueError("A-I must contain exactly three distinct action families")
+
+    if answer_letter == "J":
+        return
+
+    if answer_letter not in {letter for trio in GROUPED_OPTION_TRIOS for letter in trio}:
+        raise ValueError("non-J answers must point to one of A-I")
 
     answer_function = option_function_name(options[answer_letter])
-    function_names = [option_function_name(text) for text in option_values]
-    same_function_count = function_names.count(answer_function)
-    if same_function_count < 2:
+    answer_family_count = trio_functions.count(answer_function)
+    if answer_family_count != 1:
         raise ValueError(
-            f"question lacks same-function competition for answer family '{answer_function}'"
+            f"answer family '{answer_function}' must occupy exactly one 3-option trio"
         )
+    validate_target_family_precision(value)
 
 
 def validate_generated_question(value: dict[str, Any], option_count: int, job: QuestionJob) -> None:
@@ -922,12 +1108,16 @@ def validate_generated_question(value: dict[str, Any], option_count: int, job: Q
         if not isinstance(value["options"][letter], str) or not value["options"][letter].strip():
             raise ValueError(f"option {letter} must be a non-empty string")
         assert_english_text(value["options"][letter], f"options.{letter}")
-        validate_option_text(value["options"][letter], job)
+        validate_option_text(letter, value["options"][letter], job)
 
     answer = value["answer"]
     if not isinstance(answer, str) or answer.strip() not in letters:
         raise ValueError(f"answer must be one of {letters}")
     value["answer"] = answer.strip()
+    if value["answer"] != job.target_answer_letter:
+        raise ValueError(
+            f"answer must be exactly '{job.target_answer_letter}' for this item, got '{value['answer']}'"
+        )
     validate_difficulty_structure(value)
 
     reasoning_steps = value["reasoning_steps"]
@@ -971,6 +1161,29 @@ def build_record(question_id: str, job: QuestionJob, generated: dict[str, Any]) 
     }
 
 
+def partial_output_path(output_path: Path) -> Path:
+    return output_path.with_suffix(".partial.jsonl")
+
+
+def load_partial_records(path: Path) -> dict[int, dict[str, Any]]:
+    if not path.is_file():
+        return {}
+    loaded: dict[int, dict[str, Any]] = {}
+    for row in iter_jsonl(path):
+        question_id = str(row.get("question_id", "")).strip()
+        match = re.fullmatch(r"level1_q(\d{4})", question_id)
+        if not match:
+            continue
+        loaded[int(match.group(1))] = row
+    return loaded
+
+
+def append_partial_record(path: Path, record: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open("a", encoding="utf-8") as handle:
+        handle.write(json.dumps(record, ensure_ascii=False) + "\n")
+
+
 def generate_question_for_job(
     job: QuestionJob,
     *,
@@ -982,8 +1195,14 @@ def generate_question_for_job(
     max_tokens: int,
     timeout_s: float,
     retries: int,
+    adversarial_eval_model: str,
+    adversarial_eval_max_tokens: int,
+    adversarial_eval_timeout_s: float,
+    adversarial_eval_retries: int,
+    adversarial_eval_rounds: int,
 ) -> dict[str, Any]:
     messages = make_messages(job, demo_template, option_count)
+    banned_stem_terms = forbidden_stem_terms_text(job.entry)
     last_error: Exception | None = None
     for attempt in range(1, retries + 2):
         try:
@@ -997,20 +1216,87 @@ def generate_question_for_job(
             )
             generated = parse_json_object(content)
             validate_generated_question(generated, option_count, job)
+            if adversarial_eval_model:
+                evaluator = load_level1_evaluator_module()
+                candidate_record = build_record("preview", job, generated)
+                for round_idx in range(1, adversarial_eval_rounds + 1):
+                    solver_result = evaluator.evaluate_record(
+                        record=candidate_record,
+                        api_key=api_key,
+                        model=adversarial_eval_model,
+                        temperature=0.0,
+                        max_tokens=adversarial_eval_max_tokens,
+                        timeout_s=adversarial_eval_timeout_s,
+                        retries=adversarial_eval_retries,
+                    )
+                    if solver_result["predicted_answer"] == candidate_record["answer"]:
+                        raise ValueError(
+                            "adversarial eval model solved the item correctly: "
+                            f"{adversarial_eval_model} -> {solver_result['predicted_answer']} "
+                            f"(round {round_idx}/{adversarial_eval_rounds})"
+                        )
             return generated
         except Exception as exc:  # noqa: BLE001 - report model/API validation context.
             last_error = exc
             if attempt <= retries:
+                error_text = str(exc)
+                extra_feedback = ""
+                if "adversarial eval model solved the item correctly" in error_text:
+                    extra_feedback = (
+                        " Increase the difficulty without making the item noisy: make the answer depend more on "
+                        "a visible geometry, capacity, closure, format, slot-count, or parameter distinction from "
+                        "the pictured asset, and tighten same-function distractors so multiple options remain "
+                        "plausible until the final protocol detail is checked."
+                    )
+                elif "three distinct action families" in error_text or "share the same function name" in error_text:
+                    extra_feedback = (
+                        " Rebuild A-I strictly as three contiguous trios: A-C one function family, D-F a second "
+                        "family, and G-I a third family. Each trio must use the same function name and keyword set, "
+                        "changing only parameter values. The three trio function names must be different from each other."
+                    )
+                elif "option J must be exactly" in error_text:
+                    extra_feedback = (
+                        f" Set J to exactly {NONE_OF_ABOVE_CALL} with no arguments and do not use none_of_the_above() "
+                        "in any other option."
+                    )
+                elif "question must include at least two concrete protocol numbers" in error_text:
+                    extra_feedback = (
+                        " Rewrite the stem to include at least two explicit numbers from the protocol, such as "
+                        "volumes, durations, temperatures, rpm, xg, cycle counts, or distances."
+                    )
+                elif "question must mention prior-step or sequencing context" in error_text:
+                    extra_feedback = (
+                        " Rewrite the stem so it explicitly states one or two prior actions that have already "
+                        "happened before the decision point."
+                    )
+                elif "target family variants must differ from the correct option by exactly one keyword value" in error_text:
+                    extra_feedback = (
+                        " Rebuild the correct 3-option target family so the two wrong variants each change only one "
+                        "keyword value relative to the correct option."
+                    )
+                elif "target family variants must differ through a numeric parameter change" in error_text:
+                    extra_feedback = (
+                        " Rebuild the correct 3-option target family so the wrong variants change only one numeric "
+                        "parameter such as a duration, temperature, volume, speed, cycle count, or distance."
+                    )
+                elif "magnetic functionality for passive holder asset" in error_text:
+                    extra_feedback = (
+                        " Do not use magnetic, magnet, magnetic_stand, or magnetic mode language for this passive "
+                        "holder asset. Keep all three action families non-magnetic and consistent with an ordinary "
+                        "bench holder or organizer."
+                    )
                 messages = messages + [
                     {
                         "role": "user",
                         "content": (
                             "The previous output was rejected by the pipeline validator. "
-                            f"Validation error: {compact_text(str(exc), 600)}. "
+                            f"Validation error: {compact_text(error_text, 600)}. "
                             "Regenerate the full JSON object and fix this exact issue while "
                             "keeping all prior requirements. If the validation error mentions "
                             "question leakage, rewrite the stem from scratch and remove every "
-                            "forbidden asset term or functional cue. Do not repeat the same invalid pattern."
+                            "forbidden asset term or functional cue. "
+                            f"For this asset, the stem must not use any of these terms: {banned_stem_terms}. "
+                            f"Do not repeat the same invalid pattern.{extra_feedback}"
                         ),
                     }
                 ]
@@ -1032,6 +1318,11 @@ def generate_record_for_job(
     timeout_s: float,
     retries: int,
     sleep_s: float,
+    adversarial_eval_model: str,
+    adversarial_eval_max_tokens: int,
+    adversarial_eval_timeout_s: float,
+    adversarial_eval_retries: int,
+    adversarial_eval_rounds: int,
 ) -> tuple[int, dict[str, Any]]:
     question_id = f"level1_q{idx:04d}"
     print(
@@ -1050,6 +1341,11 @@ def generate_record_for_job(
         max_tokens=max_tokens,
         timeout_s=timeout_s,
         retries=retries,
+        adversarial_eval_model=adversarial_eval_model,
+        adversarial_eval_max_tokens=adversarial_eval_max_tokens,
+        adversarial_eval_timeout_s=adversarial_eval_timeout_s,
+        adversarial_eval_retries=adversarial_eval_retries,
+        adversarial_eval_rounds=adversarial_eval_rounds,
     )
     if sleep_s > 0:
         time.sleep(sleep_s)
@@ -1092,6 +1388,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--template-max-chars", type=int, default=16000, help="Max chars from level-1-demo.md included in prompts.")
     parser.add_argument("--max-steps-per-protocol", type=int, default=8, help="Max protocol snippets sent to the model.")
     parser.add_argument("--max-protocols-per-entry", type=int, default=80, help="Max protocol candidates retained per entry.")
+    parser.add_argument("--none-above-rate", type=float, default=0.2, help="Approximate fraction of items whose correct answer is J = none_of_the_above().")
+    parser.add_argument("--adversarial-eval-model", default="", help="Optional evaluation model used to reject questions it can already answer correctly.")
+    parser.add_argument("--adversarial-eval-max-tokens", type=int, default=256, help="Max tokens for adversarial self-play evaluation.")
+    parser.add_argument("--adversarial-eval-timeout-s", type=float, default=90.0, help="HTTP timeout for adversarial self-play evaluation.")
+    parser.add_argument("--adversarial-eval-retries", type=int, default=1, help="Retries for adversarial self-play evaluation.")
+    parser.add_argument("--adversarial-eval-rounds", type=int, default=1, help="Number of independent self-play evaluation passes a candidate must survive.")
     parser.add_argument("--multiview-manifest", type=Path, default=DEFAULT_MULTIVIEW_MANIFEST)
     parser.add_argument("--core-inventory", type=Path, default=DEFAULT_CORE_INVENTORY)
     parser.add_argument("--protocol-matches", type=Path, default=DEFAULT_PROTOCOL_MATCHES)
@@ -1122,6 +1424,21 @@ def main() -> int:
         count=args.count,
         seed=args.seed,
     )
+    target_answer_letters = build_target_answer_letters(
+        len(jobs),
+        args.option_count,
+        args.seed,
+        none_above_rate=args.none_above_rate,
+    )
+    jobs = [
+        QuestionJob(
+            entry=job.entry,
+            protocol=job.protocol,
+            selected_views=job.selected_views,
+            target_answer_letter=target_answer_letters[idx],
+        )
+        for idx, job in enumerate(jobs)
+    ]
 
     if args.dry_run:
         for idx, job in enumerate(jobs, 1):
@@ -1130,13 +1447,25 @@ def main() -> int:
                 f"{idx:03d} {job.entry.entry_id} | {job.protocol.protocol_id} | "
                 f"steps={list(step.get('idx') for step in job.protocol.relevant_steps[:4])} | "
                 f"nearby={list(step.get('idx') for step in job.protocol.nearby_steps[:4])} | "
-                f"views={views}"
+                f"answer={job.target_answer_letter} | views={views}"
             )
         return 0
 
     api_key = get_api_key(read_from_stdin=args.api_key_stdin)
     demo_template = read_demo_template(args.demo_template, args.template_max_chars)
+    partial_path = partial_output_path(args.output)
+    resumed_records = load_partial_records(partial_path)
     record_slots: list[dict[str, Any] | None] = [None] * len(jobs)
+    for idx, record in resumed_records.items():
+        if 1 <= idx <= len(record_slots):
+            record_slots[idx - 1] = record
+    resumed_count = sum(record is not None for record in record_slots)
+    if resumed_count:
+        print(
+            f"Resuming from {resumed_count} existing record(s) in {partial_path}",
+            file=sys.stderr,
+            flush=True,
+        )
 
     with ThreadPoolExecutor(max_workers=args.concurrency) as executor:
         futures = {
@@ -1154,8 +1483,14 @@ def main() -> int:
                 timeout_s=args.timeout_s,
                 retries=args.retries,
                 sleep_s=args.sleep_s,
+                adversarial_eval_model=args.adversarial_eval_model,
+                adversarial_eval_max_tokens=args.adversarial_eval_max_tokens,
+                adversarial_eval_timeout_s=args.adversarial_eval_timeout_s,
+                adversarial_eval_retries=args.adversarial_eval_retries,
+                adversarial_eval_rounds=args.adversarial_eval_rounds,
             ): idx
             for idx, job in enumerate(jobs, 1)
+            if record_slots[idx - 1] is None
         }
         for completed_count, future in enumerate(as_completed(futures), 1):
             idx = futures[future]
@@ -1167,8 +1502,9 @@ def main() -> int:
                 question_id = f"level1_q{idx:04d}"
                 raise RuntimeError(f"Failed generating {question_id}") from exc
             record_slots[result_idx - 1] = record
+            append_partial_record(partial_path, record)
             print(
-                f"[{completed_count}/{len(jobs)}] completed level1_q{result_idx:04d}",
+                f"[{resumed_count + completed_count}/{len(jobs)}] completed level1_q{result_idx:04d}",
                 file=sys.stderr,
                 flush=True,
             )
