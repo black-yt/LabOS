@@ -1,0 +1,46 @@
+{
+  "schema": "protocol_min_v1",
+  "input": "data/protocol_v1/all.jsonl",
+  "output": "data/protocol_v1/protocol_min_v1.jsonl",
+  "total_input_records": 5606,
+  "kept_records": 3749,
+  "dropped_records": 1857,
+  "thresholds": {
+    "min_reagents": 5,
+    "min_equipment": 2,
+    "min_steps": 20,
+    "min_unique_stages": 3
+  },
+  "kept_by_source": {
+    "bioprot": 337,
+    "curprot": 109,
+    "nprot": 15,
+    "oww": 4,
+    "star": 3284
+  },
+  "dropped_by_source": {
+    "bioprot": 613,
+    "curprot": 82,
+    "jove": 112,
+    "mimb": 142,
+    "nprot": 5,
+    "oww": 246,
+    "star": 657
+  },
+  "drop_reasons": {
+    "unique_stages<3": 1301,
+    "equipment<2": 660,
+    "steps<20": 540,
+    "reagents<5": 283
+  },
+  "stage_fallback_steps": 182,
+  "kept_unique_stage_mean": 6.11,
+  "notes": [
+    "background is normalized from abstract, falling back to title",
+    "reagents.identifier comes from raw catalog_id",
+    "equipment.identifier comes from raw model",
+    "step.stage comes from raw section, falling back to the previous non-empty stage or title",
+    "troubleshooting entries are kept when either problem or solution is non-empty",
+    "benchmark filtering keeps longer and more structured protocols by requiring enough steps and unique stages"
+  ]
+}

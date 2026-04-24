@@ -69,7 +69,7 @@ def load_local_env() -> None:
 
 load_local_env()
 
-DEFAULT_MODEL = os.environ.get("OPENROUTER_MODEL", "qwen/qwen3.6-plus")
+DEFAULT_MODEL = os.environ.get("OPENROUTER_MODEL", "openai/gpt-5.4")
 DEFAULT_VIEW_ORDER = ("front", "right", "left", "top", "free", "back", "bottom")
 CJK_RE = re.compile(r"[\u3400-\u4dbf\u4e00-\u9fff\u3000-\u303f\uff00-\uffef]")
 ZERO_VALUE_ARG_RE = re.compile(
@@ -108,6 +108,35 @@ ACTIVE_DEVICE_GROUPS = {
     "heating_device",
     "muffle_furnace",
 }
+HARDER_PRIORITY_GROUPS = {
+    "centrifuge",
+    "thermal_cycler",
+    "thermal_mixer",
+    "vortex_mixer",
+    "drying_box",
+    "heating_device",
+    "muffle_furnace",
+    "pipette",
+    "pcr_plate",
+    "tip_box",
+    "pipette_rack",
+}
+GENERIC_STEM_CUE_PHRASE_SOURCE = (
+    "asset function",
+    "asset's function",
+    "container's capacity",
+    "container capacity",
+    "container's structural design",
+    "container's physical design",
+    "vessel's capacity",
+    "vessel's dimensions",
+    "device's rotational function",
+    "volumetric measuring tool",
+    "passive storage function",
+    "gentle handling",
+    "passive sample container",
+    "visual features of this volumetric measuring tool",
+)
 DISALLOWED_ENTRY_IDS = {
     # This multi-well rack repeatedly invites unsupported magnetic-rack or
     # sealing distractors and is a weak Level 1 benchmark candidate.
@@ -196,6 +225,16 @@ class QuestionJob:
     selected_views: tuple[tuple[str, str], ...]
 
 
+def entry_difficulty_rank(entry: InventoryEntry) -> int:
+    if entry.match_group in ACTIVE_DEVICE_GROUPS:
+        return 0
+    if entry.match_group in HARDER_PRIORITY_GROUPS:
+        return 1
+    if entry.match_group in PASSIVE_CONTAINER_GROUPS:
+        return 3
+    return 2
+
+
 def load_json(path: Path) -> Any:
     with path.open("r", encoding="utf-8") as handle:
         return json.load(handle)
@@ -222,6 +261,9 @@ def compact_text(value: str, limit: int) -> str:
 
 def normalize_key(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", " ", value.lower()).strip()
+
+
+GENERIC_STEM_CUE_PHRASES = tuple(normalize_key(value) for value in GENERIC_STEM_CUE_PHRASE_SOURCE)
 
 
 def make_search_terms(entry: InventoryEntry) -> tuple[str, ...]:
@@ -454,11 +496,11 @@ def build_jobs(
         for entry in entries_by_id.values()
         if protocols_by_entry.get(entry.entry_id)
     ]
-    eligible_entries.sort(key=lambda item: item.entry_id)
-    rng.shuffle(eligible_entries)
+    eligible_entries.sort(key=lambda item: (entry_difficulty_rank(item), rng.random(), item.entry_id))
 
     jobs: list[QuestionJob] = []
     used_pairs: set[tuple[str, str]] = set()
+    used_protocol_ids: set[str] = set()
     while len(jobs) < count:
         made_progress = False
         for entry in eligible_entries:
@@ -469,8 +511,13 @@ def build_jobs(
             ]
             if not available_protocols:
                 continue
-            protocol = rng.choice(available_protocols[: min(12, len(available_protocols))])
+            unseen_protocols = [
+                protocol for protocol in available_protocols if protocol.protocol_id not in used_protocol_ids
+            ]
+            candidate_pool = unseen_protocols or available_protocols
+            protocol = rng.choice(candidate_pool[: min(12, len(candidate_pool))])
             used_pairs.add((entry.entry_id, protocol.protocol_id))
+            used_protocol_ids.add(protocol.protocol_id)
             jobs.append(
                 QuestionJob(
                     entry=entry,
@@ -587,6 +634,7 @@ def make_messages(job: QuestionJob, demo_template: str, option_count: int) -> li
     )
     aliases = ", ".join(job.entry.aliases[:12]) if job.entry.aliases else "(none)"
     affordance_guardrails = build_affordance_guardrails(job.entry)
+    forbidden_stem_terms = ", ".join(stem_reveal_terms(job.entry)[:16]) or "(none)"
     template_section = f"\n\nUse this English example as the style and structure template:\n{demo_template}" if demo_template else ""
 
     system = (
@@ -613,21 +661,28 @@ Hard requirements:
 5. The question must require both visual asset understanding and protocol reasoning.
    Avoid trivial stems where the answer is just "pour liquid into the obvious container"
    unless a concrete protocol detail makes that choice genuinely discriminative.
-6. Distractors must be realistic, protocol-adjacent, and syntactically valid Python
+6. Do NOT give away the answer direction by describing the object as a "volumetric
+   measuring tool", "passive storage function", "rotational function", "container
+   capacity", "vessel dimensions", or similar functional hints in the question stem.
+   Forbidden stem terms for this asset: {forbidden_stem_terms}
+7. Distractors must be realistic, protocol-adjacent, and syntactically valid Python
    function calls. Prefer three classes of distractors:
    - adjacent or nearby steps from the same workflow,
    - same-workflow operations with wrong parameters,
    - operations that fit the sample state but use the wrong asset or wrong stage.
-7. Do not use obviously irrelevant distractors such as autoclaving, parafilm sealing,
+8. At least two options must stay within the same action family as the correct answer,
+   differing by key parameters, workflow stage, or asset assumptions. The goal is to
+   force fine-grained reasoning instead of category-level elimination.
+9. Do not use obviously irrelevant distractors such as autoclaving, parafilm sealing,
    robotic manipulation, sonication, or furnace operations unless those ideas are
    explicitly supported by the provided protocol context.
-8. Respect the asset affordance guardrails below. Do not invent specialized functions
+10. Respect the asset affordance guardrails below. Do not invent specialized functions
    that the pictured asset cannot perform.
-9. Options must be exactly {", ".join(letters)}, and answer must be one of those single letters.
-10. reasoning_steps must contain 3-5 English strings explaining visual asset
+11. Options must be exactly {", ".join(letters)}, and answer must be one of those single letters.
+12. reasoning_steps must contain 3-5 English strings explaining visual asset
     recognition, sample/protocol state, relevant parameters, and why nearby but
     incorrect operations are less appropriate.
-11. Output exactly one JSON object matching the schema below.
+13. Output exactly one JSON object matching the schema below.
 
 Output schema example:
 {json.dumps(schema, ensure_ascii=False, indent=2)}
@@ -801,6 +856,9 @@ def validate_question_stem(question: str, entry: InventoryEntry) -> None:
     leaked = [term for term in stem_reveal_terms(entry) if term and term in normalized_question]
     if leaked:
         raise ValueError(f"question leaks asset identity: {', '.join(leaked[:4])}")
+    leaked_cues = [phrase for phrase in GENERIC_STEM_CUE_PHRASES if phrase and phrase in normalized_question]
+    if leaked_cues:
+        raise ValueError(f"question leaks functional hint: {', '.join(leaked_cues[:3])}")
 
 
 def validate_option_text(option_text: str, job: QuestionJob) -> None:
@@ -825,6 +883,22 @@ def validate_option_text(option_text: str, job: QuestionJob) -> None:
         token in function_name for token in ("aspirat", "dispens", "aliquot", "transfer", "dispense")
     ):
         raise ValueError(f"option treats a pipette rack as the liquid-handling tool: {option_text}")
+
+
+def validate_difficulty_structure(value: dict[str, Any]) -> None:
+    options = value["options"]
+    answer_letter = value["answer"]
+    option_values = list(options.values())
+    if len(set(option_values)) != len(option_values):
+        raise ValueError("options contain duplicate candidate strings")
+
+    answer_function = option_function_name(options[answer_letter])
+    function_names = [option_function_name(text) for text in option_values]
+    same_function_count = function_names.count(answer_function)
+    if same_function_count < 2:
+        raise ValueError(
+            f"question lacks same-function competition for answer family '{answer_function}'"
+        )
 
 
 def validate_generated_question(value: dict[str, Any], option_count: int, job: QuestionJob) -> None:
@@ -854,6 +928,7 @@ def validate_generated_question(value: dict[str, Any], option_count: int, job: Q
     if not isinstance(answer, str) or answer.strip() not in letters:
         raise ValueError(f"answer must be one of {letters}")
     value["answer"] = answer.strip()
+    validate_difficulty_structure(value)
 
     reasoning_steps = value["reasoning_steps"]
     if not isinstance(reasoning_steps, list) or not (2 <= len(reasoning_steps) <= 6):
@@ -933,7 +1008,9 @@ def generate_question_for_job(
                             "The previous output was rejected by the pipeline validator. "
                             f"Validation error: {compact_text(str(exc), 600)}. "
                             "Regenerate the full JSON object and fix this exact issue while "
-                            "keeping all prior requirements. Do not repeat the same invalid pattern."
+                            "keeping all prior requirements. If the validation error mentions "
+                            "question leakage, rewrite the stem from scratch and remove every "
+                            "forbidden asset term or functional cue. Do not repeat the same invalid pattern."
                         ),
                     }
                 ]

@@ -354,11 +354,25 @@
 
 - `pipeline/level-1/build_level1_questions.py` 是当前 Level 1 题目构造脚本。
 - 脚本输入来自本仓库内的公开数据：
+  - `data/benchmark_inventory/files/`
   - `data/benchmark_inventory/multiview_manifest.json`
   - `data/benchmark_inventory/benchmark_core_inventory.json`
   - `data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl`
+  - `data/protocol_v1/protocol_min_v1.jsonl`
   - `data/benchmark_inventory/level-1-demo.md`
-- 默认模型是 `qwen/qwen3.6-plus`，输出语言口径是英文；脚本会校验题干、选项、reasoning steps 和 protocol alignment 中不能出现 CJK 字符。
+- 为了让新环境 `clone` 后能直接开始工作，当前仓库已经直接跟踪：
+  - `data/benchmark_inventory/files/` 下的本地 3D / mesh / USD 资源
+  - `data/protocol_v1/protocol_min_v1.jsonl` 与 `protocol_min_v1.stats.json`
+  - `data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl`
+  - `data/benchmark_inventory/protocol_min_v1_inventory_matches.jsonl`
+  - `data/benchmark_inventory/protocol_min_v1_inventory_matches.stats.json`
+  - `pipeline/level-1/generated/` 下的样例题集与评测输出
+- 当前仍未进入 Git 的 protocol 文件，只剩两份超过 GitHub 单文件限制的原始 dump：
+  - `data/protocol_v1/all.jsonl`
+  - `data/protocol_v1/records/star.jsonl`
+- `data/protocol_v1/rejected/*.jsonl` 里可能会原样保留上游 protocol 文本中的数据库连接示例值；如果 GitHub push protection 报 credential-like secret，优先只对命中的 access id / key 子串做最小范围脱敏，用公开占位符替换，不要整条删除记录。
+- 默认模型现已切回 `openai/gpt-5.4`，输出语言口径是英文；脚本会校验题干、选项、reasoning steps 和 protocol alignment 中不能出现 CJK 字符。
+- 如果当前网络节点无法稳定访问 `openai/gpt-5.4`，再显式回退到 `qwen/qwen3.6-plus`，不要默认继续沿用旧节点上的不可用结论。
 - `pipeline/level-1/build_level1_questions.py` 现在会自动加载 `pipeline/level-1/.env` 与仓库根目录 `.env`；本地可在忽略掉的 `.env` 里放 `OPENROUTER_API_KEY` 与 `OPENROUTER_MODEL`，不要把真实密钥写进 README、AGENTS 或任何可提交文件。
 - 根目录 `.gitignore` 已覆盖 `.env`；`pipeline/level-1/.env` 会被自动忽略。提交前可用 `git check-ignore -v pipeline/level-1/.env` 复核忽略规则仍然生效。
 - 本地 `.env` 当前推荐只放两项：
@@ -373,8 +387,16 @@
   - OpenRouter 偶发长尾或连接重置
 - 因此在 `--concurrency 4` 下，单题模型调用常见在 `10-40s`，而整批墙钟时间更多取决于少数重试尾项。
 - 当前 prompt 要求题干不能直接点名资产、品牌或 `match_group`，并把 protocol 邻近步骤一并提供给模型，用于构造更接近真实 workflow 的干扰项。
+- 当前 prompt 还会显式禁止题干用功能类提示词偷给答案，例如：
+  - `volumetric measuring tool`
+  - `passive storage function`
+  - `device's rotational function`
+  - `container capacity`
+  这类表述虽然不直接点名资产，但仍会显著降低题目难度。
 - 当前脚本会额外做题目质量过滤：题干资产泄露检测、选项 Python 函数调用语法检查、零值操作参数拒绝，以及对被动 rack 类资产的伪造 `magnetic` 功能拦截。
+- 当前脚本也会拒绝“低难度选项集”：如果正确答案所在的动作族没有至少一个同函数竞争项（例如同一 `centrifuge_sample(...)` 但参数不同），题目会被打回重生成。这个约束的目的是减少“认出设备大类就能秒选”的题。
 - 邻近 step 不是装饰信息，而是当前干扰项质量的主要来源；如果以后改 prompt，优先保住这部分上下文。
+- `build_jobs()` 现在会优先选择更难的资产族，并尽量减少 protocol 重复；和早期版本相比，主动设备、可混淆参数题、以及带近邻阶段竞争项的样本会被更优先抽到。
 - 当前脚本里已经踩过两类规则误杀：
   - `speed_rpm=0` 不能一概判错；对 thermal mixer 等设备，“加热但不振荡”可能是合理参数。
   - 零值参数正则不能把 `volume_ml=0.5` 误判为零；当前正则只拦真正的 `0` 或 `0.0...`。
@@ -386,10 +408,14 @@
 - 当前公开样例 `pipeline/level-1/generated/level1_questions_20.json` 是增强后重生成的版本，和更早那批质量较弱的样例不是同一批。不要用旧批次的失败模式直接评价当前脚本。
 - `pipeline/level-1/evaluate_level1_accuracy.py` 是独立评测脚本，会把 3 张本地图编码成 data URL，通过 OpenRouter 多模态请求评测模型在 Level 1 题集上的 `Answer Accuracy`，并把每题预测结果与汇总指标写入 `pipeline/level-1/generated/`。
 - 评测脚本与构题脚本一样会自动加载 `.env`，默认模型当前可直接设为 `openai/gpt-5.4`。
+- 评测脚本当前要求模型输出严格 JSON，字段至少包含：
+  - `reasoning_steps: list[str]`
+  - `answer: str`
+- 当前评测逻辑仍然只把 `answer` 用于计分，也就是报告 `Answer Accuracy`；`reasoning_steps` 主要用于后验审阅、失败分析和人工检查，不会参与自动评分。
+- `reasoning_steps + answer` 这一路径下，`max_tokens=128` 容易把 JSON 截断；当前默认值已经提升到 `256`。如果以后再把 reasoning 写得更长，优先先调 `--max-tokens`，不要急着放宽解析器约束。
 - 评测输出当前包括：
   - `level1_questions_20.eval.openai_gpt-5.4.json`
   - `level1_questions_20.eval.openai_gpt-5.4.jsonl`
-- 评测脚本当前只评估 `answer`，不评 reasoning；也就是说这是 `Answer Accuracy`，不是完整的 Level 1 双指标评测。
 - 评测脚本会把 3 张图编码为 data URL 内联进 OpenRouter 请求，因此：
   - 不依赖外部图床
   - 但请求体更大，网络抖动时更容易遇到 `Connection reset by peer`
@@ -400,6 +426,11 @@
   - 再用 `--concurrency 1 --retries 5` 重跑，结果仍是 `11/20 = 0.55`
   - 第二次只剩 1 题网络失败，因此 `0.55` 可以近似视为当前题集上的真实 `Answer Accuracy`
   - 若只按成功返回的 19 题算，命中率约为 `11/19 = 57.9%`
+- 在把评测输出改成 `reasoning_steps + answer` 之后，又做了一次 `openai/gpt-5.4` 重评：
+  - 初次用 reasoning 口径评测时，`max_tokens=128` 过低，出现额外 JSON 截断，结果降到 `10/20 = 0.50`，`invalid_count = 4`
+  - 把默认 `max_tokens` 提升到 `256` 后重跑，结果是 `12/20 = 0.60`，`invalid_count = 2`
+  - 这 2 个无效样本依然是 OpenRouter `Connection reset by peer`，不是模型输出结构问题
+  - 当前 reasoning 口径下更合理的公开结论应是：`gpt-5.4` 在这 20 题上的 `Answer Accuracy = 0.60`，并同时注明 `invalid_count = 2`
 - `gpt-5.4` 当前这批样例上的主要失分模式：
   - 容器或被动资产题里选了错误但表面合理的近邻动作
   - 离心相关题中，把下一步操作和前后邻近动作混淆

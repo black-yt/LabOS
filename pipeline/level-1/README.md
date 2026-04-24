@@ -16,9 +16,11 @@ explanations are English-only.
 
 The script reads only local repository data:
 
+- `data/benchmark_inventory/files/`
 - `data/benchmark_inventory/multiview_manifest.json`
 - `data/benchmark_inventory/benchmark_core_inventory.json`
 - `data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl`
+- `data/protocol_v1/protocol_min_v1.jsonl`
 - `data/benchmark_inventory/level-1-demo.md`
 
 The pipeline selects one inventory entry with rendered multiview images, chooses
@@ -30,6 +32,27 @@ leak the asset identity or invent unrealistic options.
 Known low-confidence entries such as `autobio_centrifuge_plate_60well` are
 excluded from the default candidate pool because they repeatedly invite
 unsupported affordance assumptions and weak distractors.
+Entry selection is also biased toward harder assets and more diverse protocols,
+so active devices and richer affordance distinctions are preferred over passive
+container-only questions when enough candidates are available.
+
+The repository is now arranged so a fresh clone can start Level 1 work without
+an extra local sync step. In particular, the committed tree already includes:
+
+- `data/benchmark_inventory/files/` with the local 3D / mesh / USD assets used
+  by the inventory and preview pipeline
+- `data/protocol_v1/protocol_min_v1.jsonl` as the directly usable protocol
+  working set for benchmark construction
+- `data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl` plus the
+  inventory-match byproducts used by this pipeline
+- `pipeline/level-1/generated/` with one committed 20-question sample set and
+  its `openai/gpt-5.4` evaluation outputs
+
+Two oversized raw corpus dumps remain outside Git because they exceed GitHub's
+single-file limit:
+
+- `data/protocol_v1/all.jsonl`
+- `data/protocol_v1/records/star.jsonl`
 
 ## Quick Start
 
@@ -56,11 +79,17 @@ export OPENROUTER_API_KEY="..."
 PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --count 20
 ```
 
-The default OpenRouter model is `qwen/qwen3.6-plus`. The same run can be made
-explicit:
+The default OpenRouter model is `openai/gpt-5.4`. A fallback run with
+`qwen/qwen3.6-plus` remains available:
 
 ```bash
 PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --count 20 --model qwen/qwen3.6-plus
+```
+
+The stronger default can also be made explicit:
+
+```bash
+PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --count 20 --model openai/gpt-5.4
 ```
 
 Generation is concurrent by default. The default `--concurrency 4` runs four API
@@ -89,7 +118,11 @@ PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --dr
 
 Use the independent evaluator to measure answer accuracy of a multimodal
 OpenRouter model on the generated Level 1 questions. The evaluator also
-auto-loads `pipeline/level-1/.env`.
+auto-loads `pipeline/level-1/.env`. The model must output both
+`reasoning_steps` and `answer`, but the reported metric remains answer accuracy.
+The committed reference evaluation currently reports `12/20 = 0.60` with
+`invalid_count = 2` for `openai/gpt-5.4`, where the invalid items were network
+resets rather than structured-output failures.
 
 ```bash
 conda activate agent
@@ -140,6 +173,10 @@ The script validates each model response before writing the final dataset:
 - rejection of obviously implausible zero-valued operational parameters
 - rejection of off-context distractor tokens and unsupported magnetic behavior
   for passive rack-like assets
+- rejection of stems that leak the answer direction through functional hints
+  such as "volumetric measuring tool" or "container capacity"
+- rejection of low-difficulty option sets that do not include at least one
+  same-function competitor to the correct answer
 
 Useful local checks after generation:
 

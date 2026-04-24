@@ -1,0 +1,4 @@
+# Imported upstream lab assets are kept byte-for-byte to preserve provenance.
+# Their original OBJ/USD/MDL text formatting contains trailing whitespace and
+# EOF padding that should not block repository checks.
+data/benchmark_inventory/files/** whitespace=-blank-at-eol,-blank-at-eof

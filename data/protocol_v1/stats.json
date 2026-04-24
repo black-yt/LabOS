@@ -1,0 +1,60 @@
+{
+  "total": 5606,
+  "by_source": {
+    "bioprot": {
+      "count": 950,
+      "median_reagents": 50.9,
+      "median_steps": 47.8
+    },
+    "curprot": {
+      "count": 191,
+      "median_reagents": 42.8,
+      "median_steps": 76.9
+    },
+    "jove": {
+      "count": 112,
+      "median_reagents": 8.6,
+      "median_steps": 44.1
+    },
+    "mimb": {
+      "count": 142,
+      "median_reagents": 28.9,
+      "median_steps": 54.0
+    },
+    "nprot": {
+      "count": 20,
+      "median_reagents": 29.1,
+      "median_steps": 65.3
+    },
+    "oww": {
+      "count": 250,
+      "median_reagents": 9.5,
+      "median_steps": 21.1
+    },
+    "star": {
+      "count": 3941,
+      "median_reagents": 28.2,
+      "median_steps": 73.6
+    }
+  },
+  "qc_score_histogram": {
+    "0.8": 1217,
+    "0.7": 529,
+    "0.6": 178,
+    "0.5": 92,
+    "0.4": 115,
+    "0.9": 3373,
+    "0.3": 64,
+    "0.2": 28,
+    "0.1": 10
+  },
+  "generated_at": "2026-04-14T12:20:25.505874Z",
+  "by_license_bucket": {
+    "CC BY-NC": 875,
+    "CC BY": 1641,
+    "CC BY-NC-ND": 2929,
+    "other / unclear": 12,
+    "COVID-19 open (PMC special)": 148,
+    "unknown": 1
+  }
+}

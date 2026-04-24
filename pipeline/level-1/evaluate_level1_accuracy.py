@@ -103,8 +103,11 @@ def build_user_content(record: dict[str, Any]) -> list[dict[str, Any]]:
     option_lines = [f"{letter}. {text}" for letter, text in sorted(record["options"].items())]
     prompt = (
         "Solve one LabOS Level 1 multiple-choice question using the three images and the "
-        "question text. Return strict JSON only in the format {\"answer\": \"A\"}. "
-        "The answer must be exactly one capital letter from the provided options.\n\n"
+        "question text. Return strict JSON only in the format "
+        "{\"reasoning_steps\": [\"...\"], \"answer\": \"A\"}. "
+        "The answer must be exactly one capital letter from the provided options. "
+        "reasoning_steps must be a list of 3-5 concise English strings grounded in the "
+        "images, the protocol context implied by the stem, and the option differences.\n\n"
         f"Question:\n{record['question']}\n\n"
         f"Options:\n" + "\n".join(option_lines)
     )
@@ -162,7 +165,7 @@ def openrouter_chat_completion(
     return json.loads(body)
 
 
-def parse_answer(content: str, valid_letters: set[str]) -> str:
+def parse_reasoning_answer(content: str, valid_letters: set[str]) -> tuple[list[str], str]:
     text = content.strip()
     if text.startswith("```"):
         text = re.sub(r"^```(?:json)?\s*", "", text)
@@ -170,18 +173,30 @@ def parse_answer(content: str, valid_letters: set[str]) -> str:
     try:
         parsed = json.loads(text)
     except json.JSONDecodeError:
-        match = re.search(r"\b([A-J])\b", text)
-        if not match:
-            raise ValueError(f"Could not parse answer from response: {compact_text(text, 200)}")
-        answer = match.group(1)
-    else:
-        if not isinstance(parsed, dict) or "answer" not in parsed:
-            raise ValueError(f"Response JSON missing answer field: {compact_text(text, 200)}")
-        answer = str(parsed["answer"]).strip()
+        start = text.find("{")
+        end = text.rfind("}")
+        if start < 0 or end < start:
+            raise ValueError(f"Response is not valid JSON: {compact_text(text, 200)}")
+        try:
+            parsed = json.loads(text[start : end + 1])
+        except json.JSONDecodeError as exc:
+            raise ValueError(f"Response is not valid JSON: {compact_text(text, 200)}") from exc
+    if not isinstance(parsed, dict) or "answer" not in parsed or "reasoning_steps" not in parsed:
+        raise ValueError(f"Response JSON missing reasoning_steps or answer: {compact_text(text, 200)}")
+
+    answer = str(parsed["answer"]).strip()
+    reasoning_steps = parsed["reasoning_steps"]
+    if not isinstance(reasoning_steps, list) or not (2 <= len(reasoning_steps) <= 6):
+        raise ValueError("reasoning_steps must be a list with 2-6 items")
+    cleaned_steps: list[str] = []
+    for idx, step in enumerate(reasoning_steps, 1):
+        if not isinstance(step, str) or not step.strip():
+            raise ValueError(f"reasoning_steps[{idx}] must be a non-empty string")
+        cleaned_steps.append(step.strip())
 
     if answer not in valid_letters:
         raise ValueError(f"Invalid answer letter: {answer}")
-    return answer
+    return cleaned_steps, answer
 
 
 def evaluate_record(
@@ -201,7 +216,8 @@ def evaluate_record(
             "content": (
                 "You are evaluating a LabOS Level 1 asset-understanding item. "
                 "Use the images and question text to choose the correct option. "
-                "Return strict JSON only with a single field named answer."
+                "Return strict JSON only with fields reasoning_steps and answer. "
+                "The reasoning steps must be concise English strings; scoring will still use the answer field."
             ),
         },
         {"role": "user", "content": build_user_content(record)},
@@ -220,12 +236,13 @@ def evaluate_record(
                 timeout_s=timeout_s,
             )
             content = response["choices"][0]["message"]["content"]
-            answer = parse_answer(content, valid_letters)
+            reasoning_steps, answer = parse_reasoning_answer(content, valid_letters)
             elapsed_s = round(time.time() - started, 3)
             return {
                 "question_id": record["question_id"],
                 "entry_id": record["entry_id"],
                 "gold_answer": record["answer"],
+                "reasoning_steps": reasoning_steps,
                 "predicted_answer": answer,
                 "correct": answer == record["answer"],
                 "response_content": content,
@@ -242,7 +259,9 @@ def evaluate_record(
                         "content": (
                             "The previous response was invalid. "
                             f"Validation error: {compact_text(str(exc), 400)}. "
-                            "Return only {\"answer\": \"<LETTER>\"} with one valid option letter."
+                            "Return only strict JSON in the form "
+                            "{\"reasoning_steps\": [\"...\"], \"answer\": \"<LETTER>\"}. "
+                            "Keep 3-5 concise English reasoning steps and one valid option letter."
                         ),
                     }
                 ]
@@ -269,6 +288,13 @@ def default_output_path(questions_path: Path, model: str) -> Path:
     return questions_path.with_name(f"{questions_path.stem}.eval.{suffix}.json")
 
 
+def repo_relative_display(path: Path) -> str:
+    try:
+        return str(path.resolve().relative_to(REPO_ROOT))
+    except ValueError:
+        return str(path)
+
+
 def write_outputs(output_path: Path, summary: dict[str, Any], results: list[dict[str, Any]]) -> None:
     output_path.parent.mkdir(parents=True, exist_ok=True)
     payload = {
@@ -291,7 +317,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--output", type=Path, help="Evaluation output JSON path.")
     parser.add_argument("--model", default=DEFAULT_MODEL, help="OpenRouter model id.")
     parser.add_argument("--temperature", type=float, default=0.0, help="Sampling temperature.")
-    parser.add_argument("--max-tokens", type=int, default=128, help="Max output tokens per question.")
+    parser.add_argument("--max-tokens", type=int, default=256, help="Max output tokens per question.")
     parser.add_argument("--timeout-s", type=float, default=120.0, help="HTTP timeout per API call.")
     parser.add_argument("--retries", type=int, default=2, help="Retries per question after invalid output or request failure.")
     parser.add_argument("--concurrency", type=int, default=2, help="Number of concurrent evaluation requests.")
@@ -356,8 +382,8 @@ def main() -> int:
 
     elapsed_s = round(time.time() - started, 3)
     summary = {
-        "questions_path": str(args.questions),
-        "output_path": str(output_path),
+        "questions_path": repo_relative_display(args.questions),
+        "output_path": repo_relative_display(output_path),
         "count": len(finalized_results),
         "model_requested": args.model,
         "model_returned": sorted(model_returns),

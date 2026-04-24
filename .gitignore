@@ -211,17 +211,5 @@ __marimo__/
 
 # Local benchmark data
 /data/protocol_v1/all.jsonl
-/data/protocol_v1/manifest.jsonl
-/data/protocol_v1/stats.json
-/data/protocol_v1/README.md
-/data/protocol_v1/docs/
-/data/protocol_v1/pipeline/
-/data/protocol_v1/records/
-/data/protocol_v1/rejected/
-/data/protocol_v1/protocol_min_v1.jsonl
-/data/protocol_v1/protocol_min_v1.stats.json
-/data/benchmark_inventory/files/
+/data/protocol_v1/records/star.jsonl
 /data/benchmark_inventory/runtime/
-/data/benchmark_inventory/protocol_min_v1_inventory_matches.jsonl
-/data/benchmark_inventory/protocol_min_v1_inventory_matches.stats.json
-/data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl
