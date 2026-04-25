@@ -431,18 +431,25 @@
 - 当前公开样例 `pipeline/level-1/generated/level1_questions_20.json` 是增强后重生成的版本，和更早那批质量较弱的样例不是同一批。不要用旧批次的失败模式直接评价当前脚本。
 - `pipeline/level-1/evaluate_level1_accuracy.py` 是独立评测脚本，会把 3 张本地图编码成 data URL，通过 OpenRouter 多模态请求评测模型在 Level 1 题集上的 `Answer Accuracy`，并把每题预测结果与汇总指标写入 `pipeline/level-1/generated/`。
 - 评测脚本与构题脚本一样会自动加载 `.env`，默认模型当前可直接设为 `openai/gpt-5.4`。
-- 评测脚本当前要求模型输出严格 JSON，字段至少包含：
-  - `reasoning_steps: list[str]`
-  - `answer: str`
-- 当前评测逻辑仍然只把 `answer` 用于计分，也就是报告 `Answer Accuracy`；`reasoning_steps` 主要用于后验审阅、失败分析和人工检查，不会参与自动评分。
-- `reasoning_steps + answer` 这一路径下，`max_tokens=128` 容易把 JSON 截断；当前默认值已经提升到 `256`。如果以后再把 reasoning 写得更长，优先先调 `--max-tokens`，不要急着放宽解析器约束。
-- 评测输出当前包括：
-  - `level1_questions_20.eval.openai_gpt-5.4.json`
-  - `level1_questions_20.eval.openai_gpt-5.4.jsonl`
+- `2026-04-25` 起，Level 1 评测默认不再要求严格 JSON。当前公开口径是：
+  - 模型可以自由输出自然语言推理
+  - 最后一个非空行必须严格写成 `Final Answer: X`
+  - 解析器仍兼容旧的 JSON / `<answer>...</answer>` 输出，但默认 prompt 不再要求这些格式
+- 当前评测逻辑仍然只把最终答案字母用于计分，也就是报告 `Answer Accuracy`；推理文本主要用于后验审阅、失败分析和人工检查，不会参与自动评分。
+- 当前 evaluator 默认也不再主动设置：
+  - `temperature`
+  - `max_tokens`
+  - `response_format`
+  也就是默认使用 provider 原生采样和输出策略；只有在明确需要兼容某个模型时再显式覆盖。
 - 评测脚本会把 3 张图编码为 data URL 内联进 OpenRouter 请求，因此：
   - 不依赖外部图床
   - 但请求体更大，网络抖动时更容易遇到 `Connection reset by peer`
   - 若要复现实验结果，优先使用 `--concurrency 1 --retries 5`
+- `evaluate_level1_accuracy.py` 现在带追加式 cache：
+  - 对输出 `foo.json`，会同步维护 `foo.partial.jsonl`
+  - 重跑同一路径时，会复用已完成且 `predicted_answer != None` 的题目
+  - 之前失败的 invalid 行不会被复用，而是自动重试
+  - 这对长批次多模态评测尤其重要，可以避免因为少数网络 reset 从头重跑 200 题
 - `2026-04-24` 的节点切换后，`openai/gpt-5.4` 已确认可经 OpenRouter 正常调用，返回的具体版本是 `openai/gpt-5.4-20260305`；当前本地 `.env` 默认模型可设回 `openai/gpt-5.4`。
 - `2026-04-24` 用 `pipeline/level-1/evaluate_level1_accuracy.py` 对当前 `level1_questions_20.json` 做了一次 `openai/gpt-5.4` 多模态评测：
   - 先用 `--concurrency 2` 跑了一次，得到 `11/20 = 0.55`，但有 4 题受网络 `Connection reset by peer` 干扰
@@ -475,6 +482,9 @@
   - `level1_questions_20.json`
   - `level1_questions_20.jsonl`
   - `level1_questions_20.metadata.json`
+  - `level1_questions_200_gpt54_grouped_formal.json`
+  - `level1_questions_200_gpt54_grouped_formal.jsonl`
+  - `level1_questions_200_gpt54_grouped_formal.metadata.json`
 - 当前生成脚本支持断点续跑：
   - 给定输出路径 `foo.json` 时，会同步维护 `foo.partial.jsonl`
   - 如果上一次因为 OpenRouter 长尾或结构校验失败中断，再次运行同一命令会优先从 `.partial.jsonl` 恢复已完成题目
@@ -482,14 +492,39 @@
 - 当前评测结果默认也落在同一目录：
   - `level1_questions_20.eval.openai_gpt-5.4.json`
   - `level1_questions_20.eval.openai_gpt-5.4.jsonl`
-- `2026-04-24` 的 grouped-option 两轮实测结果要分开记：
-  - 第一轮 `level1_questions_20_gpt54_grouped.json`
-    - 结构：3 个动作族 + `J=none_of_the_above()`
-    - `openai/gpt-5.4` 多模态评测：`10/20 = 0.50`
-  - 第二轮 `level1_questions_20_gpt54_grouped_v2.json`
-    - 额外收紧：target family 错项必须只改一个数值参数；nearby-step family 只来自 ±2 step 的局部窗口
-    - `openai/gpt-5.4` 多模态评测：`11/20 = 0.55`
-  - 也就是说，这两个新约束在结构上更符合预期，但单次实测并没有把分数进一步压低到 `0.50` 以下；不要在公开文档里把它写成“必然更难”
+- `2026-04-25` 已正式生成并保留 `200` 题 grouped-option 正式集：
+  - 文件：
+    - `pipeline/level-1/generated/level1_questions_200_gpt54_grouped_formal.json`
+    - `pipeline/level-1/generated/level1_questions_200_gpt54_grouped_formal.jsonl`
+    - `pipeline/level-1/generated/level1_questions_200_gpt54_grouped_formal.metadata.json`
+  - 数据概况：
+    - `200` 题
+    - `25` 个不同 `entry_id`
+    - `197` 个不同 `source_protocol_id`
+    - 答案分布：
+      - `A:19 B:18 C:18 D:17 E:18 F:18 G:18 H:17 I:17 J:40`
+  - 当前仓库只保留这套正式 200 题和一个公开 20 题小样本；`hard / harder / grouped / grouped_v2` 等中间实验题集已清理，不再继续跟踪。
+- `2026-04-25` 这套正式 200 题在统一自然语言评测口径下的正式结果：
+  - `openai/gpt-5.4`
+    - 请求模型：`openai/gpt-5.4`
+    - 返回版本：`openai/gpt-5.4-20260305`
+    - `102/200 = 0.51`
+    - `invalid_count = 0`
+  - `anthropic/claude-opus-4.7`
+    - 请求模型：`anthropic/claude-opus-4.7`
+    - 返回版本：`anthropic/claude-4.7-opus-20260416`
+    - `100/200 = 0.50`
+    - `invalid_count = 3`
+  - `google/gemini-3.1-pro-preview`
+    - 请求模型：`google/gemini-3.1-pro-preview`
+    - 返回版本：`google/gemini-3.1-pro-preview-20260219`
+    - `92/200 = 0.46`
+    - `invalid_count = 0`
+- 上面这轮统一评测的正式保留文件只有：
+  - `level1_questions_200_gpt54_grouped_formal.eval.openai_gpt-5.4.final_answer_unified.{json,jsonl}`
+  - `level1_questions_200_gpt54_grouped_formal.eval.anthropic_claude-opus-4.7.final_answer_unified.{json,jsonl}`
+  - `level1_questions_200_gpt54_grouped_formal.eval.google_gemini-3.1-pro-preview.final_answer_unified.{json,jsonl}`
+  - `smoke`、`debug`、旧 JSON-mode 评测、以及 `.partial.jsonl` 都不再保留为正式仓库内容
 - 该 pipeline 会给每道题选择 3 张多视角图片，定位一个匹配 protocol 和相关 procedure steps，然后构造字段：
   - `image_paths`
   - `question`

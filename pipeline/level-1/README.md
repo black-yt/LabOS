@@ -118,11 +118,16 @@ PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/build_level1_questions.py --dr
 
 Use the independent evaluator to measure answer accuracy of a multimodal
 OpenRouter model on the generated Level 1 questions. The evaluator also
-auto-loads `pipeline/level-1/.env`. The model must output both
-`reasoning_steps` and `answer`, but the reported metric remains answer accuracy.
-The committed reference evaluation currently reports `12/20 = 0.60` with
-`invalid_count = 2` for `openai/gpt-5.4`, where the invalid items were network
-resets rather than structured-output failures.
+auto-loads `pipeline/level-1/.env`.
+
+The current default evaluation contract is:
+
+- the model may reason in natural language
+- the last non-empty line must be exactly `Final Answer: X`
+- automatic scoring uses only that final answer letter
+
+This avoids brittle JSON-mode failures for some providers while still leaving a
+parsable answer anchor.
 
 ```bash
 conda activate agent
@@ -139,6 +144,25 @@ PYTHONDONTWRITEBYTECODE=1 python pipeline/level-1/evaluate_level1_accuracy.py \
   --output pipeline/level-1/generated/level1_questions_20.eval.openai_gpt-5.4.json
 ```
 
+The evaluator now omits `temperature`, `max_tokens`, and `response_format` by
+default, letting the provider use its native defaults. Override them only when
+there is a concrete compatibility reason.
+
+The evaluator also supports append-style checkpointing:
+
+- a run writing `foo.json` will also maintain `foo.partial.jsonl`
+- completed valid items are restored on rerun
+- cached invalid rows are retried instead of being reused
+
+The committed formal 200-question run is:
+
+- question set:
+  - `pipeline/level-1/generated/level1_questions_200_gpt54_grouped_formal.json`
+- unified natural-language evaluation results:
+  - `openai/gpt-5.4`: `102/200 = 0.51`, `invalid_count = 0`
+  - `anthropic/claude-opus-4.7`: `100/200 = 0.50`, `invalid_count = 3`
+  - `google/gemini-3.1-pro-preview`: `92/200 = 0.46`, `invalid_count = 0`
+
 ## Outputs
 
 Outputs are written to `pipeline/level-1/generated/` by default:
@@ -146,6 +170,11 @@ Outputs are written to `pipeline/level-1/generated/` by default:
 - `level1_questions_20.json`
 - `level1_questions_20.jsonl`
 - `level1_questions_20.metadata.json`
+- `level1_questions_200_gpt54_grouped_formal.json`
+- `level1_questions_200_gpt54_grouped_formal.jsonl`
+- `level1_questions_200_gpt54_grouped_formal.metadata.json`
+- `level1_questions_200_gpt54_grouped_formal.eval.<model>.final_answer_unified.json`
+- `level1_questions_200_gpt54_grouped_formal.eval.<model>.final_answer_unified.jsonl`
 
 Metadata records the model and requested concurrency used for the run.
 

@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import ast
+import copy
 import getpass
 import importlib.util
 import json
@@ -986,6 +987,224 @@ def ast_node_contains_numeric_literal(node: ast.AST) -> bool:
     )
 
 
+def extract_first_numeric_literal(node: ast.AST) -> int | float | None:
+    for child in ast.walk(node):
+        if isinstance(child, ast.Constant) and isinstance(child.value, (int, float)):
+            return child.value
+    return None
+
+
+class FirstNumericLiteralRewriter(ast.NodeTransformer):
+    def __init__(self, new_value: int | float) -> None:
+        self.new_value = new_value
+        self.replaced = False
+
+    def visit_Constant(self, node: ast.Constant) -> ast.AST:  # noqa: N802
+        if not self.replaced and isinstance(node.value, (int, float)):
+            self.replaced = True
+            return ast.copy_location(ast.Constant(value=self.new_value), node)
+        return node
+
+
+def replace_first_numeric_literal(node: ast.AST, new_value: int | float) -> ast.AST:
+    cloned = copy.deepcopy(node)
+    rewriter = FirstNumericLiteralRewriter(new_value)
+    updated = rewriter.visit(cloned)
+    ast.fix_missing_locations(updated)
+    return updated
+
+
+def numeric_delta(value: int | float) -> int | float:
+    if isinstance(value, int):
+        magnitude = abs(value)
+        if magnitude >= 1000:
+            return 100
+        if magnitude >= 100:
+            return 10
+        return 1
+    magnitude = abs(float(value))
+    if magnitude >= 100:
+        return 10.0
+    if magnitude >= 10:
+        return 1.0
+    if magnitude >= 1:
+        return 0.5
+    return 0.1
+
+
+def perturb_numeric_value(value: int | float, variant_idx: int) -> int | float:
+    delta = numeric_delta(value)
+    candidate = value - delta if variant_idx % 2 == 0 else value + delta
+    if isinstance(value, int):
+        if candidate <= 0:
+            candidate = value + delta
+        return int(candidate)
+    candidate = float(candidate)
+    if candidate <= 0:
+        candidate = float(value + delta)
+    return round(candidate, 6)
+
+
+def perturb_option_expression(
+    expr: str,
+    *,
+    variant_idx: int,
+    preferred_key: str | None = None,
+) -> str | None:
+    call = parse_python_call(expr)
+    node_map = option_keyword_node_map(expr)
+    numeric_keys = [key for key, node in node_map.items() if ast_node_contains_numeric_literal(node)]
+    if not numeric_keys:
+        return None
+
+    selected_key = preferred_key if preferred_key in numeric_keys else numeric_keys[variant_idx % len(numeric_keys)]
+    base_value = extract_first_numeric_literal(node_map[selected_key])
+    if base_value is None:
+        return None
+    replacement_value = perturb_numeric_value(base_value, variant_idx)
+    repaired_call = copy.deepcopy(call)
+    for keyword in repaired_call.keywords:
+        if (keyword.arg or "") != selected_key:
+            continue
+        keyword.value = replace_first_numeric_literal(node_map[selected_key], replacement_value)
+        break
+    return ast.unparse(repaired_call)
+
+
+def maybe_repair_duplicate_options(value: dict[str, Any]) -> None:
+    if not isinstance(value, dict):
+        return
+    options = value.get("options")
+    if not isinstance(options, dict):
+        return
+
+    answer_letter = value.get("answer")
+    duplicates: list[tuple[str, str]] = []
+    seen_by_expr: dict[str, str] = {}
+    for letter, expr in options.items():
+        if not isinstance(expr, str):
+            continue
+        if expr in seen_by_expr:
+            duplicates.append((letter, seen_by_expr[expr]))
+        else:
+            seen_by_expr[expr] = letter
+
+    for repair_idx, (letter, original_letter) in enumerate(duplicates, 1):
+        if letter == "J":
+            continue
+        expr = options.get(letter)
+        if not isinstance(expr, str):
+            continue
+        preferred_key = None
+        trio = next((group for group in GROUPED_OPTION_TRIOS if letter in group), None)
+        if (
+            isinstance(answer_letter, str)
+            and trio is not None
+            and answer_letter in trio
+            and answer_letter != "J"
+            and isinstance(options.get(answer_letter), str)
+        ):
+            answer_nodes = option_keyword_node_map(options[answer_letter])
+            expr_nodes = option_keyword_node_map(expr)
+            changed_keys = [
+                key
+                for key in sorted(answer_nodes)
+                if ast_node_signature(answer_nodes[key]) != ast_node_signature(expr_nodes.get(key, answer_nodes[key]))
+            ]
+            preferred_key = next(
+                (
+                    key
+                    for key in changed_keys
+                    if ast_node_contains_numeric_literal(answer_nodes[key])
+                    and ast_node_contains_numeric_literal(expr_nodes.get(key, answer_nodes[key]))
+                ),
+                None,
+            )
+
+        used_values = set(options.values())
+        used_values.discard(expr)
+        for attempt in range(1, 6):
+            repaired = perturb_option_expression(
+                expr,
+                variant_idx=repair_idx + attempt,
+                preferred_key=preferred_key,
+            )
+            if repaired is None or repaired in used_values:
+                continue
+            options[letter] = repaired
+            break
+
+
+def maybe_repair_target_family_precision(value: dict[str, Any]) -> None:
+    if not isinstance(value, dict):
+        return
+    answer_letter = value.get("answer")
+    options = value.get("options")
+    if not isinstance(answer_letter, str) or answer_letter == "J":
+        return
+    if not isinstance(options, dict):
+        return
+
+    try:
+        validate_difficulty_structure(value)
+        validate_target_family_precision(value)
+        return
+    except ValueError:
+        pass
+
+    target_trio = next((trio for trio in GROUPED_OPTION_TRIOS if answer_letter in trio), None)
+    if target_trio is None:
+        return
+    correct_expr = options.get(answer_letter)
+    if not isinstance(correct_expr, str):
+        return
+
+    correct_call = parse_python_call(correct_expr)
+    correct_nodes = option_keyword_node_map(correct_expr)
+    numeric_keys = [key for key, node in correct_nodes.items() if ast_node_contains_numeric_literal(node)]
+    if not numeric_keys:
+        return
+
+    for variant_idx, letter in enumerate(target_trio):
+        if letter == answer_letter:
+            continue
+        candidate_expr = options.get(letter)
+        if not isinstance(candidate_expr, str):
+            continue
+        candidate_nodes = option_keyword_node_map(candidate_expr)
+        changed_keys = [
+            key
+            for key in sorted(correct_nodes)
+            if ast_node_signature(correct_nodes[key]) != ast_node_signature(candidate_nodes.get(key, correct_nodes[key]))
+        ]
+        selected_key = next(
+            (
+                key
+                for key in changed_keys
+                if key in numeric_keys and ast_node_contains_numeric_literal(candidate_nodes.get(key, correct_nodes[key]))
+            ),
+            None,
+        )
+        if selected_key is None:
+            selected_key = numeric_keys[variant_idx % len(numeric_keys)]
+
+        replacement_value = extract_first_numeric_literal(candidate_nodes.get(selected_key, correct_nodes[selected_key]))
+        if replacement_value is None or replacement_value == extract_first_numeric_literal(correct_nodes[selected_key]):
+            base_value = extract_first_numeric_literal(correct_nodes[selected_key])
+            if base_value is None:
+                continue
+            replacement_value = perturb_numeric_value(base_value, variant_idx)
+
+        repaired_call = copy.deepcopy(correct_call)
+        for keyword in repaired_call.keywords:
+            arg_name = keyword.arg or ""
+            if arg_name != selected_key:
+                keyword.value = copy.deepcopy(correct_nodes[arg_name])
+                continue
+            keyword.value = replace_first_numeric_literal(correct_nodes[selected_key], replacement_value)
+        options[letter] = ast.unparse(repaired_call)
+
+
 def validate_target_family_precision(value: dict[str, Any]) -> None:
     answer_letter = value["answer"]
     if answer_letter == "J":
@@ -1215,6 +1434,8 @@ def generate_question_for_job(
                 timeout_s=timeout_s,
             )
             generated = parse_json_object(content)
+            maybe_repair_target_family_precision(generated)
+            maybe_repair_duplicate_options(generated)
             validate_generated_question(generated, option_count, job)
             if adversarial_eval_model:
                 evaluator = load_level1_evaluator_module()

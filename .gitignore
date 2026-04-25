@@ -213,3 +213,8 @@ __marimo__/
 /data/protocol_v1/all.jsonl
 /data/protocol_v1/records/star.jsonl
 /data/benchmark_inventory/runtime/
+/pipeline/level-1/generated/*.partial.jsonl
+/pipeline/level-1/generated/*smoke*.json
+/pipeline/level-1/generated/*smoke*.jsonl
+/pipeline/level-1/generated/*debug*.json
+/pipeline/level-1/generated/*debug*.jsonl
