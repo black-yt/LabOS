@@ -136,8 +136,15 @@ def evaluate_record(
                 "action_sequence_similarity": metrics["action_sequence_similarity"],
                 "parameter_accuracy": metrics["parameter_accuracy"],
                 "final_score": metrics["final_score"],
+                "relaxed_action_sequence_similarity": metrics["relaxed_action_sequence_similarity"],
+                "relaxed_parameter_accuracy": metrics["relaxed_parameter_accuracy"],
+                "relaxed_final_score": metrics["relaxed_final_score"],
                 "error_count": metrics["error_count"],
                 "details": metrics["details"],
+                "relaxed_details": metrics["relaxed_details"],
+                "relaxed_alignment_length": metrics["relaxed_alignment_length"],
+                "relaxed_matched_parameter_count": metrics["relaxed_matched_parameter_count"],
+                "relaxed_total_parameter_count": metrics["relaxed_total_parameter_count"],
                 "model_requested": model,
                 "model_returned": response["model"],
                 "usage": response.get("usage"),
@@ -168,8 +175,15 @@ def evaluate_record(
         "action_sequence_similarity": 0.0,
         "parameter_accuracy": 0.0,
         "final_score": 0.0,
+        "relaxed_action_sequence_similarity": 0.0,
+        "relaxed_parameter_accuracy": 0.0,
+        "relaxed_final_score": 0.0,
         "error_count": None,
         "details": [],
+        "relaxed_details": [],
+        "relaxed_alignment_length": 0,
+        "relaxed_matched_parameter_count": 0,
+        "relaxed_total_parameter_count": 0,
         "model_requested": model,
         "model_returned": None,
         "usage": None,
@@ -278,6 +292,9 @@ def main() -> int:
     average_sequence = sum(result["action_sequence_similarity"] for result in finalized_results) / len(finalized_results)
     average_parameter = sum(result["parameter_accuracy"] for result in finalized_results) / len(finalized_results)
     average_final = sum(result["final_score"] for result in finalized_results) / len(finalized_results)
+    average_relaxed_sequence = sum(result.get("relaxed_action_sequence_similarity", 0.0) for result in finalized_results) / len(finalized_results)
+    average_relaxed_parameter = sum(result.get("relaxed_parameter_accuracy", 0.0) for result in finalized_results) / len(finalized_results)
+    average_relaxed_final = sum(result.get("relaxed_final_score", 0.0) for result in finalized_results) / len(finalized_results)
     total_cost = 0.0
     for result in finalized_results:
         usage = result.get("usage") or {}
@@ -297,6 +314,9 @@ def main() -> int:
         "average_action_sequence_similarity": average_sequence,
         "average_parameter_accuracy": average_parameter,
         "average_final_score": average_final,
+        "average_relaxed_action_sequence_similarity": average_relaxed_sequence,
+        "average_relaxed_parameter_accuracy": average_relaxed_parameter,
+        "average_relaxed_final_score": average_relaxed_final,
         "invalid_count": invalid_count,
         "total_cost": round(total_cost, 6),
         "elapsed_s": round(time.time() - started, 3),

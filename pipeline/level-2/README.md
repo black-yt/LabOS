@@ -92,6 +92,23 @@ Automatic scoring follows the two-part `SGI-Bench` logic, but on Python AST:
    - later variable references are checked through a predicted-to-gold output
      mapping instead of direct variable-name matching
 
+The current evaluator reports both `strict` and `relaxed` metrics:
+
+- `strict`
+  - keeps the current SGI-like high bar
+  - step-count mismatch still drives sequence score to `0`
+  - parameter checking stays step-level and exact
+
+- `relaxed`
+  - `Relaxed Action Sequence Similarity`:
+    fraction of step positions whose action names match, normalized by the
+    longer program length
+  - `Relaxed Parameter Accuracy`:
+    parameters are compared on action-aligned steps, and numeric literals allow
+    a uniform `10%` relative tolerance
+  - `Relaxed Final Score`:
+    average of the two relaxed metrics
+
 Run evaluation with:
 
 ```bash
@@ -137,17 +154,20 @@ Current formal-set summary:
 Current formal evaluation summary:
 
 - `openai/gpt-5.4`
-  - `Action Sequence Similarity = 0.049861111111111106`
-  - `Parameter Accuracy = 0.014427090882973235`
-  - `Final Score = 0.032144100997042166`
+  - `Strict Final Score = 0.032144100997042166`
+  - `Relaxed Action Sequence Similarity = 0.3580599313608028`
+  - `Relaxed Parameter Accuracy = 0.3784040783844986`
+  - `Relaxed Final Score = 0.36823200487265045`
 - `anthropic/claude-opus-4.7`
-  - `Action Sequence Similarity = 0.06848809523809524`
-  - `Parameter Accuracy = 0.0`
-  - `Final Score = 0.03424404761904762`
+  - `Strict Final Score = 0.03424404761904762`
+  - `Relaxed Action Sequence Similarity = 0.3692846995890867`
+  - `Relaxed Parameter Accuracy = 0.3690825400186904`
+  - `Relaxed Final Score = 0.36918361980388853`
 - `google/gemini-3.1-pro-preview`
-  - `Action Sequence Similarity = 0.09382142857142856`
-  - `Parameter Accuracy = 0.029725901141342305`
-  - `Final Score = 0.06177366485638545`
+  - `Strict Final Score = 0.06177366485638545`
+  - `Relaxed Action Sequence Similarity = 0.40570601448849536`
+  - `Relaxed Parameter Accuracy = 0.38419150516954326`
+  - `Relaxed Final Score = 0.3949487598290191`
 
 ## Checks
 

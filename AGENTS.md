@@ -541,6 +541,10 @@
   - `model_returned`
   - `usage`
   - `latency_s`
+- `pipeline/level-1/CASE_STUDY.md` 是当前 Level 1 的人工速查文档：
+  - 开头用中文总结数据源、构造 pipeline、题目分布和正式评测结果
+  - 正文固定保留 `5` 道完整英文原题、三视图图片，以及多模型原始英文回答
+  - 该文件面向人工阅读，不参与自动评测
 - 生成后至少检查：
   - JSON / JSONL 能解析
   - 每题正好 3 张图片，路径都存在
@@ -644,23 +648,39 @@
     - gold 步数范围 `8-13`
 - 当前正式 Level 2 统一评测结果：
   - `openai/gpt-5.4`
-    - `average_action_sequence_similarity = 0.049861111111111106`
-    - `average_parameter_accuracy = 0.014427090882973235`
-    - `average_final_score = 0.032144100997042166`
+    - `strict average_final_score = 0.032144100997042166`
+    - `relaxed average_action_sequence_similarity = 0.3580599313608028`
+    - `relaxed average_parameter_accuracy = 0.3784040783844986`
+    - `relaxed average_final_score = 0.36823200487265045`
     - `invalid_count = 4`
     - `model_returned = openai/gpt-5.4-20260305`
   - `anthropic/claude-opus-4.7`
-    - `average_action_sequence_similarity = 0.06848809523809524`
-    - `average_parameter_accuracy = 0.0`
-    - `average_final_score = 0.03424404761904762`
+    - `strict average_final_score = 0.03424404761904762`
+    - `relaxed average_action_sequence_similarity = 0.3692846995890867`
+    - `relaxed average_parameter_accuracy = 0.3690825400186904`
+    - `relaxed average_final_score = 0.36918361980388853`
     - `invalid_count = 13`
     - `model_returned = anthropic/claude-4.7-opus-20260416`
   - `google/gemini-3.1-pro-preview`
-    - `average_action_sequence_similarity = 0.09382142857142856`
-    - `average_parameter_accuracy = 0.029725901141342305`
-    - `average_final_score = 0.06177366485638545`
+    - `strict average_final_score = 0.06177366485638545`
+    - `relaxed average_action_sequence_similarity = 0.40570601448849536`
+    - `relaxed average_parameter_accuracy = 0.38419150516954326`
+    - `relaxed average_final_score = 0.3949487598290191`
     - `invalid_count = 23`
     - `model_returned = google/gemini-3.1-pro-preview-20260219`
+- Level 2 的当前评测口径建议显式分成两套：
+  - `strict`
+    - 保留当前 SGI 风格高标准
+    - 适合作为 challenge / appendix 指标
+  - `relaxed`
+    - `Relaxed Action Sequence Similarity`：按步骤位置比较动作名，分母取较长程序长度
+    - `Relaxed Parameter Accuracy`：只在 action-aligned 步骤上比较参数；数值字面量允许统一 `10%` 相对误差
+    - `Relaxed Final Score = (relaxed sequence + relaxed parameter) / 2`
+  - 这套 relaxed 定义不改数据、不降步数，只是把“步数不同直接记 0”和“数值完全精确匹配”放宽到更可解释的 partial-credit 口径
 - Level 2 的 README 和 AGENTS 里都应明确：
   - 输入中的动作空间来自 `AutoBio` / `LabUtopia` 动作概念和 protocol 步骤抽象，不等于原始机器人控制 API
   - 当前目标是“可解析、可评测的 planning benchmark”，不是直接可执行的仿真控制脚本
+- `pipeline/level-2/CASE_STUDY.md` 是当前 Level 2 的人工速查文档：
+  - 开头用中文总结数据源、构造 pipeline、题目分布，以及 `strict / relaxed` 两套正式指标
+  - 正文固定保留 `5` 个完整英文 case，包括题面输入、action pool、gold program，以及多模型原始英文回答
+  - 该文件面向人工阅读，不参与自动评测
