@@ -1,0 +1,12 @@
+{
+  "count": 200,
+  "protocols_path": "data/benchmark_inventory/protocol_min_v1_with_inventory.jsonl",
+  "model": "openai/gpt-5.4",
+  "seed": 7,
+  "hardness": "hard",
+  "concurrency": 1,
+  "min_steps": 8,
+  "max_steps": 12,
+  "unique_protocol_count": 105,
+  "unique_title_count": 105
+}

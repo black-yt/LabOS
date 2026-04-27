@@ -218,3 +218,8 @@ __marimo__/
 /pipeline/level-1/generated/*smoke*.jsonl
 /pipeline/level-1/generated/*debug*.json
 /pipeline/level-1/generated/*debug*.jsonl
+/pipeline/level-2/generated/*.partial.jsonl
+/pipeline/level-2/generated/*smoke*.json
+/pipeline/level-2/generated/*smoke*.jsonl
+/pipeline/level-2/generated/*baseline*.json
+/pipeline/level-2/generated/*baseline*.jsonl

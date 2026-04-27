@@ -569,3 +569,98 @@
   - viewer 非空白
   - 资源路径有效
   - 移动端和桌面端都没有明显布局崩坏
+
+## 17. Level 2 数据构造经验
+
+- `pipeline/level-2/` 是 Level 2 的工作目录，职责应和 Level 1 对齐：
+  - `build_level2_tasks.py` 负责构造
+  - `evaluate_level2_accuracy.py` 负责评测
+  - `README.md` 记录输入、输出、命令和指标
+  - `generated/` 存放样例集、正式集和评测输出
+- Level 2 的任务形式要对齐 `SGI-WetExperiment` 的 action pool 概念，但不要照搬其文本格式：
+  - 输入应包含实验背景 / 当前要求 / Python 函数形式的有限动作空间
+  - 每个动作只保留一个函数定义；相同动作不要因为参数不同拆成多个函数
+  - 函数体不需要执行真实逻辑，但应通过 docstring 或注释把动作语义、输入、输出写清楚
+  - 输出是 Python 代码形式的长程动作序列，而不是 SGI 原始的自定义文本结构
+- Level 2 的动作空间不要做成“每题专门造一个函数名”的伪动作集。更稳的做法是：
+  - 先维护一个跨题复用的规范化 action library
+  - 每道题再从中抽取一个局部 action pool
+  - gold program 只能使用题目里给出的函数
+  - 同一个 protocol 里的重复实验动作应复用相同函数名，不要在 gold program 里换同义函数
+- Level 2 的 gold 输出应默认允许：
+  - 变量赋值
+  - 多步函数调用
+  - 后续步骤引用前面步骤的输出变量
+  - 必要时保留少量原始输入变量，例如 `sample`, `buffer_a`, `pellet`
+- 评测逻辑要对齐 `SGI-Bench` `step_2_score.py` 的两个核心指标，但底层实现改成 AST：
+  - `Action Sequence Similarity`
+    - 先把预测程序和 gold 程序都解析成步骤列表
+    - 如果步骤数不同，默认直接记 `0`
+    - 若步骤数相同，则按 SGI 同款的 Kendall tau 风格顺序一致性计算
+  - `Parameter Accuracy`
+    - 逐步比较动作名是否一致
+    - 比较参数键集合是否一致
+    - 比较参数值引用类型是否一致：原始输入、字面量、前序步骤变量
+    - 比较变量依赖映射是否一致，而不是直接逐 token 文本匹配
+- Level 2 评测不要依赖模型输出严格 JSON。更稳的公开口径应是：
+  - 模型可以自由解释
+  - 但最终必须给出一段可解析的 Python 代码
+  - 评测器优先提取 fenced code block 里的 Python；若没有 fenced block，再回退到提取首段可解析代码
+  - 自动评分只看解析出的程序，不看解释文本
+- Level 2 的构造不要靠 self-play 反复筛样本。更高效的难化策略应直接体现在任务本身：
+  - 输入给出更大的 action pool，但只允许少数动作真正能组成正确流程
+  - 在 action pool 中加入函数名相同但参数可微调的高混淆动作场景
+  - 把容易混淆的前后步骤、重复 wash / spin / incubate / resuspend / transfer 串进同一局部 protocol
+  - 增加变量依赖和容器 / 产物传递，而不是只考独立步骤排序
+  - 保持多个动作族都“看起来合理”，不要出现一眼假的离题动作
+- Level 2 的正式 hard 构造经验已经确认：
+  - 优先选局部 stage 内的连续 protocol window，不要跨太远的 stage 跳步
+  - 默认动作池应保持在 protocol 抽象层；不要默认把 `pick_container`、`place_container`、`pour_liquid`、`load_centrifuge_rotor` 这类低层搬运步骤塞进题里
+  - 只有当源 step 明确提到 lid / button / seal / rotor slot / balance 等设备交互时，才把低层设备动作放回 action pool
+  - `hard` 模式下，优先保留重复 `mix / incubate / centrifuge / wash / transfer` 的窗口，并要求较长的生成变量依赖链
+  - 同一题里多次重复同一函数、但只改少量关键数值，是当前最稳定的难化手段
+  - 对生成器来说，要求 gold program 的参数只能是字面量、原始输入变量或前序变量；不要允许 f-string、字符串拼接或其他 expression，否则 AST 评测会被噪声污染
+- Level 2 的第一轮迭代目标不是覆盖全部 protocol，而是先形成闭环：
+  - 先构造 `20` 题
+  - 用 `openai/gpt-5.4` 评测
+  - 分析其错误集中在顺序、参数、还是变量依赖
+  - 再调整构造策略，争取把 `Action Sequence Similarity` 和 `Parameter Accuracy` 都压到 `0.5` 以下
+- Level 2 正式集再扩到 `200` 题，并统一评测：
+  - `openai/gpt-5.4`
+  - `anthropic/claude-opus-4.7`
+  - `google/gemini-3.1-pro-preview`
+- 当前正式 Level 2 数据集已经落盘：
+  - `pipeline/level-2/generated/level2_tasks_200_hard_formal.{json,jsonl}`
+  - `pipeline/level-2/generated/level2_tasks_200_hard_formal.metadata.json`
+  - 正式评测结果保留：
+    - `pipeline/level-2/generated/level2_tasks_200_hard_formal.eval.openai_gpt-5.4.json`
+    - `pipeline/level-2/generated/level2_tasks_200_hard_formal.eval.anthropic_claude-opus-4.7.json`
+    - `pipeline/level-2/generated/level2_tasks_200_hard_formal.eval.google_gemini-3.1-pro-preview.json`
+  - `smoke`、`baseline`、`*_v2`、以及 `.partial.jsonl` 都只是本地中间产物；公开仓库里应默认删除
+  - 当前统计：
+    - `200` 题
+    - `105` 个不同 protocol
+    - 平均 `10.85` 步
+    - gold 步数范围 `8-13`
+- 当前正式 Level 2 统一评测结果：
+  - `openai/gpt-5.4`
+    - `average_action_sequence_similarity = 0.049861111111111106`
+    - `average_parameter_accuracy = 0.014427090882973235`
+    - `average_final_score = 0.032144100997042166`
+    - `invalid_count = 4`
+    - `model_returned = openai/gpt-5.4-20260305`
+  - `anthropic/claude-opus-4.7`
+    - `average_action_sequence_similarity = 0.06848809523809524`
+    - `average_parameter_accuracy = 0.0`
+    - `average_final_score = 0.03424404761904762`
+    - `invalid_count = 13`
+    - `model_returned = anthropic/claude-4.7-opus-20260416`
+  - `google/gemini-3.1-pro-preview`
+    - `average_action_sequence_similarity = 0.09382142857142856`
+    - `average_parameter_accuracy = 0.029725901141342305`
+    - `average_final_score = 0.06177366485638545`
+    - `invalid_count = 23`
+    - `model_returned = google/gemini-3.1-pro-preview-20260219`
+- Level 2 的 README 和 AGENTS 里都应明确：
+  - 输入中的动作空间来自 `AutoBio` / `LabUtopia` 动作概念和 protocol 步骤抽象，不等于原始机器人控制 API
+  - 当前目标是“可解析、可评测的 planning benchmark”，不是直接可执行的仿真控制脚本
